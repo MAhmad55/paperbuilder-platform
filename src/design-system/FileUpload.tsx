@@ -61,7 +61,16 @@ export function FileUpload({
       >
         <div className="pb-file-upload__icon"><FileUp size={22} aria-hidden="true" /></div>
         <div className="pb-file-upload__title">{title ?? t('common.uploadFiles')}</div>
-        {hint && <div className="pb-file-upload__hint">{hint}</div>}
+        {hint && (
+          <div className="pb-file-upload__hint">
+            {hint.split('·').map((token, i, arr) => (
+              <span key={i}>
+                <Bidi>{token.trim()}</Bidi>
+                {i < arr.length - 1 && ' · '}
+              </span>
+            ))}
+          </div>
+        )}
         <input
           ref={inputRef}
           id={inputId}

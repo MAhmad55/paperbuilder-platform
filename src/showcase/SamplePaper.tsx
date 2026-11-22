@@ -138,7 +138,7 @@ function UrContent() {
       <div className="pb-paper__answer-space" />
       <div className="pb-paper__question">
         <bdi className="bdi">3.</bdi>
-        <span>y = 2x + 1 کے 그래프 کو 0 سے 3 کے درمیان کھینچیں۔ <bdi className="bdi">(10 مارک)</bdi></span>
+        <span>y = 2x + 1 کے گراف کو 0 سے 3 کے درمیان کھینچیں۔ <bdi className="bdi">(10 مارک)</bdi></span>
       </div>
       <div className="pb-paper__answer-space" />
 

@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import Bidi from '../utils/bidi'
 
 export interface PaginationProps {
   page: number
@@ -40,13 +41,16 @@ export function Pagination({ page, totalPages, onPageChange, previousLabel, next
     <nav className="pb-pagination" aria-label={resolvedAria}>
       <button
         type="button"
-        className="pb-pagination__btn"
+        className="pb-pagination__btn pb-pagination__btn--prev"
         disabled={page <= 1}
         onClick={() => onPageChange(page - 1)}
         aria-label={resolvedPrevious}
       >
         <ChevronLeft className="flip-rtl" size={16} aria-hidden="true" />
       </button>
+      <span className="pb-pagination__compact" aria-hidden="true">
+        <Bidi>{`${page} / ${totalPages}`}</Bidi>
+      </span>
       {pages.map((p, i) =>
         p === 'gap' ? (
           <span key={`gap-${i}`} className="pb-pagination__ellipsis" aria-hidden="true">…</span>
@@ -64,7 +68,7 @@ export function Pagination({ page, totalPages, onPageChange, previousLabel, next
       )}
       <button
         type="button"
-        className="pb-pagination__btn"
+        className="pb-pagination__btn pb-pagination__btn--next"
         disabled={page >= totalPages}
         onClick={() => onPageChange(page + 1)}
         aria-label={resolvedNext}

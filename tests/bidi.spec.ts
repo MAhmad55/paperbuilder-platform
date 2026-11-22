@@ -67,5 +67,17 @@ for (const lang of ['en', 'ur'] as const) {
       const metaText = (await meta.innerText()).trim()
       expect(metaText).toMatch(/\d{1,2} \S+ \d{4}/) // e.g. "8 Nov 2026" / "8 نومبر 2026"
     })
+
+    test('FileUpload hint tokens stay in order (each wrapped in bdi)', async ({ page }) => {
+      const hint = page.locator('.pb-file-upload__hint').first()
+      await expect(hint).toBeVisible()
+      const tokens = await hint.locator('bdi[dir="auto"]').allInnerTexts()
+      if (lang === 'en') expect(tokens).toEqual(['PDF', 'JPG', 'PNG', 'Max 5MB'])
+      else expect(tokens).toEqual(['PDF', 'JPG', 'PNG', 'زیادہ سے زیادہ 5MB'])
+      // the visible order matches the token order (no RTL reversal)
+      const visible = (await hint.innerText()).replace(/\s+/g, ' ').trim()
+      if (lang === 'en') expect(visible).toBe('PDF · JPG · PNG · Max 5MB')
+      else expect(visible).toBe('PDF · JPG · PNG · زیادہ سے زیادہ 5MB')
+    })
   })
 }

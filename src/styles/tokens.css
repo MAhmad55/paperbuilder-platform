@@ -99,8 +99,8 @@
 :root[dir='rtl'],
 html[dir='rtl'],
 [dir='rtl'] {
-  --font-body: 'Noto Naskh Arabic', 'Inter', system-ui, sans-serif;
-  --font-heading: 'Noto Nastaliq Urdu', 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', 'Noto Naskh Arabic', system-ui, sans-serif;
+  --font-heading: 'Space Grotesk', 'Noto Nastaliq Urdu', 'Noto Naskh Arabic', sans-serif;
 }
 
 @media (prefers-reduced-motion: reduce) {

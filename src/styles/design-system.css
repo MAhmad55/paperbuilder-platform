@@ -36,15 +36,19 @@
 
 .pb-btn--secondary { background: var(--paper); color: var(--ink-900); border-color: var(--line); }
 .pb-btn--secondary:hover { background: var(--canvas); border-color: #c3c9de; }
+.pb-btn--secondary:active { background: var(--ink-100); color: var(--ink-900); border-color: #c3c9de; }
 
 .pb-btn--ghost { background: transparent; color: var(--ink-700); }
 .pb-btn--ghost:hover { background: var(--ink-100); }
+.pb-btn--ghost:active { background: var(--ink-100); color: var(--ink-900); }
 
 .pb-btn--destructive { background: var(--pen-600); color: #fff; }
 .pb-btn--destructive:hover { background: #a51e36; }
+.pb-btn--destructive:active { background: #8f1a2e; }
 
 .pb-btn--destructive-outline { background: var(--paper); color: var(--pen-600); border-color: var(--pen-600); }
 .pb-btn--destructive-outline:hover { background: var(--pen-100); }
+.pb-btn--destructive-outline:active { background: var(--pen-100); color: var(--pen-600); }
 
 .pb-btn:disabled,
 .pb-btn[aria-disabled='true'] { opacity: 0.55; cursor: not-allowed; pointer-events: none; }
@@ -81,7 +85,7 @@
 }
 
 .pb-icon-btn:hover { background: var(--ink-100); color: var(--ink-900); }
-.pb-icon-btn:active { background: #dde1f4; }
+.pb-icon-btn:active { background: var(--ink-100); color: var(--ink-900); }
 .pb-icon-btn:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
 
 .pb-icon-btn--bordered { border-color: var(--line); background: var(--paper); }
@@ -651,6 +655,7 @@
 }
 
 .pb-pagination__btn:hover { background: var(--canvas); }
+.pb-pagination__btn:active { background: var(--ink-100); color: var(--ink-900); }
 
 .pb-pagination__btn[aria-current='true'] {
   background: var(--ink-700);
@@ -661,6 +666,22 @@
 .pb-pagination__btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .pb-pagination__ellipsis { color: var(--muted); padding: 0 4px; }
+
+.pb-pagination__compact {
+  display: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-900);
+  padding: 0 4px;
+  white-space: nowrap;
+}
+
+@media (max-width: 479px) {
+  .pb-pagination { flex-wrap: nowrap; }
+  .pb-pagination__compact { display: inline-flex; }
+  .pb-pagination__btn:not(.pb-pagination__btn--prev):not(.pb-pagination__btn--next),
+  .pb-pagination__ellipsis { display: none; }
+}
 
 /* ---------- Card ---------- */
 .pb-card {
