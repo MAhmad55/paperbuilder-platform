@@ -1,0 +1,111 @@
+/* ------------------------------------------------------------------
+   PaperBuilder design tokens — "Daftar" (an examiner's desk)
+   Navy ink, white paper, a red pen for what needs attention,
+   a yellow highlighter for what is selected.
+------------------------------------------------------------------- */
+
+:root {
+  /* Ink */
+  --ink-900: #0f1733;
+  --ink-700: #1e2a78;
+  --ink-600: #2d3ca0;
+  --ink-100: #e8eaf8;
+
+  /* Pen (red) */
+  --pen-600: #c92a45;
+  --pen-100: #fce4e8;
+
+  /* Highlighter */
+  --mark-300: #ffd84d;
+
+  /* Surfaces */
+  --canvas: #f4f5f9;
+  --paper: #ffffff;
+  --line: #dce0ec;
+  --muted: #4a5470;
+
+  /* Status chips: background / text */
+  --status-draft-bg: #e6e9f2;
+  --status-draft-fg: #2b3556;
+  --status-submitted-bg: #e8eaf8;
+  --status-submitted-fg: #1e2a78;
+  --status-review-bg: #fff0c2;
+  --status-review-fg: #7a4b00;
+  --status-approved-bg: #ddf3ea;
+  --status-approved-fg: #0b6b50;
+  --status-changes-bg: #fce4e8;
+  --status-changes-fg: #9b1c2e;
+  --status-printed-bg: #e6e9f2;
+  --status-printed-fg: #2b3556;
+  --status-archived-bg: #e6e9f2;
+  --status-archived-fg: #4a5470;
+
+  /* Radius */
+  --radius-control: 10px;
+  --radius-card: 14px;
+  --radius-chip: 999px;
+  --radius-paper: 2px;
+
+  /* Elevation — floating layers only */
+  --shadow-menu: 0 8px 24px rgba(15, 23, 51, 0.14), 0 2px 6px rgba(15, 23, 51, 0.08);
+  --shadow-sheet: 0 -4px 32px rgba(15, 23, 51, 0.18);
+  --shadow-paper: 0 1px 2px rgba(15, 23, 51, 0.1), 0 8px 28px rgba(15, 23, 51, 0.12);
+
+  /* Borders */
+  --border-card: 1px solid var(--line);
+  --border-subtle: 1px solid var(--line);
+
+  /* Typography */
+  --font-body: 'Inter', 'Noto Naskh Arabic', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Space Grotesk', 'Noto Nastaliq Urdu', sans-serif;
+  --font-paper-latin: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-urdu-ui: 'Noto Naskh Arabic', 'Inter', sans-serif;
+  --font-urdu-head: 'Noto Nastaliq Urdu', 'Noto Naskh Arabic', serif;
+
+  /* Type scale (px) */
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 22px;
+  --text-2xl: 28px;
+  --text-3xl: 36px;
+
+  /* Spacing (4px base grid) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  /* Shell layout */
+  --rail-width: 240px;
+  --rail-width-collapsed: 72px;
+  --topbar-height: 64px;
+  --max-content: 1280px;
+  --max-form: 720px;
+
+  /* Focus ring */
+  --focus-ring: 2px solid var(--ink-700);
+  --focus-offset: 2px;
+
+  /* Motion */
+  --motion-fast: 150ms ease-out;
+  --motion-sheet: 220ms ease-out;
+}
+
+:root[dir='rtl'],
+html[dir='rtl'],
+[dir='rtl'] {
+  --font-body: 'Noto Naskh Arabic', 'Inter', system-ui, sans-serif;
+  --font-heading: 'Noto Nastaliq Urdu', 'Space Grotesk', sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-sheet: 0ms;
+  }
+}
