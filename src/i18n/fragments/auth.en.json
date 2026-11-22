@@ -1,0 +1,71 @@
+{
+  "auth": {
+    "errors": {
+      "codeInvalid": "Enter the 6-digit code.",
+      "emailInvalid": "Enter a valid email address.",
+      "passwordMismatch": "Passwords do not match.",
+      "passwordTooShort": "Password must be at least 8 characters.",
+      "required": "This field is required.",
+      "termsRequired": "Accept the terms to continue."
+    },
+    "forgot": {
+      "backToEmail": "Change email",
+      "backToSignIn": "Back to sign in",
+      "codeHint": "Demo: there is no email delivery. Enter any 6 digits, for example {{code}}.",
+      "codeLabel": "Reset code",
+      "codePlaceholder": "6-digit code",
+      "codeResent": "A new code was sent.",
+      "codeSubtitle": "We sent a 6-digit code to {{email}}.",
+      "codeTitle": "Enter the reset code",
+      "confirmPassword": "Confirm new password",
+      "email": "Email",
+      "newPassword": "New password",
+      "resendCode": "Resend code",
+      "resetPassword": "Reset password",
+      "sendCode": "Send reset code",
+      "step1": "Step 1 of 2",
+      "step2": "Step 2 of 2",
+      "subtitle": "Enter your account email and we will send a reset code.",
+      "successLead": "Your password has been changed. Sign in with your new password.",
+      "successTitle": "Password reset",
+      "title": "Forgot password"
+    },
+    "invite": {
+      "acceptButton": "Accept invitation",
+      "accepting": "Accepting…",
+      "confirmPassword": "Confirm password",
+      "invitedBy": "Invited by",
+      "language": "Interface language",
+      "languageHint": "You can change this later in Settings.",
+      "password": "Password",
+      "passwordHint": "At least 8 characters. Mix letters, numbers and a symbol for a stronger password.",
+      "schoolLabel": "School",
+      "setPassword": "Set your password",
+      "strength": "Password strength",
+      "strengthFair": "Fair",
+      "strengthGood": "Good",
+      "strengthStrong": "Strong",
+      "strengthWeak": "Weak",
+      "subtitle": "{{inviter}} invited you to join {{school}} as a teacher.",
+      "terms": "I accept the terms of use.",
+      "title": "Accept invitation"
+    },
+    "signIn": {
+      "demoHint": "Demo — no real account needed",
+      "demoNote": "Pick a role to sign in instantly. The demo password is already filled in.",
+      "demoTitle": "Try a demo account",
+      "email": "Email",
+      "emailPlaceholder": "you@school.example.pk",
+      "forgotPassword": "Forgot password?",
+      "hidePassword": "Hide password",
+      "noAccess": "Your school is not on PaperBuilder yet?",
+      "password": "Password",
+      "requestAccess": "Request school access",
+      "showPassword": "Show password",
+      "signIn": "Sign in",
+      "signingIn": "Signing in…",
+      "subtitle": "Sign in to your school account to build and print exam papers.",
+      "title": "Welcome back"
+    }
+  }
+}

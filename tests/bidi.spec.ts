@@ -81,3 +81,86 @@ for (const lang of ['en', 'ur'] as const) {
     })
   })
 }
+
+/* ------------------------------------------------------------------
+   Phase 2 public screens — no session, language only.
+------------------------------------------------------------------ */
+
+async function setLangOnly(page: Page, lang: 'en' | 'ur') {
+  await page.addInitScript((l) => localStorage.setItem('paperbuilder.lang', l), lang)
+}
+
+for (const lang of ['en', 'ur'] as const) {
+  test.describe(`bidi — public screens — ${lang}`, () => {
+    test.beforeEach(async ({ page }) => {
+      await setLangOnly(page, lang)
+    })
+
+    test('landing hero paper date renders day-month-year in order', async ({ page }) => {
+      const expected = lang === 'en' ? '15 Dec 2026' : '15 دسمبر 2026'
+      await page.goto('/', { waitUntil: 'domcontentloaded' })
+      const paper = page.locator('.landing-hero__paper .pb-paper').first()
+      await expect(paper).toBeVisible()
+      await expect(paper).toContainText(expected)
+    })
+
+    test('sign-in demo account line is isolated in a bdi', async ({ page }) => {
+      await page.goto('/sign-in', { waitUntil: 'domcontentloaded' })
+      const line = page.locator('.auth-demo__account-email bdi[dir="auto"]').first()
+      await expect(line).toBeVisible()
+      await expect(line).toContainText('@')
+    })
+
+    test('request-status dates render day-month-year in order, reference in a bdi', async ({ page }) => {
+      await page.goto('/request-status?state=pending', { waitUntil: 'domcontentloaded' })
+      await page.waitForTimeout(900)
+      const ref = page.locator('.req-ref__value bdi[dir="auto"]')
+      await expect(ref).toBeVisible()
+      const meta = await page.locator('.req-ref__meta').innerText()
+      expect(meta).toMatch(/\d{1,2} \S+ \d{4}/)
+    })
+
+    test('invite school row is isolated in a bdi', async ({ page }) => {
+      await page.goto('/invite', { waitUntil: 'domcontentloaded' })
+      const row = page.locator('.auth-invite-row bdi[dir="auto"]').first()
+      await expect(row).toBeVisible()
+      await expect(row).toContainText('Beacon')
+    })
+
+    test('forgot-password step 2 shows the email isolated in a bdi', async ({ page }) => {
+      await page.goto('/forgot-password', { waitUntil: 'domcontentloaded' })
+      await page.locator('input[type="email"]').fill('teacher@school.example.pk')
+      await page.locator('form button[type="submit"]').click()
+      const email = page.locator('.auth-subtitle bdi[dir="auto"]')
+      await expect(email).toBeVisible()
+      await expect(email).toHaveText('teacher@school.example.pk')
+    })
+
+    test('request-access FileUpload hint stays one isolated token', async ({ page }) => {
+      await page.goto('/request-access', { waitUntil: 'domcontentloaded' })
+      // School step
+      await page.locator('#req-school-name').fill('Beacon Model School')
+      await page.locator('#req-city').fill('Lahore')
+      await page.locator('#req-board').selectOption('bise-lahore')
+      await page.locator('#req-address').fill('12 Garden Town, Lahore')
+      await page.locator('#req-students').selectOption('301-600')
+      await page.locator('#req-school-type').selectOption('high')
+      await page.locator('.req-actions button[type="button"]').last().click()
+      // Contact step
+      await page.locator('#req-contact-name').fill('Asma Malik')
+      await page.locator('#req-contact-role').selectOption('principal')
+      await page.locator('#req-contact-phone').fill('03001234567')
+      await page.locator('#req-contact-email').fill('asma@school.example.pk')
+      await page.locator('.req-actions button[type="button"]').last().click()
+      // Documents step — certificate hint
+      const hint = page.locator('.pb-file-upload__hint').first()
+      await expect(hint).toBeVisible()
+      const expected =
+        lang === 'en'
+          ? 'PDF, JPG or PNG, up to 5 MB'
+          : 'پی ڈی ایف، جے پی جی یا پی این جی، زیادہ سے زیادہ 5 ایم بی'
+      await expect(hint).toHaveText(expected)
+      await expect(hint.locator('bdi[dir="auto"]')).toHaveCount(1)
+    })
+  })
+}

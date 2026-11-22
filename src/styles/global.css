@@ -92,10 +92,12 @@ button {
   transform: scaleX(-1);
 }
 
-/* Latin words / numbers inside Urdu text */
+/* Latin words / numbers inside Urdu text.
+   No forced direction here: <bdi dir="auto"> resolves from its first strong
+   character (Latin/digits -> LTR, Urdu dates -> RTL in correct order).
+   A forced `direction: ltr` scrambled mixed runs such as "19 نومبر 2026". */
 .bdi {
   unicode-bidi: isolate;
-  direction: ltr;
 }
 
 /* Scrollbars */
@@ -111,7 +113,7 @@ button {
 .skip-link {
   position: absolute;
   inset-inline-start: 16px;
-  top: -48px;
+  top: -100px; /* taller than the link incl. RTL line-height, so no sliver peeks in */
   z-index: 1000;
   background: var(--ink-900);
   color: #fff;

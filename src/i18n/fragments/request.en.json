@@ -1,0 +1,161 @@
+{
+  "request": {
+    "actions": {
+      "back": "Back",
+      "continue": "Continue",
+      "edit": "Edit",
+      "saveDraft": "Save draft",
+      "submit": "Submit request"
+    },
+    "contact": {
+      "email": "Email address",
+      "emailPlaceholder": "name@school.edu.pk",
+      "name": "Full name",
+      "namePlaceholder": "For example, Asma Malik",
+      "phone": "Mobile number",
+      "phoneHint": "We use this number only about your request.",
+      "phonePlaceholder": "03XX XXXXXXX",
+      "role": "Role",
+      "roleOptions": {
+        "admin": "Administrator",
+        "other": "Other",
+        "owner": "Owner",
+        "principal": "Principal",
+        "vice-principal": "Vice principal"
+      },
+      "rolePlaceholder": "Choose a role"
+    },
+    "documents": {
+      "additional": "Other document",
+      "additionalHint": "Optional. PDF, JPG or PNG, up to 5 MB",
+      "certificate": "Registration certificate",
+      "certificateHint": "PDF, JPG or PNG, up to 5 MB",
+      "certificateRequired": "Required",
+      "reattachNote": "Files attached earlier are kept with your draft.",
+      "storedFile": "Attached earlier",
+      "uploadTitle": "Drop a file here or choose one"
+    },
+    "errors": {
+      "consentRequired": "Please accept the declaration to continue.",
+      "fileRequired": "Please attach the registration certificate.",
+      "fileTooLarge": "File must be 5 MB or smaller.",
+      "fileType": "Only PDF, JPG or PNG files are accepted.",
+      "fixErrors": "Please fix the highlighted fields.",
+      "invalidEmail": "Enter a valid email address.",
+      "invalidPhone": "Enter a valid mobile number, for example 03XX XXXXXXX.",
+      "required": "This field is required.",
+      "tooShort": "Please enter at least {{min}} characters."
+    },
+    "plan": {
+      "choose": "Which plan interests you?",
+      "chooseHint": "You can change the plan later. Prices are confirmed after approval.",
+      "desc": {
+        "enterprise": "Unlimited teachers and papers, with priority support.",
+        "growth": "Up to 60 teachers and 100 papers a month.",
+        "starter": "Up to 25 teachers and 30 papers a month."
+      },
+      "notes": "Notes for our team",
+      "notesPlaceholder": "Anything else we should know? (optional)"
+    },
+    "resumeNote": "Your saved draft was restored. You can continue where you left off.",
+    "review": {
+      "consent": "I confirm the details above are correct and our school may be contacted about this request.",
+      "intro": "Check every section before you submit. Use Edit to change a section.",
+      "submit": "Submit request",
+      "submitted": "Request submitted",
+      "title": "Check your request"
+    },
+    "saved": "Draft saved",
+    "savedAt": "Saved at {{time}}",
+    "school": {
+      "address": "School address",
+      "addressPlaceholder": "Street, area and city",
+      "board": "Education board",
+      "boardOptions": {
+        "bise-karachi": "BISE Karachi",
+        "bise-lahore": "BISE Lahore",
+        "bise-rawalpindi": "BISE Rawalpindi",
+        "cambridge": "Cambridge",
+        "fbise": "Federal Board (FBISE)",
+        "other": "Other"
+      },
+      "boardPlaceholder": "Choose a board",
+      "city": "City",
+      "cityPlaceholder": "For example, Lahore",
+      "name": "School name",
+      "namePlaceholder": "For example, Beacon Model School",
+      "students": "Number of students",
+      "studentsOptions": {
+        "1-100": "1 to 100 students",
+        "1000+": "More than 1,000 students",
+        "101-300": "101 to 300 students",
+        "301-600": "301 to 600 students",
+        "601-1000": "601 to 1,000 students"
+      },
+      "studentsPlaceholder": "Choose a range",
+      "type": "School type",
+      "typeOptions": {
+        "high": "High",
+        "higher-secondary": "Higher secondary",
+        "middle": "Middle",
+        "primary": "Primary"
+      },
+      "typePlaceholder": "Choose a type"
+    },
+    "status": {
+      "actions": {
+        "editAndResubmit": "Edit and resubmit",
+        "newRequest": "Make a new request",
+        "signIn": "Sign in",
+        "startNew": "Start a new request",
+        "trackAnother": "Check another request"
+      },
+      "approvedBody": "Your school is approved. Sign in to set up your school, invite teachers and create your first paper.",
+      "approvedTitle": "Request approved",
+      "devOnly": "Dev only — preview state",
+      "expectedBy": "Expected decision by",
+      "expectedNote": "We review most requests within 2 working days.",
+      "infoBody": "Our team needs a little more from you before they can approve this request. Send the missing items below and your request goes back for review.",
+      "infoTitle": "More information needed",
+      "missing": {
+        "address": "School address",
+        "certificate": "Registration certificate",
+        "contact": "Contact person details"
+      },
+      "missingTitle": "What is missing",
+      "notFoundBody": "We could not find a request with this reference. Check the number or start a new request.",
+      "notFoundTitle": "Request not found",
+      "pendingBody": "Your request is with our team. We will contact the person named in your request once it is reviewed.",
+      "pendingTitle": "Request received",
+      "reasons": {
+        "incomplete": "The registration documents were incomplete.",
+        "unverifiable": "The school details could not be verified."
+      },
+      "reference": "Reference number",
+      "rejectedTitle": "Request not approved",
+      "resubmittedNote": "Thank you. Your updated request is back with our team.",
+      "submittedOn": "Submitted on",
+      "timeline": {
+        "approved": "Request approved",
+        "infoRequested": "Information requested",
+        "rejected": "Request rejected",
+        "resubmitted": "Information resubmitted",
+        "submitted": "Request submitted",
+        "underReview": "Under review"
+      },
+      "timelineTitle": "Timeline",
+      "title": "Request status"
+    },
+    "stepOf": "Step {{current}} of {{total}}",
+    "steps": {
+      "contact": "Contact person",
+      "documents": "Documents",
+      "plan": "Plan interest",
+      "review": "Review and submit",
+      "school": "School details"
+    },
+    "subtitle": "Tell us about your school. We review most requests within 2 working days.",
+    "title": "Request school access",
+    "editingResubmit": "You are updating request {{ref}}. Submitting sends it back for review."
+  }
+}

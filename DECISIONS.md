@@ -75,3 +75,43 @@ Design decisions made where the blueprint left latitude. Entries are dated; open
 - **A7 — Mobile top-bar screenshots:** new `scripts/topbar-shots.mjs` captures the real `.app-topbar` at 390px, deviceScaleFactor 2, on /design-system, Urdu + English (`screenshots/topbar-ur-390.png`, `topbar-en-390.png`) — page title and language toggle visible in both.
 - **Vitest config fix (found while gating Part A):** `npm test` exited 1 because Vitest picked up the Playwright specs in tests/ (config defect, not product code). Added `vitest.config.ts` excluding `tests/**`; also added `src/vite-env.d.ts` (`vite/client` types) so tests can use `?raw` imports without node types. Vitest now 27/27; Playwright 113/113.
 - **`.ds-grid align-items: start`** unchanged; demo artifacts intentionally exclude hover/focus-only demos (`ButtonsDemo` uses `data-force`).
+
+## Phase 2 — Public & access (Part B, 2026-11-22)
+
+Coordinator foundation: `src/features/public/PublicLayout.tsx` (top bar, nav links, language toggle, Sign in / Go-to-dashboard button, mobile Drawer menu, dark footer with links + toggle) + `src/styles/public.css`; routes `/` (landing), `/sign-in`, `/request-access`, `/request-status`, `/forgot-password`, `/invite`, `/public-preview` are public (outside the shell); the role-home redirect moved to `/home`. i18n fragments convention: each scope writes `src/i18n/fragments/<scope>.{en,ur}.json`, merged by `scripts/merge-fragment.mjs <scope>` (idempotent deep merge) — fragments are the source of truth, re-merge is safe.
+- **Skip-link fix (foundation bug, found by QA):** `.skip-link` was `top: -48px` but is ~52px tall in RTL (line-height 2.0), so a 6px dark strip peeked into every public page. Now `top: -100px`; focus state unchanged (`top: 12px`).
+- **`.bdi` shared fix (found by the request-flow agent):** `global.css` forced `.bdi { direction: ltr }`, which overrode `<bdi dir="auto">` and scrambled mixed Urdu dates ("19 نومبر 2026" read month-year-day). Now only `unicode-bidi: isolate` — `dir="auto"` resolves from the first strong character (Latin/digits → LTR, Urdu dates → RTL in correct order). Verified by run-position measurement (day "19" right of year "2026"). The request agent's local B4 per-token workarounds stay in place and are harmless.
+
+### B1 — Landing
+- **Plan prices [placeholder]:** no currency amounts anywhere; all plans "Price on request" / "قیمت معلوم کریں", with an on-page placeholder note. Limits also placeholders: Starter 5 teachers / 50 papers a month, Growth 25 / 300, Enterprise unlimited.
+- **Enterprise "Contact us" routes to `/request-access`** (the request form carries plan interest; no separate contact page exists in this phase).
+- **Sample paper content is hardcoded in LandingPage.tsx** (school, title, meta, instructions — mirroring the `SamplePaperContent` precedent): the preview must show either paper language regardless of UI language, and English paper strings in ur.json would trip the Arabic-script checker. All UI copy is i18n.
+- **Plan limit numbers are code literals (data), not i18n strings**, so ur.json has no Latin-only numeric values; "Unlimited" is translated (لامحدود). Numbers inside Urdu sentences use `<Bidi>` (hero caption via `Trans` + `<Bidi>`).
+- **Accordion** (`src/design-system/Accordion.tsx`, new) styles live in `landing.css` until QA promotes it to the showcase (index.ts export + showcase entry).
+
+### B2 / B5 / B6 — Auth
+- **B6 mock invite:** `SCHOOLS[0]` = Beacon Model School, Lahore; inviter `SCHOOL_ADMINS[0]` = Asma Malik (u-adm-03), that school's school admin.
+- **B5 mock code:** no email delivery; **any 6 digits accepted**; a dev hint shows an example code (`123456`, `MOCK_RESET_CODE_EXAMPLE` in auth-schemas.ts).
+- **Manual sign-in role:** the entered email is matched case-insensitively against `USERS` to pick the role; an unknown email signs in as teacher, preserving the old "any credentials work" demo behaviour. Demo password is the fixed `demo-password`, pre-filled. One demo click fills email + password and signs in as that role via `switchRole(role)`.
+- **B6 strength meter:** an inline 4-segment indicator in auth.css, **not** the design-system `Meter`, because Meter's status copy is marks-specific ("Below 80% of target"). Score: length ≥ 8, mixed case, digit, symbol.
+- **PasswordField:** the show/hide toggle is a small component exported from SignInPage and reused by the other two pages, because design-system `Input` has no trailing slot. Recommend hoisting it into `Input` as a trailing slot later; the design-system owner should decide.
+- **Urdu email placeholder:** instructional text ("اپنا ای میل لکھیں"), not an email sample — the mixed "آپ@school.example.pk" reordered confusingly in RTL.
+
+### B3 / B4 — Request flow
+- **Reference format:** `PB-<year>-<sequence>`, continuing from the highest existing sequence. Seed ends at PB-2026-1042, so the first new submission is PB-2026-1043. The `ApprovalRequest.id` IS the reference number (what `?id=` looks up).
+- **Expected time:** "review within 2 working days"; `expectedBy` = submission + 2 working days, skipping Sat/Sun (Pakistan weekend), computed in the store.
+- **Info-state resubmit:** "Edit and resubmit" restores the request's details into the draft (with `resubmitRef`) and returns to `/request-access`; submitting then flips the SAME request back to `pending` with a `resubmitted` timeline event, no new reference, and shows a success note on B4.
+- **Rejected:** reason shown from `request.status.reasons.*`; button starts a new request and clears the draft. Approved: button goes to `/sign-in`.
+- **Mock values:** info = PB-2026-1041 (Al-Rehman Model School, Bahawalpur), missing `certificate` + `contact`; rejected = PB-2026-1040 (City View School, Sialkot), reason `incomplete` ("registration documents were incomplete"); approved = PB-2026-1039 (Ibrahim Model School); pending = PB-2026-1042 (Taj Mirza Academy). `rejectionReason`/`missingItems` are stored as i18n key suffixes, not display copy.
+- **Phone validation:** Pakistani mobile `^(\+92|0)3\d{9}$` (spaces/dashes tolerated).
+- **Draft-restored files** are kept as name/size descriptors and listed as "attached earlier" (File objects can't persist); they count toward validation.
+
+## Phase 2 — QA & integration (2026-11-22)
+- **QA focus-to-error fixes:** submit with errors did not move focus on Sign-in / Forgot-password / Invite. Now the first invalid field is focused (50 ms timeout, same `focusField` pattern as the request form); ids added: `#signin-email`, `#forgot-email`, `#forgot-code`, `#invite-terms`.
+- **Checkbox `id` root cause:** the component destructured the `id` prop but never passed it to the `<input>`, so `getElementById` could never find it. Fixed in `src/design-system/Checkbox.tsx` (one line); also fixes any other Checkbox `id` use in the app.
+- **Focus-to-step-heading (integration fix):** `goToStep` in RequestAccessPage only scrolled to top; now it also focuses the step `<h2>` (`tabIndex={-1}` + ref). Verified live by the keyboard drive ("Contact person" / "رابطہ شخص").
+- **Accordion promoted:** exported from `src/design-system/index.ts` (+ types) with a demo in `src/showcase/FeedbackDemos.tsx` (reuses the landing FAQ strings). Its styles still live in `landing.css`.
+- **Public-preview index** (`/public-preview`, dev only) lists all Phase 2 screens and states as links.
+- **Phase 2 screenshot PDFs:** the first build embedded `file://` image URLs, which do not load from `page.setContent` — the PDFs were 24 pages of empty frames. Fixed by embedding base64 data URIs (`scripts/phase2-pdf.mjs`).
+- **Dev server:** the original `vite` server on :5173 died during QA; restarted via `scripts/dev-server.mjs` (inline Vite config, no config file — works around the sandbox blocking Vite's config-bundle temp write). If :5173 is down, restart with `node scripts/dev-server.mjs` from the app folder.
+- **QA sandbox limits (honest note):** the QA agent could not launch Chromium in its own sandbox (seccomp SIGTRAP) and produced no screenshots and only a static keyboard audit. The coordinator re-ran everything in its own context: Playwright, axe, screenshots, PDFs and the live keyboard drive all ran and passed there. The QA agent's `scripts/rebuild-en.mjs` (a recovery tool for a concurrent-merge scare) was not needed — fragment coverage was verified directly (all fragment keys present in both languages, 781 keys, parity pass).

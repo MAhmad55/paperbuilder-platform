@@ -14,6 +14,9 @@ const ROLE_ROUTES: Record<string, string[]> = {
 
 const SHARED_ROUTES = ['/design-system', '/foundation-test', '/profile', '/settings', '/history', '/notifications', '/session-expired', '/does-not-exist']
 
+/** Phase 2 public & access screens — no session, language only. */
+const PUBLIC_ROUTES = ['/', '/sign-in', '/request-access', '/request-status', '/forgot-password', '/invite', '/public-preview']
+
 /** Scan the visible DOM for raw i18n keys. Sample-paper regions (data-sample-artifact) are excluded: they are bilingual fixtures, not demo copy. */
 async function scanVisibleText(page: Page) {
   return page.locator('body').evaluate((body) => {
@@ -63,6 +66,18 @@ for (const lang of ['en', 'ur'] as const) {
       await expect(page.locator('body')).toBeVisible()
       const bad = await scanVisibleText(page)
       expect(bad, `raw i18n key(s) visible on /sign-in: ${bad.map(b => b.text).join(', ')}`).toEqual([])
+    })
+
+    test.describe('public routes (no session)', () => {
+      for (const route of PUBLIC_ROUTES) {
+        test(route, async ({ page }) => {
+          await page.addInitScript((l) => localStorage.setItem('paperbuilder.lang', l), lang)
+          await page.goto(route, { waitUntil: 'domcontentloaded' })
+          await page.waitForTimeout(1200)
+          const bad = await scanVisibleText(page)
+          expect(bad, `raw i18n key(s) visible on ${route}: ${bad.map(b => b.text).join(', ')}`).toEqual([])
+        })
+      }
     })
 
     for (const role of Object.keys(ROLE_SESSIONS)) {

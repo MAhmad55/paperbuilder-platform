@@ -5,6 +5,12 @@ import { AuthProvider, useAuth } from './shell/AuthContext'
 import { ToastProvider } from './design-system'
 import { AppShell } from './shell/AppShell'
 import { SignInPage } from './pages/SignInPage'
+import { LandingPage } from './pages/LandingPage'
+import { RequestAccessPage } from './pages/RequestAccessPage'
+import { RequestStatusPage } from './pages/RequestStatusPage'
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
+import { InvitePage } from './pages/InvitePage'
+import { PublicPreviewPage } from './pages/PublicPreviewPage'
 import { DesignSystemPage } from './pages/DesignSystemPage'
 import { FoundationTestPage } from './pages/FoundationTestPage'
 import { PlaceholderPage } from './pages/PlaceholderPage'
@@ -89,10 +95,17 @@ export function App() {
       <AuthProvider>
         <ToastProvider>
           <Routes>
+          {/* Public & access screens (Phase 2, blueprint 4.1) — no sidebar */}
+          <Route path="/" element={<LandingPage />} />
           <Route path="/sign-in" element={<SignInPage />} />
+          <Route path="/request-access" element={<RequestAccessPage />} />
+          <Route path="/request-status" element={<RequestStatusPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/invite" element={<InvitePage />} />
+          <Route path="/public-preview" element={<PublicPreviewPage />} />
 
           <Route element={<ProtectedLayout />}>
-            <Route path="/" element={<RoleHomeRedirect />} />
+            <Route path="/home" element={<RoleHomeRedirect />} />
             <Route path="/design-system" element={<DesignSystemPage />} />
             <Route path="/foundation-test" element={<FoundationTestPage />} />
             <Route path="/admin/*" element={<RolePlaceholder role="super-admin" />} />

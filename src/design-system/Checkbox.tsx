@@ -18,6 +18,7 @@ export function Checkbox({ label, indeterminate, error, className, onChange, id,
       <input
         ref={ref}
         type="checkbox"
+        id={id}
         className={['pb-checkbox', className].filter(Boolean).join(' ')}
         aria-invalid={error ? true : undefined}
         onChange={e => {

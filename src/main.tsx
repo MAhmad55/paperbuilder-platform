@@ -7,6 +7,7 @@ import './styles/global.css'
 import './styles/design-system.css'
 import './styles/shell.css'
 import './styles/showcase.css'
+import './styles/public.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

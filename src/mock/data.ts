@@ -717,3 +717,149 @@ export function personName(id: string) {
 export function personRole(id: string): PersonRole {
   return byId(USERS, id).role
 }
+
+/* ---------------- Approval requests (school onboarding, B3/B4) ---------------- */
+
+/**
+ * A school's request for platform access. `id` IS the public reference
+ * number (for example "PB-2026-1042") — it is what the school quotes and
+ * what /request-status?id= looks up. `rejectionReason`, when present, is
+ * an i18n key suffix under request.status.reasons.* (not display copy).
+ * `missingItems` entries are key suffixes under request.status.missing.*.
+ */
+export type ApprovalRequestStatus = 'pending' | 'info-requested' | 'rejected' | 'approved'
+
+export type ApprovalTimelineType =
+  | 'submitted' | 'under-review' | 'info-requested' | 'resubmitted' | 'approved' | 'rejected'
+
+export interface ApprovalTimelineEvent {
+  id: string
+  type: ApprovalTimelineType
+  at: string // ISO
+}
+
+export type ApprovalMissingItem = 'certificate' | 'contact' | 'address'
+
+export interface ApprovalRequest {
+  id: string
+  schoolName: string
+  city: string
+  status: ApprovalRequestStatus
+  submittedAt: string // ISO
+  expectedBy: string // ISO — decision expected by this date
+  planId: PlanId
+  contactName: string
+  contactRole?: string
+  contactPhone?: string
+  contactEmail?: string
+  address?: string
+  board?: string
+  studentsRange?: string
+  schoolType?: string
+  notes?: string
+  documentNames?: string[]
+  missingItems?: ApprovalMissingItem[]
+  rejectionReason?: string
+  timeline: ApprovalTimelineEvent[]
+}
+
+/** Seed requests — newest first. New submissions continue the sequence (next: PB-2026-1043). */
+export const APPROVAL_REQUESTS: ApprovalRequest[] = [
+  {
+    id: 'PB-2026-1042',
+    schoolName: 'Taj Mirza Academy',
+    city: 'Rawalpindi',
+    status: 'pending',
+    submittedAt: daysAgo(1),
+    expectedBy: daysAhead(1),
+    planId: 'growth',
+    contactName: 'Tariq Mirza',
+    contactRole: 'principal',
+    contactPhone: '03001234567',
+    contactEmail: 'tariq.mirza@example.pk',
+    address: 'Main Murree Road, Rawalpindi',
+    board: 'bise-rawalpindi',
+    studentsRange: '301-600',
+    schoolType: 'high',
+    notes: '',
+    documentNames: ['registration-certificate.pdf'],
+    timeline: [
+      { id: 'tl-1042-1', type: 'submitted', at: daysAgo(1) },
+      { id: 'tl-1042-2', type: 'under-review', at: daysAgo(0) },
+    ],
+  },
+  {
+    id: 'PB-2026-1041',
+    schoolName: 'Al-Rehman Model School',
+    city: 'Bahawalpur',
+    status: 'info-requested',
+    submittedAt: daysAgo(3),
+    expectedBy: daysAhead(1),
+    planId: 'starter',
+    contactName: 'Rehman Gul',
+    contactRole: 'owner',
+    contactPhone: '03019876543',
+    contactEmail: 'rehman.gul@example.pk',
+    address: 'Model Town, Bahawalpur',
+    board: 'bise-lahore',
+    studentsRange: '101-300',
+    schoolType: 'middle',
+    notes: '',
+    documentNames: [],
+    missingItems: ['certificate', 'contact'],
+    timeline: [
+      { id: 'tl-1041-1', type: 'submitted', at: daysAgo(3) },
+      { id: 'tl-1041-2', type: 'under-review', at: daysAgo(2) },
+      { id: 'tl-1041-3', type: 'info-requested', at: daysAgo(1) },
+    ],
+  },
+  {
+    id: 'PB-2026-1040',
+    schoolName: 'City View School',
+    city: 'Sialkot',
+    status: 'rejected',
+    submittedAt: daysAgo(6),
+    expectedBy: daysAgo(4),
+    planId: 'growth',
+    contactName: 'Nadia Aslam',
+    contactRole: 'principal',
+    contactPhone: '03015551234',
+    contactEmail: 'nadia.aslam@example.pk',
+    address: 'Cantt Road, Sialkot',
+    board: 'bise-lahore',
+    studentsRange: '301-600',
+    schoolType: 'high',
+    notes: '',
+    documentNames: ['registration-certificate.pdf'],
+    rejectionReason: 'incomplete',
+    timeline: [
+      { id: 'tl-1040-1', type: 'submitted', at: daysAgo(6) },
+      { id: 'tl-1040-2', type: 'under-review', at: daysAgo(5) },
+      { id: 'tl-1040-3', type: 'rejected', at: daysAgo(4) },
+    ],
+  },
+  {
+    id: 'PB-2026-1039',
+    schoolName: 'Ibrahim Model School',
+    city: 'Faisalabad',
+    status: 'approved',
+    submittedAt: daysAgo(9),
+    expectedBy: daysAgo(7),
+    planId: 'starter',
+    contactName: 'Ibrahim Khan',
+    contactRole: 'principal',
+    contactPhone: '03017778899',
+    contactEmail: 'ibrahim.khan@example.pk',
+    address: 'Jaranwala Road, Faisalabad',
+    board: 'bise-lahore',
+    studentsRange: '101-300',
+    schoolType: 'primary',
+    notes: '',
+    documentNames: ['registration-certificate.pdf'],
+    timeline: [
+      { id: 'tl-1039-1', type: 'submitted', at: daysAgo(9) },
+      { id: 'tl-1039-2', type: 'under-review', at: daysAgo(8) },
+      { id: 'tl-1039-3', type: 'approved', at: daysAgo(7) },
+    ],
+  },
+]

@@ -1,0 +1,133 @@
+{
+  "landing": {
+    "cta": {
+      "button": "Request school access",
+      "text": "Request access and the platform team will set your school up: teachers, classes and your first paper.",
+      "title": "Bring PaperBuilder to your school"
+    },
+    "faq": {
+      "a1": "Fill in the request form with your school details. The platform reviews the request and, once approved, your school admin receives login details and a first-login checklist.",
+      "a2": "Yes. A paper can be built in Urdu, in English, or in both languages, and the preview switches between them before printing.",
+      "a3": "No. The answer key is a separate document. It is never printed on the same pages as the paper.",
+      "a4": "Your school admin reviews each submitted paper and approves it or sends it back with a comment. Schools can also switch approval off if they prefer.",
+      "a5": "Each plan sets how many teachers can use the platform and how many papers the school can build each month. Plans and prices are confirmed when your school is onboarded.",
+      "a6": "Yes. Request access and ask for a demo. The platform team will walk your school through a full paper, from setup to print.",
+      "eyebrow": "Questions",
+      "q1": "How does our school get access?",
+      "q2": "Can we print papers in Urdu and English?",
+      "q3": "Is the answer key printed with the paper?",
+      "q4": "Who approves a paper before it is printed?",
+      "q5": "What do the plans include?",
+      "q6": "Can we try PaperBuilder before deciding?",
+      "title": "Frequently asked questions"
+    },
+    "hero": {
+      "eyebrow": "School Examination & Paper Management Platform",
+      "previewEnglish": "English",
+      "previewLabel": "Preview paper in",
+      "previewUrdu": "Urdu",
+      "primaryCta": "Request school access",
+      "sampleNote": "Sample paper · Class <b>{{classNo}}</b> Mathematics · <b>{{marks}}</b> marks",
+      "secondaryCta": "See how it works",
+      "subtitle": "PaperBuilder helps teachers build, approve and print board-pattern exam papers in Urdu and English, with the answer key kept separate.",
+      "title": "Exam papers, made the way your school works"
+    },
+    "how": {
+      "buildText": "Questions are picked from the bank and laid out on a live A4 preview.",
+      "buildTitle": "Build",
+      "eyebrow": "How it works",
+      "pickText": "Choose the class, subject and chapters. The pattern sets the sections and the marks.",
+      "pickTitle": "Pick",
+      "printText": "Approve the paper, then print it, with the answer key as a separate document.",
+      "printTitle": "Print",
+      "subtitle": "Three steps, from a blank page to a printed paper.",
+      "title": "How a paper is made"
+    },
+    "plans": {
+      "contactUs": "Contact us",
+      "enterprise": {
+        "blurb": "For a group of schools or a large institution.",
+        "feature": "Dedicated support",
+        "name": "Enterprise",
+        "papersLabel": "papers a month",
+        "teachersLabel": "teachers"
+      },
+      "eyebrow": "Plans",
+      "growth": {
+        "blurb": "For a growing school with more papers to build.",
+        "feature": "Templates included",
+        "name": "Growth",
+        "papersLabel": "papers a month",
+        "teachersLabel": "teachers"
+      },
+      "mostPopular": "Most popular",
+      "note": "Plan prices and limits are placeholders.",
+      "perMonth": "per month",
+      "priceOnRequest": "Price on request",
+      "requestAccess": "Request access",
+      "starter": {
+        "blurb": "For a single school getting started.",
+        "feature": "Email support",
+        "name": "Starter",
+        "papersLabel": "papers a month",
+        "teachersLabel": "teachers"
+      },
+      "subtitle": "Start small and grow. Final pricing is decided with the platform.",
+      "title": "Plans for every school",
+      "unlimited": "Unlimited"
+    },
+    "roles": {
+      "eyebrow": "Who it is for",
+      "platform": {
+        "illustrationTitle": "Schools on the platform",
+        "meterLabel": "Papers this month",
+        "point1": "Approve schools and set their plans and limits",
+        "point2": "See usage across every school at a glance",
+        "point3": "A full audit trail for every action",
+        "row1Meta": "Lahore",
+        "row1Name": "Beacon Model School",
+        "row2Meta": "Rawalpindi",
+        "row2Name": "City Grammar School",
+        "row3Meta": "Multan",
+        "row3Name": "Al-Noor Public School",
+        "subtitle": "Onboard schools and keep the whole platform in view.",
+        "title": "For the platform"
+      },
+      "school": {
+        "illustrationTitle": "Papers waiting for approval",
+        "point1": "Approve or send back papers with a comment",
+        "point2": "One place for every class, subject and teacher",
+        "point3": "Exam calendar and paper library stay in step",
+        "row1Name": "Ayesha Khan",
+        "row1Paper": "Class 9 Mathematics",
+        "row2Name": "Bilal Ahmed",
+        "row2Paper": "Class 10 Physics",
+        "row3Name": "Sana Malik",
+        "row3Paper": "Class 9 Chemistry",
+        "subtitle": "Every paper checked before it reaches the printer.",
+        "title": "For schools"
+      },
+      "teacher": {
+        "illustrationTitle": "Mathematics · Midterm",
+        "meterLabel": "Total marks",
+        "point1": "Pick chapters and a pattern, and the paper lays itself out",
+        "point2": "See the marks add up as you build",
+        "point3": "Submit for approval, and print when it is approved",
+        "subtitle": "Build a paper without the paperwork.",
+        "title": "For teachers"
+      }
+    },
+    "trust": {
+      "approvalsText": "No paper prints before the school approves it.",
+      "approvalsTitle": "Approvals",
+      "auditText": "Every change is recorded, with who made it and when.",
+      "auditTitle": "Audit trail",
+      "bilingualText": "Papers in Urdu, English, or both, from the same build.",
+      "bilingualTitle": "Bilingual papers",
+      "keyText": "The answer key prints as its own document, never with the paper.",
+      "keyTitle": "Separate answer key",
+      "subtitle": "The controls a school needs, on every paper.",
+      "title": "Built on trust"
+    }
+  }
+}

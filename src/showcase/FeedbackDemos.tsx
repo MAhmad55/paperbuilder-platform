@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
-import { Banner, StatusChip, Stepper, Meter, Skeleton, Timeline, EmptyState } from '../design-system'
+import { Accordion, Banner, StatusChip, Stepper, Meter, Skeleton, Timeline, EmptyState } from '../design-system'
+import '../styles/landing.css'
 import { Demo } from './Demo'
 import type { ChipStatus } from '../design-system'
 import { Button } from '../design-system'
@@ -135,6 +136,21 @@ export function FeedbackDemos() {
           >
             <Button variant="primary" size="md">{t('copy.feedback.emptyBtn')}</Button>
           </EmptyState>
+        )}
+      />
+      <Demo
+        id="accordion"
+        title={t('landing.faq.title')}
+        states={['default']}
+        render={() => (
+          <Accordion
+            ariaLabel={t('landing.faq.title')}
+            items={[1, 2].map(n => ({
+              id: `demo-faq-${n}`,
+              question: t(`landing.faq.q${n}`),
+              answer: t(`landing.faq.a${n}`),
+            }))}
+          />
         )}
       />
     </>

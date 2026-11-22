@@ -1,11 +1,13 @@
 import {
   SCHOOLS, TEACHERS, SUPER_ADMINS, SCHOOL_ADMINS, USERS, PAPERS, PLANS, AUDIT_EVENTS,
   NOTIFICATIONS, EXAMS, TEMPLATES, SAVED_QUESTIONS, CLASSES, SUBJECTS, CHAPTERS,
+  APPROVAL_REQUESTS,
   personRole, currentMarks,
 } from '../mock/data'
 import type {
   School, Paper, PaperStatus, Person, PersonRole, Plan, AuditEvent, AppNotification,
   Exam, Template, SavedQuestion, Medium, ExamType, Term, AuditAction,
+  ApprovalRequest, ApprovalRequestStatus, ApprovalTimelineEvent,
 } from '../mock/data'
 import type { Session, Role, PaperFilter, Result } from './types'
 import { PAPER_TRANSITIONS, canTransition, validateTransition, type ActorRole } from './paper-transitions'
@@ -24,6 +26,7 @@ interface PersistedState {
   notifications: typeof NOTIFICATIONS
   session: Session | null
   schoolOverrides: Record<string, SchoolStatus>
+  approvalRequests: ApprovalRequest[]
 }
 
 function loadPersisted(): PersistedState | null {
@@ -53,10 +56,16 @@ function seed(): PersistedState {
     notifications: [...NOTIFICATIONS],
     session: loadPersisted()?.session ?? null,
     schoolOverrides: {},
+    approvalRequests: [...APPROVAL_REQUESTS],
   }
 }
 
 let state: PersistedState = loadPersisted() ?? seed()
+
+/* States persisted before approval requests existed lack the field. */
+if (!Array.isArray(state.approvalRequests)) {
+  state.approvalRequests = [...APPROVAL_REQUESTS]
+}
 
 function save() {
   persist(state)
@@ -309,6 +318,134 @@ function markAllNotificationsRead(userId: string) {
   save()
 }
 
+/* ---------------- Approval requests (school onboarding, B3/B4) ---------------- */
+
+/**
+ * Next reference number: PB-<year>-<sequence>, continuing from the highest
+ * existing sequence so references never collide with the seed data
+ * (seed ends at PB-2026-1042, so the first new request is PB-2026-1043).
+ */
+function nextApprovalReference(): string {
+  const year = new Date().getFullYear()
+  let max = 1042
+  for (const r of state.approvalRequests) {
+    const m = /^PB-(\d{4})-(\d+)$/.exec(r.id)
+    if (m && Number(m[1]) === year) max = Math.max(max, Number(m[2]))
+  }
+  return `PB-${year}-${max + 1}`
+}
+
+/** Expected decision date: 2 working days after submission (skips Sat/Sun). */
+function expectedDecisionDate(fromIso: string): string {
+  const d = new Date(fromIso)
+  let remaining = 2
+  while (remaining > 0) {
+    d.setDate(d.getDate() + 1)
+    const day = d.getDay()
+    if (day !== 0 && day !== 6) remaining -= 1
+  }
+  return d.toISOString()
+}
+
+function listApprovalRequests(): ApprovalRequest[] {
+  return [...state.approvalRequests].sort((a, b) => b.submittedAt.localeCompare(a.submittedAt))
+}
+
+function getApprovalRequest(id: string): ApprovalRequest | undefined {
+  return state.approvalRequests.find(r => r.id === id)
+}
+
+function getLatestApprovalRequest(): ApprovalRequest | undefined {
+  return listApprovalRequests()[0]
+}
+
+function createApprovalRequest(input: {
+  schoolName: string; city: string; planId: ApprovalRequest['planId']; contactName: string
+  contactRole?: string; contactPhone?: string; contactEmail?: string
+  address?: string; board?: string; studentsRange?: string; schoolType?: string
+  notes?: string; documentNames?: string[]
+}): ApprovalRequest {
+  const now = new Date().toISOString()
+  const request: ApprovalRequest = {
+    id: nextApprovalReference(),
+    schoolName: input.schoolName,
+    city: input.city,
+    status: 'pending',
+    submittedAt: now,
+    expectedBy: expectedDecisionDate(now),
+    planId: input.planId,
+    contactName: input.contactName,
+    contactRole: input.contactRole,
+    contactPhone: input.contactPhone,
+    contactEmail: input.contactEmail,
+    address: input.address,
+    board: input.board,
+    studentsRange: input.studentsRange,
+    schoolType: input.schoolType,
+    notes: input.notes,
+    documentNames: input.documentNames ?? [],
+    timeline: [{ id: `tl-${Date.now().toString(36)}`, type: 'submitted', at: now }],
+  }
+  state.approvalRequests.unshift(request)
+  save()
+  return request
+}
+
+function updateApprovalRequest(
+  id: string,
+  patch: Partial<Pick<ApprovalRequest, 'status' | 'missingItems' | 'rejectionReason' | 'documentNames'>>,
+  timelineType?: ApprovalTimelineEvent['type'],
+): ApprovalRequest | undefined {
+  const request = getApprovalRequest(id)
+  if (!request) return undefined
+  Object.assign(request, patch)
+  if (timelineType) {
+    request.timeline.push({
+      id: `tl-${Date.now().toString(36)}`,
+      type: timelineType,
+      at: new Date().toISOString(),
+    })
+  }
+  save()
+  return request
+}
+
+/**
+ * Resubmit after information was requested: the same reference goes back
+ * to pending with a "resubmitted" timeline event (no new reference).
+ */
+function resubmitApprovalRequest(
+  id: string,
+  input: Parameters<typeof createApprovalRequest>[0],
+): ApprovalRequest | undefined {
+  const request = getApprovalRequest(id)
+  if (!request) return undefined
+  Object.assign(request, {
+    schoolName: input.schoolName,
+    city: input.city,
+    planId: input.planId,
+    contactName: input.contactName,
+    contactRole: input.contactRole,
+    contactPhone: input.contactPhone,
+    contactEmail: input.contactEmail,
+    address: input.address,
+    board: input.board,
+    studentsRange: input.studentsRange,
+    schoolType: input.schoolType,
+    notes: input.notes,
+    documentNames: input.documentNames ?? [],
+    status: 'pending' as ApprovalRequestStatus,
+    missingItems: undefined,
+  })
+  request.timeline.push({
+    id: `tl-${Date.now().toString(36)}`,
+    type: 'resubmitted',
+    at: new Date().toISOString(),
+  })
+  save()
+  return request
+}
+
 /* ---------------- Facade ---------------- */
 
 export const AuthService = {
@@ -344,6 +481,16 @@ export const QuestionBankProvider = {
   autoFill,
 } as const
 
+export const ApprovalRequestService = {
+  list: listApprovalRequests,
+  get: getApprovalRequest,
+  getLatest: getLatestApprovalRequest,
+  create: createApprovalRequest,
+  update: updateApprovalRequest,
+  resubmit: resubmitApprovalRequest,
+  nextReference: nextApprovalReference,
+} as const
+
 export const PlatformService = {
   listPlans: () => PLANS,
   listAudit,
@@ -367,9 +514,10 @@ export function resetMockData() {
 export {
   SCHOOLS, TEACHERS, SUPER_ADMINS, SCHOOL_ADMINS, USERS, PAPERS, PLANS, AUDIT_EVENTS,
   NOTIFICATIONS, EXAMS, TEMPLATES, SAVED_QUESTIONS, CLASSES, SUBJECTS, CHAPTERS,
+  APPROVAL_REQUESTS,
   personRole, currentMarks,
 }
 export type {
   School, Paper, PaperStatus, Person, PersonRole, Plan, AuditEvent, AppNotification,
-  Exam, Template, SavedQuestion,
+  Exam, Template, SavedQuestion, ApprovalRequest, ApprovalRequestStatus,
 }
