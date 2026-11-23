@@ -36,6 +36,13 @@ export interface SchoolService {
   setPlan(id: string, planId: PlanId, actor: Person): Result<School>
   listTeachers(schoolId: string): Person[]
   listAdmins(schoolId: string): Person[]
+  inviteTeacher(schoolId: string, input: { name: string; email: string }, actor: Person): Result<Person>
+  updateTeacherAssignments(id: string, patch: { subjects: string[]; classes: string[] }, actor: Person): Result<Person>
+  setTeacherStatus(id: string, status: Person['status'], actor: Person): Result<Person>
+  getSettings(id: string): import('../mock/data').SchoolSettings | undefined
+  updateSettings(id: string, patch: Partial<import('../mock/data').SchoolSettings>, actor: Person): Result<import('../mock/data').SchoolSettings>
+  requestPlanUpgrade(schoolId: string, planId: PlanId, actor: Person): Result<PlanId>
+  getUpgradeRequest(schoolId: string): PlanId | undefined
 }
 
 /* ---------------- Papers ---------------- */
@@ -102,5 +109,7 @@ export interface PlatformService {
   markAllNotificationsRead(userId: string): void
   listExams(filter?: { schoolId?: string }): Exam[]
   listTemplates(schoolId?: string): Template[]
+  duplicateTemplate(id: string, name: string, actor: Person): Result<Template>
+  setDefaultTemplate(id: string, actor: Person): Result<Template>
   listSavedQuestions(teacherId: string): SavedQuestion[]
 }

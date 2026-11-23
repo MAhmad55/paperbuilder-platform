@@ -50,7 +50,8 @@
     "notifications": "Notifications",
     "settings": "Settings",
     "help": "Help",
-    "platformSettings": "Platform settings"
+    "platformSettings": "Platform settings",
+    "planAndUsage": "Plan & usage"
   },
   "roles": {
     "superAdmin": "Super Admin",
@@ -985,7 +986,14 @@
         "teacherInvited": "Invited teacher",
         "templateCreated": "Created template",
         "userDeactivated": "Deactivated user",
-        "userInvited": "Invited user"
+        "userInvited": "Invited user",
+        "paperChangesRequested": "Requested changes to a paper",
+        "paperArchived": "Archived a paper",
+        "paperInReview": "Moved a paper to review",
+        "schoolSettingsChanged": "Changed school settings",
+        "schoolPlanUpgradeRequested": "Requested a plan upgrade",
+        "templateDefaultChanged": "Changed the default template",
+        "teacherAssignmentChanged": "Changed a teacher assignment"
       },
       "error": {
         "body": "Something went wrong. Please try again.",
@@ -1450,7 +1458,10 @@
         "paper": {
           "approved": "Paper approved",
           "printed": "Paper printed",
-          "submitted": "Paper submitted"
+          "submitted": "Paper submitted",
+          "changes-requested": "Changes requested on paper",
+          "archived": "Paper archived",
+          "in-review": "Paper moved to review"
         },
         "plan": {
           "limit-changed": "Plan limit changed"
@@ -1461,13 +1472,17 @@
           "plan-changed": "School plan changed",
           "reactivated": "School reactivated",
           "rejected": "School rejected",
-          "suspended": "School suspended"
+          "suspended": "School suspended",
+          "settings-changed": "School settings changed",
+          "plan-upgrade-requested": "Plan upgrade requested"
         },
         "teacher": {
-          "invited": "Teacher invited"
+          "invited": "Teacher invited",
+          "assignment-changed": "Teacher assignment changed"
         },
         "template": {
-          "created": "Template created"
+          "created": "Template created",
+          "default-changed": "Default template changed"
         },
         "user": {
           "deactivated": "User deactivated",
@@ -1553,6 +1568,386 @@
       "termsEn": "Terms of use (English)",
       "termsUr": "Terms of use (Urdu)",
       "title": "Platform settings"
+    }
+  },
+  "school": {
+    "dashboard": {
+      "error": {
+        "body": "Something went wrong. Please try again.",
+        "title": "Dashboard could not be loaded"
+      },
+      "exams": {
+        "empty": "No exams scheduled.",
+        "title": "Upcoming exams",
+        "viewAll": "View exam calendar"
+      },
+      "kpi": {
+        "exams": "Upcoming exams",
+        "papers": "Papers this month",
+        "teachers": "Active teachers",
+        "waiting": "Papers waiting for approval"
+      },
+      "lead": "Your school at a glance — papers waiting, exams coming up, and recent work.",
+      "queue": {
+        "empty": "No papers are waiting for approval.",
+        "review": "Review",
+        "title": "Waiting for approval",
+        "viewAll": "View all approvals"
+      },
+      "recent": {
+        "empty": "No papers yet.",
+        "title": "Recent papers",
+        "viewAll": "View all papers"
+      }
+    },
+    "approvals": {
+      "actions": {
+        "approve": "Approve",
+        "approvedToast": "Paper approved.",
+        "changesToast": "Changes requested.",
+        "decidedNote": "This paper has already been decided.",
+        "requestChanges": "Request changes"
+      },
+      "checklist": {
+        "answerKey": "Answer key is attached",
+        "answerKeyUnknown": "Answer keys are not tracked in this mock",
+        "coverage": "Every chapter in scope is covered",
+        "duplicates": "No duplicate questions",
+        "marksTotal": "Marks total matches the target",
+        "met": "Checked",
+        "notMet": "Needs attention",
+        "title": "Review checklist",
+        "unknown": "Not checked"
+      },
+      "details": {
+        "chapters": "Chapters",
+        "class": "Class",
+        "examDate": "Exam date",
+        "examType": "Exam type",
+        "marks": "Target marks",
+        "medium": "Medium",
+        "subject": "Subject",
+        "teacher": "Teacher",
+        "term": "Term"
+      },
+      "error": {
+        "body": "Something went wrong. Please try again.",
+        "title": "Approvals could not be loaded"
+      },
+      "filters": {
+        "all": "All",
+        "searchPlaceholder": "Search by title, subject or teacher…",
+        "statusGroupLabel": "Filter by status"
+      },
+      "history": {
+        "title": "History"
+      },
+      "historyAction": {
+        "approved": "Approved",
+        "archived": "Archived",
+        "changesRequested": "Changes requested",
+        "created": "Created",
+        "edited": "Edited",
+        "inReview": "Moved to review",
+        "printed": "Printed",
+        "submitted": "Submitted"
+      },
+      "inline": {
+        "changesCancel": "Cancel",
+        "changesConfirm": "Send changes request",
+        "changesError": "Write a comment so the teacher knows what to change.",
+        "changesLabel": "What should the teacher change?",
+        "changesPlaceholder": "Write the changes the teacher should make…",
+        "changesTitle": "Request changes"
+      },
+      "lead": "Review submitted papers side by side with the live paper, then approve or send back with a comment.",
+      "list": {
+        "count": "{{count}} papers",
+        "emptyBody": "Submitted papers will appear here for review.",
+        "emptyTitle": "No papers in the queue",
+        "title": "Queue"
+      },
+      "preview": {
+        "title": "Paper preview"
+      },
+      "title": "Approvals"
+    },
+    "teachers": {
+      "allStatuses": "All statuses",
+      "allSubjects": "All subjects",
+      "confirmDeactivate": {
+        "body": "{{name}} will no longer be able to sign in.",
+        "cancel": "Cancel",
+        "confirm": "Deactivate",
+        "title": "Deactivate teacher?"
+      },
+      "confirmReactivate": {
+        "body": "{{name}} will be able to sign in again.",
+        "cancel": "Cancel",
+        "confirm": "Reactivate",
+        "title": "Reactivate teacher?"
+      },
+      "deactivate": "Deactivate",
+      "edit": {
+        "classesLabel": "Classes",
+        "save": "Save assignments",
+        "savedToast": "Assignments saved for {{name}}.",
+        "subjectsLabel": "Subjects",
+        "title": "Edit assignments"
+      },
+      "editButton": "Edit assignments",
+      "emptyAction": "Invite teacher",
+      "emptyBody": "Invite your first teacher to get started.",
+      "emptyTitle": "No teachers yet",
+      "error": {
+        "body": "Something went wrong. Please try again.",
+        "title": "Teachers could not be loaded"
+      },
+      "filterStatus": "Status",
+      "filterSubject": "Subject",
+      "invite": "Invite teacher",
+      "inviteDialog": {
+        "cancel": "Cancel",
+        "email": "Email",
+        "emailInvalid": "Enter a valid email address.",
+        "emailPlaceholder": "teacher@school.example.pk",
+        "emailRequired": "Enter an email address.",
+        "emailTaken": "This email is already invited.",
+        "error": "The invite could not be sent. Try again.",
+        "name": "Name",
+        "namePlaceholder": "Teacher's full name",
+        "nameRequired": "Enter the teacher's name.",
+        "submit": "Send invite",
+        "title": "Invite teacher"
+      },
+      "lead": "Teachers at your school — invite, assign classes and subjects, and manage access.",
+      "reactivate": "Reactivate",
+      "searchPlaceholder": "Search by name or email…",
+      "sort": {
+        "joinedNew": "Newest first",
+        "joinedOld": "Oldest first",
+        "label": "Sort",
+        "nameAsc": "Name A to Z",
+        "nameDesc": "Name Z to A"
+      },
+      "table": {
+        "actions": "Actions",
+        "classes": "Classes",
+        "joined": "Joined",
+        "name": "Name",
+        "status": "Status",
+        "subjects": "Subjects"
+      },
+      "title": "Teachers",
+      "toast": {
+        "deactivated": "{{name}} deactivated.",
+        "error": "Something went wrong. Try again.",
+        "invited": "Invite sent to {{name}}.",
+        "reactivated": "{{name}} reactivated."
+      }
+    },
+    "classes": {
+      "allClasses": "All classes",
+      "assignedSummary": "{{assigned}} of {{total}} class and subject combinations have a teacher.",
+      "cell": {
+        "edit": "Edit assignments",
+        "medium": "Medium",
+        "noTeacher": "No teacher assigned",
+        "pattern": "Pattern",
+        "patternDefault": "Board pattern",
+        "teacher": "Teacher"
+      },
+      "emptyBody": "Try a different search or class filter.",
+      "emptyTitle": "No classes match",
+      "error": {
+        "body": "Something went wrong. Please try again.",
+        "title": "Classes could not be loaded"
+      },
+      "filterClass": "Class",
+      "lead": "Every class and subject, with the teacher assigned to it.",
+      "searchPlaceholder": "Search classes or subjects…",
+      "title": "Classes & subjects"
+    },
+    "calendar": {
+      "columns": {
+        "class": "Class",
+        "date": "Date",
+        "paper": "Paper",
+        "subject": "Subject",
+        "term": "Term",
+        "type": "Type"
+      },
+      "emptyList": "No exams scheduled.",
+      "emptyMonth": "No exams in this month.",
+      "error": {
+        "body": "Something went wrong. Please try again.",
+        "title": "Calendar could not be loaded"
+      },
+      "examCount": "{{count}} exams",
+      "lead": "Exams for your school, by month or as a list.",
+      "noPaper": "No paper yet",
+      "paperLink": "View paper",
+      "title": "Exam calendar",
+      "today": "Today",
+      "view": {
+        "label": "View",
+        "list": "List",
+        "month": "Month"
+      }
+    },
+    "papers": {
+      "emptyBody": "Try a different search or filter.",
+      "emptyTitle": "No papers found",
+      "error": {
+        "body": "Something went wrong. Please try again.",
+        "title": "Papers could not be loaded"
+      },
+      "filters": {
+        "all": "All",
+        "searchPlaceholder": "Search by title, subject or teacher…",
+        "statusGroupLabel": "Filter by status"
+      },
+      "lead": "Every paper in your school, in one library.",
+      "list": {
+        "count": "{{count}} papers"
+      },
+      "preview": {
+        "close": "Close",
+        "title": "Paper preview"
+      },
+      "review": "Review",
+      "sort": {
+        "label": "Sort",
+        "marks": "Most marks",
+        "newest": "Newest first",
+        "oldest": "Oldest first",
+        "title": "Title A to Z"
+      },
+      "title": "All papers",
+      "view": "View"
+    },
+    "templates": {
+      "copySuffix": " (copy)",
+      "defaultBadge": "Default",
+      "defaultToast": "Default template updated.",
+      "detail": {
+        "bodyFont": "Body font",
+        "footer": "Footer text",
+        "layout": "Header layout"
+      },
+      "duplicate": "Duplicate",
+      "duplicatedToast": "Template duplicated.",
+      "emptyBody": "Templates for your school will appear here.",
+      "emptyTitle": "No templates yet",
+      "error": {
+        "body": "Something went wrong. Please try again.",
+        "title": "Templates could not be loaded"
+      },
+      "fontOptions": {
+        "nastaliq": "Nastaliq",
+        "serif": "Serif"
+      },
+      "layoutOptions": {
+        "logoCenter": "Logo in the centre",
+        "logoLeft": "Logo on the left"
+      },
+      "lead": "Paper headers, board patterns and instruction text for your school.",
+      "list": {
+        "title": "Templates"
+      },
+      "setDefault": "Set as default",
+      "title": "Templates",
+      "view": "View"
+    },
+    "reports": {
+      "byClass": "Papers per class",
+      "bySubject": "Papers per subject",
+      "byTeacher": "Papers per teacher",
+      "coverage": {
+        "empty": "No papers yet, so coverage is empty.",
+        "note": "Coverage counts the chapters used in this school's papers against the chapters in the question bank.",
+        "title": "Chapter coverage"
+      },
+      "emptyBody": "Reports appear once the school has papers.",
+      "emptyTitle": "No report data yet",
+      "error": {
+        "body": "Something went wrong. Please try again.",
+        "title": "Reports could not be loaded"
+      },
+      "export": "Export CSV",
+      "exported": "Exported {{count}} report rows.",
+      "lead": "Papers per class, subject and teacher, chapter coverage and approval turnaround.",
+      "papersLabel": "{{count}} papers",
+      "sections": {
+        "byClass": "Papers per class",
+        "bySubject": "Papers per subject",
+        "byTeacher": "Papers per teacher",
+        "coverage": "Chapter coverage",
+        "turnaround": "Approval turnaround"
+      },
+      "title": "Reports",
+      "turnaround": {
+        "average": "Average approval time",
+        "basedOn": "Based on {{count}} approved papers",
+        "days": "{{count}} days",
+        "empty": "Not enough approved papers to measure turnaround yet.",
+        "title": "Approval turnaround"
+      }
+    },
+    "settings": {
+      "error": {
+        "body": "Something went wrong. Please try again.",
+        "title": "Settings could not be loaded"
+      },
+      "errorToast": "Settings could not be saved. Try again.",
+      "form": {
+        "address": "Address",
+        "addressPlaceholder": "Street, city",
+        "approvalPolicy": "Approval policy",
+        "defaultLanguage": "Default interface language",
+        "defaultMedium": "Default medium",
+        "headerLayout": "Header layout",
+        "languageEnglish": "English",
+        "languageUrdu": "Urdu",
+        "layoutLogoCenter": "Logo in the centre",
+        "layoutLogoLeft": "Logo on the left",
+        "logo": "School logo",
+        "logoHint": "PNG or JPG, up to 5 MB. Stored as a mock — only the file name is kept.",
+        "name": "School name",
+        "nameRequired": "Enter the school name.",
+        "policyHint": "When approval is optional, a teacher can move a draft straight to Approved. When required, papers must pass through review.",
+        "policyOptional": "Optional — teachers can approve their own drafts",
+        "policyRequired": "Required — every paper needs approval",
+        "rollNumber": "Roll-number block on the paper",
+        "rollNumberHint": "Show the roll-number box on every printed paper.",
+        "save": "Save settings",
+        "savedToast": "Settings saved."
+      },
+      "lead": "Name, branding, defaults and the approval policy for your school.",
+      "title": "School settings"
+    },
+    "plan": {
+      "current": {
+        "papersThisMonth": "Papers this month",
+        "teachers": "Teachers",
+        "templates": "Templates",
+        "title": "Current plan"
+      },
+      "error": {
+        "body": "Something went wrong. Please try again.",
+        "title": "Plan could not be loaded"
+      },
+      "lead": "Your current plan, how much of it you have used, and how to ask for more.",
+      "title": "Plan & usage",
+      "unlimited": "Unlimited",
+      "upgrade": {
+        "body": "Ask the platform team to move your school to a bigger plan.",
+        "request": "Request upgrade",
+        "requested": "Upgrade requested",
+        "requestedNote": "Your request for the {{plan}} plan is with the platform team.",
+        "title": "Need more?"
+      },
+      "upgradeToast": "Upgrade request sent."
     }
   }
 }

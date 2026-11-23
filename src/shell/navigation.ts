@@ -2,7 +2,7 @@ import {
   LayoutDashboard, School, ClipboardCheck, ListChecks, BookOpen, Users,
   Megaphone, ShieldCheck, Settings, GraduationCap, UsersRound, CalendarDays,
   FileText, LayoutTemplate, BarChart3, Compass, Files, BookMarked,
-  PenTool, Wrench,
+  PenTool, Wrench, CreditCard,
   type LucideIcon,
 } from 'lucide-react'
 import type { Role } from '../services/types'
@@ -48,6 +48,7 @@ export function railNavForRole(role: Role): NavItem[] {
       { to: '/school/templates', icon: LayoutTemplate, labelKey: 'nav.templates' },
       { to: '/school/reports', icon: BarChart3, labelKey: 'nav.reports' },
       { to: '/school/settings', icon: Wrench, labelKey: 'nav.schoolSettings' },
+      { to: '/school/plan', icon: CreditCard, labelKey: 'nav.planAndUsage' },
     ]
   }
   return [

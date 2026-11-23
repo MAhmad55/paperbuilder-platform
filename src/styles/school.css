@@ -1,0 +1,703 @@
+/* School Admin screens — Phase 4. Daftar tokens only, logical properties only. */
+
+.school .pb-btn {
+  min-height: 44px;
+}
+
+.school .pb-select,
+.school .pb-search__input {
+  min-height: 44px;
+}
+
+.school__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.school__retry {
+  margin-block-start: 16px;
+}
+
+.school__section {
+  margin-block-end: 24px;
+}
+
+.school__section-title {
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+
+/* KPI cards (same compact density as the admin dashboard). */
+.school-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-block-end: 24px;
+  align-items: start;
+}
+
+.school-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 88px;
+  padding: 12px 14px;
+  background: var(--paper);
+  border: var(--border-card);
+  border-radius: var(--radius-card);
+  color: var(--ink-900);
+  text-decoration: none;
+}
+
+a.school-kpi:hover {
+  border-color: var(--ink-700);
+}
+
+a.school-kpi:focus-visible,
+.school-kpi a:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+.school-kpi--primary {
+  border-inline-start: 3px solid var(--pen-600);
+}
+
+.school-kpi--primary .school-kpi__value {
+  color: var(--pen-600);
+}
+
+.school-kpi__value {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.school-kpi__label {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* Two-column content grid (dashboard, reports). */
+.school-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .school-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Filters: chips + search + selects. */
+.school-filters {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-block-end: 16px;
+}
+
+.school-filters .pb-field {
+  flex: 0 1 220px;
+  margin: 0;
+}
+
+.school-filters .pb-search {
+  flex: 1 1 240px;
+}
+
+.school-chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 0 10px;
+  flex: 1 1 100%;
+}
+
+.school-chip {
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink-900);
+  font: inherit;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.school-chip:hover {
+  border-color: var(--ink-600);
+}
+
+.school-chip:focus-visible {
+  outline: 2px solid var(--ink-700);
+  outline-offset: 2px;
+}
+
+.school-chip[aria-pressed='true'] {
+  background: var(--ink-100);
+  border-color: var(--ink-700);
+  color: var(--ink-700);
+  font-weight: 600;
+}
+
+[data-theme='dark'] .school-chip[aria-pressed='true'] {
+  background: var(--ink-700);
+  border-color: var(--ink-700);
+  color: #fff;
+}
+
+/* List + review panel layout (approvals, templates). */
+.school-layout {
+  display: grid;
+  grid-template-columns: 380px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .school-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.school-list {
+  background: var(--paper);
+  border: var(--border-card);
+  border-radius: var(--radius-card);
+  padding: 16px;
+}
+
+.school-list__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-block-end: 12px;
+}
+
+.school-list__head h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.school-list__head span {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.school-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.school-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  min-height: 44px;
+  padding: 12px;
+  text-align: start;
+  font: inherit;
+  color: inherit;
+  background: var(--paper);
+  border: var(--border-card);
+  border-radius: var(--radius-control);
+  cursor: pointer;
+}
+
+.school-item:hover {
+  border-color: var(--ink-600);
+}
+
+.school-item:focus-visible {
+  outline: 2px solid var(--ink-700);
+  outline-offset: 2px;
+}
+
+.school-item[aria-current='true'] {
+  background: var(--ink-100);
+  border-color: var(--ink-700);
+}
+
+.school-item__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.school-item__meta {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.school-panel {
+  min-width: 0;
+}
+
+.school-panel > div {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.school-panel__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-block-end: 16px;
+}
+
+.school-panel__head h2 {
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+.school-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin: 0;
+}
+
+.school-facts > div {
+  min-width: 0;
+}
+
+.school-facts dt {
+  font-size: 13px;
+  color: var(--muted);
+  margin-block-end: 4px;
+}
+
+.school-facts dd {
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+.school-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-block-start: 12px;
+}
+
+.school-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.school-flow h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.school-note {
+  margin-block: 0 12px;
+  color: var(--muted);
+}
+
+/* Simple rows (dashboard queue/exams/recent, reports). */
+.school-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.school-rows__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  padding-block: 12px;
+  border-block-end: 1px solid var(--line);
+  font-size: 14px;
+}
+
+.school-rows__row:last-child {
+  border-block-end: none;
+}
+
+.school-rows__main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.school-rows__name {
+  font-weight: 600;
+  overflow-wrap: break-word;
+}
+
+.school-rows__meta {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.school-rows__more {
+  margin-block-start: 12px;
+}
+
+.school-empty-text {
+  color: var(--muted);
+  margin: 0;
+}
+
+/* Mobile cards for tables (teachers, papers). */
+.school-teacher-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.school-cards {
+  display: none;
+}
+
+.school-card {
+  background: var(--paper);
+  border: var(--border-card);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  margin-block-end: 12px;
+}
+
+.school-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-block-end: 8px;
+}
+
+.school-card__name {
+  font-weight: 600;
+  overflow-wrap: break-word;
+}
+
+.school-card__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 14px;
+  margin-block-end: 12px;
+}
+
+.school-card__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .school-table-wrap {
+    display: none;
+  }
+
+  .school-cards {
+    display: block;
+  }
+}
+
+/* Classes grid: one card per class x subject. */
+.school-classes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.school-class-card {
+  background: var(--paper);
+  border: var(--border-card);
+  border-radius: var(--radius-card);
+  padding: 16px;
+}
+
+.school-class-card h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+}
+
+.school-class-card__subject {
+  color: var(--muted);
+  font-size: 14px;
+  margin-block-end: 12px;
+}
+
+.school-class-card__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  margin-block-end: 12px;
+}
+
+.school-class-card__rows dt {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.school-class-card__rows dd {
+  margin: 0;
+}
+
+/* Calendar month view. */
+.school-cal {
+  background: var(--paper);
+  border: var(--border-card);
+  border-radius: var(--radius-card);
+  padding: 16px;
+}
+
+.school-cal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-block-end: 12px;
+}
+
+.school-cal__head h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.school-cal__grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.school-cal__weekday {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  padding-block: 6px;
+}
+
+.school-cal__day {
+  min-height: 64px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  font-size: 13px;
+  text-align: start;
+  background: var(--paper);
+  color: var(--ink-900);
+}
+
+.school-cal__day--other {
+  opacity: 0.45;
+}
+
+.school-cal__day--today {
+  border-color: var(--pen-600);
+  border-width: 2px;
+}
+
+.school-cal__day-num {
+  display: block;
+  font-weight: 600;
+  margin-block-end: 4px;
+}
+
+.school-cal__exam {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: var(--mark-300);
+  color: var(--ink-900);
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 12px;
+  margin-block-start: 2px;
+  text-decoration: none;
+}
+
+a.school-cal__exam:hover {
+  text-decoration: underline;
+}
+
+/* Forms (settings). */
+.school-form {
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.school-fieldset {
+  border: var(--border-card);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.school-fieldset legend {
+  font-weight: 600;
+  padding-inline: 4px;
+}
+
+.school-radios {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.school-form__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Checklist rows (approvals). */
+.school-checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.school-checklist__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+}
+
+/* Report rows with meters. */
+.school-report__row {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) minmax(0, 2fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding-block: 8px;
+  border-block-end: 1px solid var(--line);
+  font-size: 14px;
+}
+
+.school-report__row:last-child {
+  border-block-end: none;
+}
+
+.school-report__count {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .school-report__row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .school-report__row .pb-meter {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Plain proportion bar (report breakdowns — Meter's "of target" copy
+   belongs to real targets such as quotas and chapter totals). */
+.school-bar {
+  display: block;
+  height: 10px;
+  background: var(--ink-100);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.school-bar__fill {
+  display: block;
+  height: 100%;
+  background: var(--ink-700);
+  border-radius: 999px;
+}
+
+/* Plan usage meters. */
+.school-usage {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Paper preview content inside PaperSheet. */
+.school-paper-preview__section {
+  margin-block-end: 12px;
+}
+
+.school-paper-preview__section h3 {
+  margin: 0 0 4px;
+}
+
+.school-paper-preview__section p,
+.school-paper-preview__section ol {
+  margin: 0;
+}
+
+.school-paper-preview__total {
+  font-weight: 600;
+  margin-block-start: 12px;
+}
+
+/* Assignment editor checkbox groups (teachers). */
+.school-assign {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.school-assign__group h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+}
+
+.school-assign__checks {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 4px 16px;
+}
+
+.school-dialog-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.school-confirm-body {
+  margin: 0;
+}
+
+.school-count {
+  color: var(--muted);
+  font-size: 14px;
+  margin-block-end: 12px;
+}

@@ -281,7 +281,7 @@ export interface PaperHistoryEntry {
   actorId: string
   actorName: string
   actorRole: PersonRole
-  action: 'created' | 'submitted' | 'approved' | 'changes-requested' | 'printed' | 'archived' | 'edited'
+  action: 'created' | 'submitted' | 'in-review' | 'approved' | 'changes-requested' | 'printed' | 'archived' | 'edited'
   comment?: string
   createdAt: string
 }
@@ -436,9 +436,11 @@ export const PAPERS: Paper[] = (() => {
 
 export type AuditAction =
   | 'school.approved' | 'school.rejected' | 'school.suspended' | 'school.reactivated' | 'school.plan-changed' | 'school.info-requested'
-  | 'paper.approved' | 'paper.submitted' | 'paper.printed' | 'teacher.invited' | 'user.invited' | 'user.deactivated'
+  | 'school.settings-changed' | 'school.plan-upgrade-requested'
+  | 'paper.approved' | 'paper.submitted' | 'paper.printed' | 'paper.changes-requested' | 'paper.archived' | 'paper.in-review'
+  | 'teacher.invited' | 'teacher.assignment-changed' | 'user.invited' | 'user.deactivated'
   | 'plan.limit-changed'
-  | 'template.created' | 'announcement.published' | 'announcement.scheduled'
+  | 'template.created' | 'template.default-changed' | 'announcement.published' | 'announcement.scheduled'
 
 export interface AuditEvent {
   id: string
@@ -634,6 +636,8 @@ export interface Template {
   layout: 'logo-left' | 'logo-center'
   bodyFont: 'serif' | 'nastaliq'
   footerText: string
+  /** The school's default template (one per school). */
+  isDefault: boolean
 }
 
 export const TEMPLATES: Template[] = SCHOOLS.filter(s => s.status === 'active').map(s => ({
@@ -643,7 +647,26 @@ export const TEMPLATES: Template[] = SCHOOLS.filter(s => s.status === 'active').
   layout: rng() < 0.5 ? 'logo-left' : 'logo-center',
   bodyFont: 'serif',
   footerText: `© ${s.name} — Confidential`,
+  isDefault: true,
 }))
+
+/* ---------------- School settings (Phase 4, school-admin settings) ---------------- */
+
+/** Per-school settings edited on /school/settings. Seed values come from the
+    school row itself (name, approvalPolicy, defaultMedium); the override
+    only stores what the school admin changed. */
+export interface SchoolSettings {
+  /** Display name override (defaults to the school row name). */
+  name: string
+  address: string
+  headerLayout: 'logo-left' | 'logo-center'
+  defaultLanguage: 'en' | 'ur'
+  defaultMedium: 'english' | 'urdu'
+  approvalPolicy: 'required' | 'optional'
+  rollNumberBlock: boolean
+  /** Uploaded logo file name (mock — the file itself is not stored). */
+  logoName: string | null
+}
 
 /* ---------------- Saved questions ---------------- */
 

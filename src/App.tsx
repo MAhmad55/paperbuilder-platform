@@ -26,6 +26,16 @@ import { AdminUsersPage } from './pages/admin/AdminUsersPage'
 import { AdminAnnouncementsPage } from './pages/admin/AdminAnnouncementsPage'
 import { AdminAuditPage } from './pages/admin/AdminAuditPage'
 import { AdminSettingsPage } from './pages/admin/AdminSettingsPage'
+import { SchoolDashboardPage } from './pages/school/SchoolDashboardPage'
+import { SchoolApprovalsPage } from './pages/school/SchoolApprovalsPage'
+import { SchoolTeachersPage } from './pages/school/SchoolTeachersPage'
+import { SchoolClassesPage } from './pages/school/SchoolClassesPage'
+import { SchoolCalendarPage } from './pages/school/SchoolCalendarPage'
+import { SchoolPapersPage } from './pages/school/SchoolPapersPage'
+import { SchoolTemplatesPage } from './pages/school/SchoolTemplatesPage'
+import { SchoolReportsPage } from './pages/school/SchoolReportsPage'
+import { SchoolSettingsPage } from './pages/school/SchoolSettingsPage'
+import { SchoolPlanPage } from './pages/school/SchoolPlanPage'
 import { railNavForRole, type NavItem } from './shell/navigation'
 import type { Role } from './services/types'
 
@@ -141,7 +151,18 @@ export function App() {
               <Route path="/admin/audit" element={<AdminAuditPage />} />
               <Route path="/admin/settings" element={<AdminSettingsPage />} />
             </Route>
-            <Route path="/school/*" element={<RolePlaceholder role="school-admin" />} />
+            <Route element={<RequireRole role="school-admin" />}>
+              <Route path="/school" element={<SchoolDashboardPage />} />
+              <Route path="/school/approvals" element={<SchoolApprovalsPage />} />
+              <Route path="/school/teachers" element={<SchoolTeachersPage />} />
+              <Route path="/school/classes" element={<SchoolClassesPage />} />
+              <Route path="/school/calendar" element={<SchoolCalendarPage />} />
+              <Route path="/school/papers" element={<SchoolPapersPage />} />
+              <Route path="/school/templates" element={<SchoolTemplatesPage />} />
+              <Route path="/school/reports" element={<SchoolReportsPage />} />
+              <Route path="/school/settings" element={<SchoolSettingsPage />} />
+              <Route path="/school/plan" element={<SchoolPlanPage />} />
+            </Route>
             <Route path="/teacher/*" element={<RolePlaceholder role="teacher" />} />
             <Route path="/profile" element={<AnyPlaceholder titleKey="shell.profile" />} />
             <Route path="/settings" element={<AnyPlaceholder titleKey="shell.settings" />} />

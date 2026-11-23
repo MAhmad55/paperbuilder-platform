@@ -9,6 +9,7 @@ import type {
   Exam, Template, SavedQuestion, Medium, ExamType, Term, AuditAction,
   ApprovalRequest, ApprovalRequestStatus, ApprovalTimelineEvent,
   ApprovalMissingItem, Announcement, AnnouncementTarget, AnnouncementStatus, PlatformSettings,
+  SchoolSettings,
 } from '../mock/data'
 import type { Session, Role, PaperFilter, Result } from './types'
 import { PAPER_TRANSITIONS, canTransition, validateTransition, type ActorRole } from './paper-transitions'
@@ -35,12 +36,22 @@ interface PersistedState {
   schoolPlanOverrides: Record<string, PlanId>
   /** B7: per-user status changes (user id -> status). */
   userStatusOverrides: Record<string, Person['status']>
+  /** Phase 4: per-teacher assignment overrides (user id -> subjects/classes). */
+  teacherAssignmentOverrides: Record<string, { subjects: string[]; classes: string[] }>
   /** B7: platform users invited from the admin screen. */
   invitedUsers: Person[]
   /** B8: platform announcements (seed + created). */
   announcements: Announcement[]
   /** B10: platform settings. */
   platformSettings: PlatformSettings
+  /** Phase 4: per-school settings overrides (school id -> settings). */
+  schoolSettings: Record<string, SchoolSettings>
+  /** Phase 4: templates (seed + duplicated), deep-copied in seed(). */
+  templates: Template[]
+  /** Phase 4: per-school default template (school id -> template id). */
+  templateDefaultOverrides: Record<string, string>
+  /** Phase 4: plan upgrade requests (school id -> requested plan id). */
+  upgradeRequests: Record<string, PlanId>
 }
 
 function loadPersisted(): PersistedState | null {
@@ -78,9 +89,14 @@ function seed(): PersistedState {
     planOverrides: {},
     schoolPlanOverrides: {},
     userStatusOverrides: {},
+    teacherAssignmentOverrides: {},
     invitedUsers: [],
     announcements: clone(ANNOUNCEMENTS),
     platformSettings: clone(DEFAULT_PLATFORM_SETTINGS),
+    schoolSettings: {},
+    templates: clone(TEMPLATES),
+    templateDefaultOverrides: {},
+    upgradeRequests: {},
   }
 }
 
@@ -93,9 +109,14 @@ if (!Array.isArray(state.approvalRequests)) {
 if (!state.planOverrides) state.planOverrides = {}
 if (!state.schoolPlanOverrides) state.schoolPlanOverrides = {}
 if (!state.userStatusOverrides) state.userStatusOverrides = {}
+if (!state.teacherAssignmentOverrides) state.teacherAssignmentOverrides = {}
 if (!Array.isArray(state.invitedUsers)) state.invitedUsers = []
 if (!Array.isArray(state.announcements)) state.announcements = [...ANNOUNCEMENTS]
 if (!state.platformSettings) state.platformSettings = { ...DEFAULT_PLATFORM_SETTINGS }
+if (!state.schoolSettings) state.schoolSettings = {}
+if (!Array.isArray(state.templates)) state.templates = [...TEMPLATES]
+if (!state.templateDefaultOverrides) state.templateDefaultOverrides = {}
+if (!state.upgradeRequests) state.upgradeRequests = {}
 
 function save() {
   persist(state)
@@ -214,6 +235,160 @@ function setSchoolPlan(id: string, planId: PlanId, actor: Person): Result<School
   return { ok: true, value: { ...school, plan: planId } }
 }
 
+/* ---------------- School settings (Phase 4, /school/settings) ---------------- */
+
+/** Effective settings for a school: seed row values unless overridden on /school/settings. */
+function getSchoolSettings(id: string): SchoolSettings | undefined {
+  const school = SCHOOLS.find(s => s.id === id)
+  if (!school) return undefined
+  const override = state.schoolSettings[id]
+  return {
+    name: override?.name ?? school.name,
+    address: override?.address ?? '',
+    headerLayout: override?.headerLayout ?? 'logo-left',
+    defaultLanguage: override?.defaultLanguage ?? 'en',
+    defaultMedium: override?.defaultMedium ?? school.defaultMedium,
+    approvalPolicy: override?.approvalPolicy ?? school.approvalPolicy,
+    rollNumberBlock: override?.rollNumberBlock ?? true,
+    logoName: override?.logoName ?? null,
+  }
+}
+
+/** Save school settings. Writes one school.settings-changed audit event. */
+function updateSchoolSettings(
+  id: string,
+  patch: Partial<SchoolSettings>,
+  actor: Person,
+): Result<SchoolSettings> {
+  const current = getSchoolSettings(id)
+  if (!current) return { ok: false, error: 'School not found' }
+  const next: SchoolSettings = { ...current, ...patch }
+  if (!next.name.trim()) return { ok: false, error: 'School name is required' }
+  state.schoolSettings[id] = next
+  state.audit.unshift({
+    id: `aud-${Date.now().toString(36)}`,
+    actorId: actor.id,
+    actorName: actor.name,
+    action: 'school.settings-changed',
+    targetType: 'school',
+    targetId: id,
+    targetLabel: next.name,
+    createdAt: new Date().toISOString(),
+  })
+  save()
+  return { ok: true, value: next }
+}
+
+/** Request a plan upgrade (mock: records the request, writes one audit event). */
+function requestPlanUpgrade(schoolId: string, planId: PlanId, actor: Person): Result<PlanId> {
+  const school = getSchool(schoolId)
+  if (!school) return { ok: false, error: 'School not found' }
+  if (!PLANS.some(p => p.id === planId)) return { ok: false, error: 'Unknown plan' }
+  if (school.plan === planId) return { ok: false, error: 'School is already on this plan' }
+  if (state.upgradeRequests[schoolId] === planId) return { ok: false, error: 'Upgrade already requested' }
+  state.upgradeRequests[schoolId] = planId
+  const plan = PLANS.find(p => p.id === planId)!
+  state.audit.unshift({
+    id: `aud-${Date.now().toString(36)}`,
+    actorId: actor.id,
+    actorName: actor.name,
+    action: 'school.plan-upgrade-requested',
+    targetType: 'school',
+    targetId: school.id,
+    targetLabel: `${school.name} → ${plan.name}`,
+    createdAt: new Date().toISOString(),
+  })
+  save()
+  return { ok: true, value: planId }
+}
+
+function getUpgradeRequest(schoolId: string): PlanId | undefined {
+  return state.upgradeRequests[schoolId]
+}
+
+/* ---------------- School teachers (Phase 4, /school/teachers) ---------------- */
+
+/** Teachers of a school: seeded teachers + teachers invited from the school
+    screen, with status overrides applied. */
+function listSchoolTeachers(schoolId: string): Person[] {
+  const all = [
+    ...TEACHERS.filter(t => t.schoolId === schoolId),
+    ...state.invitedUsers.filter(u => u.schoolId === schoolId),
+  ]
+  return all.map(u => {
+    const assignment = state.teacherAssignmentOverrides[u.id]
+    return {
+      ...u,
+      status: state.userStatusOverrides[u.id] ?? u.status,
+      subjects: assignment?.subjects ?? u.subjects,
+      classes: assignment?.classes ?? u.classes,
+    }
+  })
+}
+
+/** Invite a teacher to this school (starts as 'invited'). */
+function inviteTeacher(
+  schoolId: string,
+  input: { name: string; email: string },
+  actor: Person,
+): Result<Person> {
+  const name = input.name.trim()
+  const email = input.email.trim().toLowerCase()
+  if (!name || !email) return { ok: false, error: 'Name and email are required' }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: 'Enter a valid email' }
+  if (listUsers().some(u => u.email.toLowerCase() === email)) return { ok: false, error: 'This email is already invited' }
+  const user: Person = {
+    id: `u-tch-inv-${Date.now().toString(36)}`,
+    name,
+    email,
+    role: 'teacher',
+    schoolId,
+    status: 'invited',
+    joinedDaysAgo: 0,
+    subjects: [],
+    classes: [],
+  }
+  state.invitedUsers.push(user)
+  state.audit.unshift({
+    id: `aud-${Date.now().toString(36)}`,
+    actorId: actor.id,
+    actorName: actor.name,
+    action: 'teacher.invited',
+    targetType: 'user',
+    targetId: user.id,
+    targetLabel: user.name,
+    createdAt: new Date().toISOString(),
+  })
+  save()
+  return { ok: true, value: user }
+}
+
+/** Edit a teacher's class/subject assignments. Stored as an override (the
+    seeded TEACHERS records are module constants, so mutating them would
+    leak across resetMockData). Writes one audit event. */
+function updateTeacherAssignments(
+  id: string,
+  patch: { subjects: string[]; classes: string[] },
+  actor: Person,
+): Result<Person> {
+  const user = getUser(id)
+  if (!user) return { ok: false, error: 'User not found' }
+  if (user.role !== 'teacher') return { ok: false, error: 'Only teachers have assignments' }
+  state.teacherAssignmentOverrides[id] = { subjects: [...patch.subjects], classes: [...patch.classes] }
+  state.audit.unshift({
+    id: `aud-${Date.now().toString(36)}`,
+    actorId: actor.id,
+    actorName: actor.name,
+    action: 'teacher.assignment-changed',
+    targetType: 'user',
+    targetId: user.id,
+    targetLabel: user.name,
+    createdAt: new Date().toISOString(),
+  })
+  save()
+  return { ok: true, value: { ...user, subjects: [...patch.subjects], classes: [...patch.classes] } }
+}
+
 /* ---------------- Papers ---------------- */
 
 
@@ -288,11 +463,15 @@ function transitionPaper(id: string, target: PaperStatus, actor: Person, comment
   const paper = getPaper(id)
   if (!paper) return { ok: false, error: 'Paper not found' }
   const school = SCHOOLS.find(s => s.id === paper.schoolId)
-  const optionalPolicy = school?.approvalPolicy === 'optional'
+  /* The approval policy gates the draft -> approved jump (blueprint §5.2):
+     a settings override saved on /school/settings wins over the seed row,
+     so flipping the policy there changes the flow immediately. */
+  const optionalPolicy = (state.schoolSettings[paper.schoolId]?.approvalPolicy ?? school?.approvalPolicy) === 'optional'
   const check = validateTransition(paper.status, target, actor.role as ActorRole, { optionalPolicy }, comment)
   if (!check.ok) return { ok: false, error: check.error }
   const historyAction =
     target === 'submitted' ? 'submitted' :
+    target === 'in-review' ? 'in-review' :
     target === 'approved' ? 'approved' :
     target === 'changes-requested' ? 'changes-requested' :
     target === 'archived' ? 'archived' :
@@ -310,9 +489,14 @@ function transitionPaper(id: string, target: PaperStatus, actor: Person, comment
   paper.updatedAt = new Date().toISOString()
   if (target === 'printed') paper.printedAt = paper.updatedAt
   const targetType = 'paper'
+  /* One audit event per transition, mapped distinctly: changes-requested
+     used to fall through to paper.submitted, hiding the decision. */
   const actionAudit: AuditAction =
     target === 'submitted' ? 'paper.submitted' :
+    target === 'in-review' ? 'paper.in-review' :
     target === 'approved' ? 'paper.approved' :
+    target === 'changes-requested' ? 'paper.changes-requested' :
+    target === 'archived' ? 'paper.archived' :
     target === 'printed' ? 'paper.printed' : 'paper.submitted'
   state.audit.unshift({
     id: `aud-${Date.now().toString(36)}`,
@@ -741,6 +925,63 @@ function updatePlatformSettings(patch: Partial<PlatformSettings>): PlatformSetti
   return { ...state.platformSettings }
 }
 
+/* ---------------- Templates (Phase 4, /school/templates) ---------------- */
+
+/** Templates for a school, with the default override applied. */
+function listTemplates(schoolId?: string): Template[] {
+  const all = schoolId ? state.templates.filter(t => t.schoolId === schoolId) : [...state.templates]
+  return all.map(t => ({
+    ...t,
+    isDefault: state.templateDefaultOverrides[t.schoolId]
+      ? state.templateDefaultOverrides[t.schoolId] === t.id
+      : t.isDefault,
+  }))
+}
+
+/** Duplicate a template (mock: a copy appears in the list). Writes a template.created audit event. */
+function duplicateTemplate(id: string, name: string, actor: Person): Result<Template> {
+  const source = state.templates.find(t => t.id === id)
+  if (!source) return { ok: false, error: 'Template not found' }
+  const copy: Template = {
+    ...source,
+    id: `tpl-copy-${Date.now().toString(36)}`,
+    name: name.trim() || source.name,
+    isDefault: false,
+  }
+  state.templates.push(copy)
+  state.audit.unshift({
+    id: `aud-${Date.now().toString(36)}`,
+    actorId: actor.id,
+    actorName: actor.name,
+    action: 'template.created',
+    targetType: 'template',
+    targetId: copy.id,
+    targetLabel: copy.name,
+    createdAt: new Date().toISOString(),
+  })
+  save()
+  return { ok: true, value: copy }
+}
+
+/** Set a school's default template. Writes one template.default-changed audit event. */
+function setDefaultTemplate(id: string, actor: Person): Result<Template> {
+  const template = state.templates.find(t => t.id === id)
+  if (!template) return { ok: false, error: 'Template not found' }
+  state.templateDefaultOverrides[template.schoolId] = id
+  state.audit.unshift({
+    id: `aud-${Date.now().toString(36)}`,
+    actorId: actor.id,
+    actorName: actor.name,
+    action: 'template.default-changed',
+    targetType: 'template',
+    targetId: template.id,
+    targetLabel: template.name,
+    createdAt: new Date().toISOString(),
+  })
+  save()
+  return { ok: true, value: { ...template, isDefault: true } }
+}
+
 /* ---------------- Facade ---------------- */
 
 export const AuthService = {
@@ -757,8 +998,15 @@ export const SchoolService = {
   get: getSchool,
   setStatus: setSchoolStatus,
   setPlan: setSchoolPlan,
-  listTeachers: (schoolId: string) => TEACHERS.filter(t => t.schoolId === schoolId),
+  listTeachers: listSchoolTeachers,
   listAdmins: (schoolId: string) => SCHOOL_ADMINS.filter(a => a.schoolId === schoolId),
+  inviteTeacher,
+  updateTeacherAssignments,
+  setTeacherStatus: setUserStatus,
+  getSettings: getSchoolSettings,
+  updateSettings: updateSchoolSettings,
+  requestPlanUpgrade,
+  getUpgradeRequest,
 } as const
 
 export const PaperService = {
@@ -806,7 +1054,9 @@ export const PlatformService = {
     const exams = filter.schoolId ? EXAMS.filter(e => e.schoolId === filter.schoolId) : EXAMS
     return [...exams].sort((a, b) => a.examDate.localeCompare(b.examDate))
   },
-  listTemplates: (schoolId?: string) => schoolId ? TEMPLATES.filter(t => t.schoolId === schoolId) : TEMPLATES,
+  listTemplates,
+  duplicateTemplate,
+  setDefaultTemplate,
   listSavedQuestions: (teacherId: string) => SAVED_QUESTIONS.filter(s => s.teacherId === teacherId),
 } as const
 
@@ -829,5 +1079,5 @@ export {
 export type {
   School, Paper, PaperStatus, Person, PersonRole, Plan, PlanId, AuditEvent, AppNotification,
   Exam, Template, SavedQuestion, ApprovalRequest, ApprovalRequestStatus,
-  Announcement, AnnouncementTarget, AnnouncementStatus, PlatformSettings,
+  Announcement, AnnouncementTarget, AnnouncementStatus, PlatformSettings, SchoolSettings,
 }
