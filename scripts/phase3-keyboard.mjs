@@ -1,11 +1,15 @@
 // Phase 3 keyboard pass: drives real key presses on every Super Admin screen
 // and reports Tab order, Enter/Space activation, Escape, focus visibility,
-// dialog open/close and focus-to-error on the approval dialogs.
+// and focus-to-error on the approval inline flows (no dialogs any more —
+// prototype adoption made Approve / Request information / Reject inline).
 // Usage (from the repo root): node scripts/phase3-keyboard.mjs
 //   BASE_URL env (default http://localhost:5173). Prints a JSON report.
+//   THEME env: 'light' (default, all screens) or 'dark' (dashboard +
+//   approvals only, dark theme forced via localStorage).
 import { chromium } from 'playwright'
 
 const BASE = process.env.BASE_URL ?? 'http://localhost:5173'
+const THEME = process.env.THEME === 'dark' ? 'dark' : 'light'
 
 const report = { screens: {} }
 
@@ -41,17 +45,18 @@ async function tabWalk(page, n = 12) {
 }
 
 /** Sign in as Super Admin via the one-click demo account (first = u-adm-01). */
-async function openPage(browser, lang, width, path) {
+async function openPage(browser, lang, width, path, theme = THEME) {
   const ctx = await browser.newContext({
     viewport: { width, height: 900 },
     locale: lang === 'ur' ? 'ur-PK' : 'en-US',
   })
   const page = await ctx.newPage()
   await page.addInitScript(
-    ({ lang }) => {
+    ({ lang, theme }) => {
       localStorage.setItem('paperbuilder.lang', lang)
+      localStorage.setItem('paperbuilder.theme', theme)
     },
-    { lang },
+    { lang, theme },
   )
   await page.goto(`${BASE}/sign-in`, { waitUntil: 'domcontentloaded' })
   await page.waitForTimeout(900)
@@ -75,43 +80,67 @@ const SCREENS = [
   { path: '/admin/settings', key: 'settings' },
 ]
 
+// Dark runs cover only the two adoption screens (dashboard + approvals).
+const RUN_SCREENS = THEME === 'dark'
+  ? SCREENS.filter((s) => s.key === 'dashboard' || s.key === 'approvals')
+  : SCREENS
+
 const browser = await chromium.launch()
 
 for (const lang of ['en', 'ur']) {
-  for (const { path, key } of SCREENS) {
+  for (const { path, key } of RUN_SCREENS) {
     const { ctx, page } = await openPage(browser, lang, 1280, path)
-    const entry = { tabStops: await tabWalk(page, 12) }
-    // Approvals: keyboard-open the Approve dialog, Escape closes it; then
-    // keyboard-open the Reject dialog and confirm empty to check focus
-    // lands on the required reason field.
+    const entry = { theme: THEME, tabStops: await tabWalk(page, 12) }
+    // Approvals: inline flows now. Reject with an empty reason must show
+    // the error and move focus to the reason field; Request information
+    // with nothing chosen must show the error and focus it; Approve acts
+    // at once (last, so the earlier flows run against a pending request).
     if (key === 'approvals') {
-      const approveBtn = page.locator('.admin-approvals__actions button:not([disabled])').first()
-      await approveBtn.focus()
-      await page.keyboard.press('Enter')
-      await page.waitForTimeout(300)
-      const dialogOpen = (await page.locator('[role="dialog"]').count()) > 0
-      const dialogFocus = await focused(page)
-      await page.keyboard.press('Escape')
-      await page.waitForTimeout(300)
-      const dialogClosed = (await page.locator('[role="dialog"]').count()) === 0
-      entry.approveDialog = { dialogOpen, dialogFocus, escapeCloses: dialogClosed }
-      const rejectBtn = page.locator('.admin-approvals__actions button:not([disabled])').nth(2)
+      const actions = page.locator('.admin-approvals__actions-card .admin-approvals__actions button:not([disabled])')
+      const rejectBtn = actions.nth(2)
       await rejectBtn.focus()
       await page.keyboard.press('Enter')
       await page.waitForTimeout(300)
-      const rejectOpen = (await page.locator('[role="dialog"]').count()) > 0
-      const confirmBtn = page.locator('[role="dialog"] button.pb-btn--primary').last()
-      await confirmBtn.focus()
+      const rejectFlowOpen = (await page.locator('#reject-reason').count()) > 0
+      const rejectConfirm = page.locator('.admin-approvals__flow .pb-btn--destructive')
+      await rejectConfirm.focus()
       await page.keyboard.press('Enter')
       await page.waitForTimeout(300)
-      const focusAfterError = await focused(page)
-      entry.rejectDialog = {
-        rejectOpen,
-        focusToReason: focusAfterError?.id === 'reject-reason' ? 'reject-reason' : focusAfterError,
+      const focusAfterRejectError = await focused(page)
+      entry.rejectInline = {
+        rejectFlowOpen,
+        focusToReason: focusAfterRejectError?.id === 'reject-reason' ? 'reject-reason' : focusAfterRejectError,
       }
-      await page.keyboard.press('Escape')
+      const rejectCancel = page.locator('.admin-approvals__flow .pb-btn--ghost')
+      await rejectCancel.focus()
+      await page.keyboard.press('Enter')
+      await page.waitForTimeout(300)
+      const infoBtn = page.locator('.admin-approvals__actions-card .admin-approvals__actions button:not([disabled])').nth(1)
+      await infoBtn.focus()
+      await page.keyboard.press('Enter')
+      await page.waitForTimeout(300)
+      const infoFlowOpen = (await page.locator('.admin-approvals__flow .admin-approvals__checks').count()) > 0
+      const infoConfirm = page.locator('.admin-approvals__flow .pb-btn--primary')
+      await infoConfirm.focus()
+      await page.keyboard.press('Enter')
+      await page.waitForTimeout(300)
+      const focusAfterInfoError = await focused(page)
+      entry.infoInline = {
+        infoFlowOpen,
+        focusToError: focusAfterInfoError?.id === 'approval-inline-info-error' ? 'approval-inline-info-error' : focusAfterInfoError,
+      }
+      const infoCancel = page.locator('.admin-approvals__flow .pb-btn--ghost')
+      await infoCancel.focus()
+      await page.keyboard.press('Enter')
+      await page.waitForTimeout(300)
+      const approveBtn = page.locator('.admin-approvals__actions-card .admin-approvals__actions button:not([disabled])').first()
+      await approveBtn.focus()
+      await page.keyboard.press('Enter')
+      await page.waitForTimeout(500)
+      const toastShown = (await page.locator('.pb-toast').count()) > 0
+      entry.approveInline = { toastShown }
     }
-    report.screens[`${key}-${lang}`] = entry
+    report.screens[`${key}-${lang}-${THEME}`] = entry
     await ctx.close()
   }
 

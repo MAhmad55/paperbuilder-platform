@@ -19,7 +19,11 @@
     "history": "History",
     "notifications": "Notifications",
     "help": "Help",
-    "currentRole": "Current role"
+    "currentRole": "Current role",
+    "theme": {
+      "switchToDark": "Switch to dark theme",
+      "switchToLight": "Switch to light theme"
+    }
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -993,7 +997,12 @@
         "schools": "Schools",
         "teachers": "Active teachers"
       },
-      "lead": "Platform at a glance — schools, approvals, papers and teachers."
+      "lead": "Platform at a glance — schools, approvals, papers and teachers.",
+      "queue": {
+        "empty": "No requests waiting for approval",
+        "review": "Review",
+        "title": "Next in the queue"
+      }
     },
     "schools": {
       "columns": {
@@ -1144,11 +1153,6 @@
         "reject": "Reject",
         "requestInfo": "Request information"
       },
-      "approveDialog": {
-        "body": "The school becomes active and can sign in.",
-        "confirm": "Approve",
-        "title": "Approve this school?"
-      },
       "approvedToast": "Request approved",
       "decided": {
         "missingTitle": "What is missing",
@@ -1179,13 +1183,7 @@
       "filters": {
         "all": "All requests",
         "searchPlaceholder": "Search school or reference",
-        "statusLabel": "Status"
-      },
-      "infoDialog": {
-        "body": "Choose what the school must send.",
-        "confirm": "Send request",
-        "error": "Choose at least one item.",
-        "title": "Request information"
+        "statusGroupLabel": "Filter requests by status"
       },
       "infoRequestedToast": "Information requested",
       "internalNotes": {
@@ -1201,15 +1199,17 @@
         "emptyTitle": "No requests",
         "title": "Requests"
       },
-      "rejectDialog": {
-        "confirm": "Reject",
-        "reasonLabel": "Reason",
-        "reasonRequired": "A reason is required.",
-        "title": "Reject this request"
-      },
       "rejectedToast": "Request rejected",
       "statusInfoRequested": "Information requested",
-      "title": "Approval queue"
+      "title": "Approval queue",
+      "inline": {
+        "infoConfirm": "Send request",
+        "infoError": "Choose at least one item.",
+        "infoTitle": "What is missing?",
+        "rejectConfirm": "Reject",
+        "rejectError": "A reason is required.",
+        "rejectTitle": "Reason"
+      }
     },
     "plans": {
       "dialog": {

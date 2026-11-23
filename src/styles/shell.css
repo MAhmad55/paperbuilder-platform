@@ -241,6 +241,11 @@
   font-weight: 700;
 }
 
+/* Dark theme: the pressed option's paper text is dark on the blue fill. */
+[data-theme='dark'] .lang-toggle__option[aria-pressed='true'] {
+  color: #fff;
+}
+
 /* Profile menu button */
 .app-topbar__profile { display: flex; align-items: center; gap: 10px; border: none; background: transparent; cursor: pointer; padding: 4px; border-radius: 12px; font-family: inherit; }
 

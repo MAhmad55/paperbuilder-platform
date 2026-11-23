@@ -7,7 +7,7 @@ import { Banner, Button, Card, EmptyState, Skeleton } from '../../design-system'
 import { ApprovalRequestService, PaperService, PlatformService, SchoolService } from '../../services/mock-store'
 import type { AuditAction, SchoolStatus } from '../../mock/data'
 import { Bidi } from '../../utils/bidi'
-import { formatDateTime } from '../../utils/date'
+import { formatDate, formatDateTime } from '../../utils/date'
 import type { AppLanguage } from '../../i18n'
 import '../../styles/admin-dashboard.css'
 
@@ -89,6 +89,13 @@ export function AdminDashboardPage() {
       return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
     }).length
   }, [isEmptyDemo])
+  const queue = useMemo(
+    () =>
+      isEmptyDemo
+        ? []
+        : ApprovalRequestService.list().filter((r) => r.status === 'pending').slice(0, 3),
+    [isEmptyDemo],
+  )
   const activeTeachers = useMemo(
     () => (isEmptyDemo ? 0 : PlatformService.listUsers().filter((u) => u.role === 'teacher' && u.status === 'active').length),
     [isEmptyDemo],
@@ -122,6 +129,10 @@ export function AdminDashboardPage() {
           <Card>
             <Skeleton variant="rect" height={24} width="35%" />
             <Skeleton variant="rect" height={56} count={4} />
+          </Card>
+          <Card>
+            <Skeleton variant="rect" height={24} width="30%" />
+            <Skeleton variant="rect" height={56} count={3} />
           </Card>
         </div>
       ) : loadFailed ? (
@@ -168,6 +179,33 @@ export function AdminDashboardPage() {
               <span className="admin-kpi__label">{t('admin.dashboard.kpi.teachers')}</span>
             </Link>
           </div>
+
+          <Card title={t('admin.dashboard.queue.title')}>
+            {queue.length === 0 ? (
+              <p className="admin-queue__empty">{t('admin.dashboard.queue.empty')}</p>
+            ) : (
+              <ul className="admin-queue">
+                {queue.map((req) => (
+                  <li key={req.id} className="admin-queue__row">
+                    <span>
+                      <span className="admin-queue__name"><Bidi>{req.schoolName}</Bidi></span>
+                      <span className="admin-queue__meta">
+                        <Bidi>{req.city}</Bidi>
+                        {' · '}
+                        {formatDate(req.submittedAt, lang)}
+                      </span>
+                    </span>
+                    <Button
+                      variant="primary"
+                      onClick={() => navigate(`/admin/approvals?selected=${req.id}`)}
+                    >
+                      {t('admin.dashboard.queue.review')}
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Card>
 
           <Card title={t('admin.dashboard.activity.title')}>
             {activity.length === 0 ? (

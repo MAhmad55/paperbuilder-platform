@@ -1,9 +1,13 @@
 // Axe-core serious/critical check for every Phase 3 Super Admin route × both languages.
 // Usage (from the repo root): node scripts/phase3-axe.mjs
 //   BASE_URL env (default http://localhost:5173). Exits 1 on any violation.
+//   THEME env: 'light' (default, all 10 routes) or 'dark' (dashboard +
+//   approvals only — the prototype-adoption screens — with the dark theme
+//   forced via localStorage before load).
 import { chromium } from 'playwright'
 
 const BASE = process.env.BASE_URL ?? 'http://localhost:5173'
+const THEME = process.env.THEME === 'dark' ? 'dark' : 'light'
 
 const AXE_ROUTES = [
   '/admin',
@@ -18,14 +22,17 @@ const AXE_ROUTES = [
   '/admin/settings',
 ]
 
+const ROUTES = THEME === 'dark' ? ['/admin', '/admin/approvals'] : AXE_ROUTES
+
 const browser = await chromium.launch()
 const results = []
 
 for (const lang of ['en', 'ur']) {
-  for (const route of AXE_ROUTES) {
+  for (const route of ROUTES) {
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, locale: lang === 'ur' ? 'ur-PK' : 'en-US' })
-    await page.addInitScript((l) => {
+    await page.addInitScript(({ l, theme }) => {
       localStorage.setItem('paperbuilder.lang', l)
+      localStorage.setItem('paperbuilder.theme', theme)
       localStorage.setItem('paperbuilder.v1', JSON.stringify({
         papers: [],
         audit: [],
@@ -33,7 +40,7 @@ for (const lang of ['en', 'ur']) {
         schoolOverrides: {},
         session: { role: 'super-admin', userId: 'u-adm-01', schoolId: null, signedInAt: '2026-11-22T00:00:00.000Z' },
       }))
-    }, lang)
+    }, { l: lang, theme: THEME })
     await page.goto(`${BASE}${route}`, { waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(1800)
     await page.addScriptTag({ path: 'node_modules/axe-core/axe.min.js' })
@@ -58,5 +65,5 @@ if (bad.length > 0) {
   console.error(`\naxe-core: ${total} serious/critical violation(s) across ${bad.length} route(s) x lang`)
   process.exit(1)
 }
-console.log('\n✓ axe-core: all Phase 3 routes clean (serious/critical) in both languages')
+console.log(`\n✓ axe-core: ${THEME} theme — all checked Phase 3 routes clean (serious/critical) in both languages`)
 await browser.close()

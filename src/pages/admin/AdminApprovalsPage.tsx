@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { FileText } from 'lucide-react'
 import { PageHeader } from '../../shell/PageHeader'
 import {
-  Banner, Button, Card, Checkbox, Dialog, EmptyState, SearchField, Select,
+  Banner, Button, Card, Checkbox, EmptyState, SearchField,
   Skeleton, StatusChip, Textarea, Timeline, useToast,
 } from '../../design-system'
 import type { TimelineItem } from '../../design-system'
@@ -54,9 +54,11 @@ export function AdminApprovalsPage() {
   const [search, setSearch] = useState('')
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [notes, setNotes] = useState('')
-  const [approveOpen, setApproveOpen] = useState(false)
-  const [infoOpen, setInfoOpen] = useState(false)
-  const [rejectOpen, setRejectOpen] = useState(false)
+  /* Inline action flow (prototype adoption): the Approve / Request
+     information / Reject dialogs are gone. Approve acts at once;
+     Request information and Reject expand inline in the panel with
+     their own Confirm/Cancel. */
+  const [flow, setFlow] = useState<'none' | 'info' | 'reject'>('none')
   const [missing, setMissing] = useState<ApprovalMissingItem[]>([])
   const [infoError, setInfoError] = useState<string | null>(null)
   const [rejectReason, setRejectReason] = useState('')
@@ -87,17 +89,29 @@ export function AdminApprovalsPage() {
     })
   }, [requests, statusFilter, search])
 
+  /* The dashboard "Next in the queue" Review button deep-links here
+     with ?selected=<request-id>; it wins over the default first item
+     (but not over a request the user picked in the list). */
+  const selectedParam = params.get('selected')
   const selected: ApprovalRequest | undefined = useMemo(() => {
     if (selectedId) {
       const found = filtered.find((r) => r.id === selectedId)
       if (found) return found
     }
+    if (selectedParam) {
+      const found = filtered.find((r) => r.id === selectedParam)
+      if (found) return found
+    }
     return filtered[0]
-  }, [filtered, selectedId])
+  }, [filtered, selectedId, selectedParam])
 
-  /* Keep the notes editor in sync with the selected request. */
+  /* Keep the notes editor in sync with the selected request, and close
+     any open inline flow when the selection changes. */
   useEffect(() => {
     setNotes(selected?.internalNotes ?? '')
+    setFlow('none')
+    setInfoError(null)
+    setRejectError(null)
   }, [selected?.id, selected?.internalNotes])
 
   const retryLoad = () => {
@@ -131,9 +145,7 @@ export function AdminApprovalsPage() {
       toast({ variant: 'error', message: result.error })
       return
     }
-    setApproveOpen(false)
-    setInfoOpen(false)
-    setRejectOpen(false)
+    setFlow('none')
     setMissing([])
     setRejectReason('')
     setVersion((v) => v + 1)
@@ -151,7 +163,8 @@ export function AdminApprovalsPage() {
 
   const confirmInfo = () => {
     if (missing.length === 0) {
-      setInfoError(t('admin.approvals.infoDialog.error'))
+      setInfoError(t('admin.approvals.inline.infoError'))
+      window.setTimeout(() => document.getElementById('approval-inline-info-error')?.focus(), 50)
       return
     }
     decide('info-requested')
@@ -159,7 +172,7 @@ export function AdminApprovalsPage() {
 
   const confirmReject = () => {
     if (!rejectReason.trim()) {
-      setRejectError(t('admin.approvals.rejectDialog.reasonRequired'))
+      setRejectError(t('admin.approvals.inline.rejectError'))
       window.setTimeout(() => document.getElementById('reject-reason')?.focus(), 50)
       return
     }
@@ -186,7 +199,22 @@ export function AdminApprovalsPage() {
 
   const isDecided = selected ? selected.status !== 'pending' && selected.status !== 'info-requested' : false
 
-  const statusOptions = [
+  /* Filter chips with counts (prototype adoption): the status Select
+     dropdown is replaced by one-tap chips. Counts come from the full
+     request list, not the filtered one. */
+  const statusCounts = useMemo(() => {
+    const counts: Record<StatusFilter, number> = {
+      all: requests.length,
+      pending: 0,
+      'info-requested': 0,
+      approved: 0,
+      rejected: 0,
+    }
+    for (const r of requests) counts[r.status] += 1
+    return counts
+  }, [requests])
+
+  const chipOptions: { value: StatusFilter; label: string }[] = [
     { value: 'all', label: t('admin.approvals.filters.all') },
     { value: 'pending', label: t('status.pending') },
     { value: 'info-requested', label: t('admin.approvals.statusInfoRequested') },
@@ -221,13 +249,25 @@ export function AdminApprovalsPage() {
       ) : (
         <div>
           <div className="admin-approvals__filters">
-            <Select
-              id="approvals-status-filter"
-              label={t('admin.approvals.filters.statusLabel')}
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
-              options={statusOptions}
-            />
+            <div
+              className="admin-approvals__chips"
+              role="group"
+              aria-label={t('admin.approvals.filters.statusGroupLabel')}
+            >
+              {chipOptions.map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  className="admin-approvals__chip"
+                  aria-pressed={statusFilter === value}
+                  onClick={() => setStatusFilter(value)}
+                >
+                  {label}
+                  {' '}
+                  <Bidi>{statusCounts[value]}</Bidi>
+                </button>
+              ))}
+            </div>
             <SearchField
               value={search}
               onChange={setSearch}
@@ -426,7 +466,7 @@ export function AdminApprovalsPage() {
                     </div>
                   </Card>
 
-                  <Card className="admin-approvals__card">
+                  <Card className="admin-approvals__card admin-approvals__actions-card">
                     {isDecided ? (
                       <div>
                         <p className="admin-approvals__note">{t('admin.approvals.actions.decidedNote')}</p>
@@ -453,30 +493,112 @@ export function AdminApprovalsPage() {
                         </div>
                       </div>
                     ) : (
-                      <div className="admin-approvals__actions">
-                        <Button variant="primary" onClick={() => setApproveOpen(true)}>
-                          {t('admin.approvals.actions.approve')}
-                        </Button>
-                        <Button
-                          variant="secondary"
-                          onClick={() => {
-                            setMissing(selected.missingItems ?? [])
-                            setInfoError(null)
-                            setInfoOpen(true)
-                          }}
-                        >
-                          {t('admin.approvals.actions.requestInfo')}
-                        </Button>
-                        <Button
-                          variant="destructive-outline"
-                          onClick={() => {
-                            setRejectReason('')
-                            setRejectError(null)
-                            setRejectOpen(true)
-                          }}
-                        >
-                          {t('admin.approvals.actions.reject')}
-                        </Button>
+                      <div>
+                        {flow === 'none' && (
+                          <div className="admin-approvals__actions">
+                            <Button variant="primary" onClick={() => decide('approved')}>
+                              {t('admin.approvals.actions.approve')}
+                            </Button>
+                            <Button
+                              variant="secondary"
+                              onClick={() => {
+                                setMissing(selected.missingItems ?? [])
+                                setInfoError(null)
+                                setFlow('info')
+                              }}
+                            >
+                              {t('admin.approvals.actions.requestInfo')}
+                            </Button>
+                            <Button
+                              variant="destructive-outline"
+                              onClick={() => {
+                                setRejectReason('')
+                                setRejectError(null)
+                                setFlow('reject')
+                              }}
+                            >
+                              {t('admin.approvals.actions.reject')}
+                            </Button>
+                          </div>
+                        )}
+                        {flow === 'info' && (
+                          <div className="admin-approvals__flow">
+                            <h3>{t('admin.approvals.inline.infoTitle')}</h3>
+                            <div
+                              className="admin-approvals__checks"
+                              role="group"
+                              aria-label={t('admin.approvals.inline.infoTitle')}
+                            >
+                              {MISSING_ITEMS.map((item) => (
+                                <Checkbox
+                                  key={item}
+                                  label={t(`request.status.missing.${item}`)}
+                                  checked={missing.includes(item)}
+                                  onChange={(e) => {
+                                    setMissing((current) =>
+                                      e.target.checked ? [...current, item] : current.filter((m) => m !== item),
+                                    )
+                                    if (infoError) setInfoError(null)
+                                  }}
+                                />
+                              ))}
+                            </div>
+                            {infoError && (
+                              <p
+                                className="pb-error-text"
+                                role="alert"
+                                tabIndex={-1}
+                                id="approval-inline-info-error"
+                              >
+                                {infoError}
+                              </p>
+                            )}
+                            <div className="admin-approvals__actions">
+                              <Button variant="primary" onClick={confirmInfo}>
+                                {t('admin.approvals.inline.infoConfirm')}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                onClick={() => {
+                                  setFlow('none')
+                                  setInfoError(null)
+                                }}
+                              >
+                                {t('common.cancel')}
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+                        {flow === 'reject' && (
+                          <div className="admin-approvals__flow">
+                            <Textarea
+                              id="reject-reason"
+                              label={t('admin.approvals.inline.rejectTitle')}
+                              value={rejectReason}
+                              onChange={(e) => {
+                                setRejectReason(e.target.value)
+                                if (rejectError) setRejectError(null)
+                              }}
+                              error={rejectError}
+                              required
+                              rows={3}
+                            />
+                            <div className="admin-approvals__actions">
+                              <Button variant="destructive" onClick={confirmReject}>
+                                {t('admin.approvals.inline.rejectConfirm')}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                onClick={() => {
+                                  setFlow('none')
+                                  setRejectError(null)
+                                }}
+                              >
+                                {t('common.cancel')}
+                              </Button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </Card>
@@ -490,91 +612,6 @@ export function AdminApprovalsPage() {
           </div>
         </div>
       )}
-
-      <Dialog
-        open={approveOpen}
-        onClose={() => setApproveOpen(false)}
-        title={t('admin.approvals.approveDialog.title')}
-        footer={
-          <>
-            <Button variant="ghost" onClick={() => setApproveOpen(false)}>
-              {t('common.cancel')}
-            </Button>
-            <Button variant="primary" onClick={() => decide('approved')}>
-              {t('admin.approvals.approveDialog.confirm')}
-            </Button>
-          </>
-        }
-      >
-        <p>{t('admin.approvals.approveDialog.body')}</p>
-      </Dialog>
-
-      <Dialog
-        open={infoOpen}
-        onClose={() => setInfoOpen(false)}
-        title={t('admin.approvals.infoDialog.title')}
-        footer={
-          <>
-            <Button variant="ghost" onClick={() => setInfoOpen(false)}>
-              {t('common.cancel')}
-            </Button>
-            <Button variant="primary" onClick={confirmInfo}>
-              {t('admin.approvals.infoDialog.confirm')}
-            </Button>
-          </>
-        }
-      >
-        <p>{t('admin.approvals.infoDialog.body')}</p>
-        <div className="admin-approvals__checks" role="group" aria-label={t('admin.approvals.infoDialog.title')}>
-          {MISSING_ITEMS.map((item) => (
-            <Checkbox
-              key={item}
-              label={t(`request.status.missing.${item}`)}
-              checked={missing.includes(item)}
-              onChange={(e) => {
-                setMissing((current) =>
-                  e.target.checked ? [...current, item] : current.filter((m) => m !== item),
-                )
-                if (infoError) setInfoError(null)
-              }}
-            />
-          ))}
-        </div>
-        {infoError && (
-          <p className="pb-error-text" role="alert">
-            {infoError}
-          </p>
-        )}
-      </Dialog>
-
-      <Dialog
-        open={rejectOpen}
-        onClose={() => setRejectOpen(false)}
-        title={t('admin.approvals.rejectDialog.title')}
-        footer={
-          <>
-            <Button variant="ghost" onClick={() => setRejectOpen(false)}>
-              {t('common.cancel')}
-            </Button>
-            <Button variant="destructive" onClick={confirmReject}>
-              {t('admin.approvals.rejectDialog.confirm')}
-            </Button>
-          </>
-        }
-      >
-        <Textarea
-          id="reject-reason"
-          label={t('admin.approvals.rejectDialog.reasonLabel')}
-          value={rejectReason}
-          onChange={(e) => {
-            setRejectReason(e.target.value)
-            if (rejectError) setRejectError(null)
-          }}
-          error={rejectError}
-          required
-          rows={3}
-        />
-      </Dialog>
     </div>
   )
 }

@@ -19,7 +19,11 @@
     "history": "تاریخ",
     "notifications": "اطلاعات",
     "help": "مدد",
-    "currentRole": "موجودہ کردار"
+    "currentRole": "موجودہ کردار",
+    "theme": {
+      "switchToDark": "گہرے تھیم پر جائیں",
+      "switchToLight": "ہلکے تھیم پر جائیں"
+    }
   },
   "nav": {
     "dashboard": "ڈیش بورڈ",
@@ -993,7 +997,12 @@
         "schools": "اسکول",
         "teachers": "فعال اساتذہ"
       },
-      "lead": "پلیٹ فارم کا جائزہ — اسکول، منظوریاں، پرچے اور اساتذہ۔"
+      "lead": "پلیٹ فارم کا جائزہ — اسکول، منظوریاں، پرچے اور اساتذہ۔",
+      "queue": {
+        "empty": "کوئی درخواست منتظر نہیں ہے۔",
+        "review": "جائزہ لیں",
+        "title": "قطار میں اگلے"
+      }
     },
     "schools": {
       "columns": {
@@ -1144,11 +1153,6 @@
         "reject": "مسترد کریں",
         "requestInfo": "معلومات مانگیں"
       },
-      "approveDialog": {
-        "body": "اسکول فعال ہو جائے گا اور سائن ان کر سکے گا۔",
-        "confirm": "منظور کریں",
-        "title": "یہ اسکول منظور کریں؟"
-      },
       "approvedToast": "درخواست منظور ہو گئی",
       "decided": {
         "missingTitle": "کیا چیز رہ گئی ہے",
@@ -1179,13 +1183,7 @@
       "filters": {
         "all": "تمام درخواستیں",
         "searchPlaceholder": "اسکول یا حوالہ تلاش کریں",
-        "statusLabel": "صورتحال"
-      },
-      "infoDialog": {
-        "body": "منتخب کریں کہ اسکول کو کیا بھیجنا ہے۔",
-        "confirm": "درخواست بھیجیں",
-        "error": "کم از کم ایک چیز منتخب کریں۔",
-        "title": "معلومات مانگیں"
+        "statusGroupLabel": "درخواستوں کو صورتحال کے لحاظ سے چھانٹیں"
       },
       "infoRequestedToast": "معلومات مانگی گئیں",
       "internalNotes": {
@@ -1201,15 +1199,17 @@
         "emptyTitle": "کوئی درخواست نہیں",
         "title": "درخواستیں"
       },
-      "rejectDialog": {
-        "confirm": "مسترد کریں",
-        "reasonLabel": "وجہ",
-        "reasonRequired": "وجہ لکھنا ضروری ہے۔",
-        "title": "یہ درخواست مسترد کریں"
-      },
       "rejectedToast": "درخواست مسترد ہو گئی",
       "statusInfoRequested": "معلومات درکار ہیں",
-      "title": "منظوری کی قطار"
+      "title": "منظوری کی قطار",
+      "inline": {
+        "infoConfirm": "درخواست بھیجیں",
+        "infoError": "کم از کم ایک چیز منتخب کریں۔",
+        "infoTitle": "کیا کمی ہے؟",
+        "rejectConfirm": "مسترد کریں",
+        "rejectError": "وجہ لکھنا ضروری ہے۔",
+        "rejectTitle": "وجہ"
+      }
     },
     "plans": {
       "dialog": {

@@ -68,6 +68,11 @@ a {
   text-underline-offset: 3px;
 }
 
+/* Dark theme: ink-700 is too dark as link text on the dark canvas. */
+[data-theme='dark'] a {
+  color: #aeb8ff;
+}
+
 a:hover {
   text-decoration: underline;
 }
@@ -115,7 +120,7 @@ button {
   inset-inline-start: 16px;
   top: -100px; /* taller than the link incl. RTL line-height, so no sliver peeks in */
   z-index: 1000;
-  background: var(--ink-900);
+  background: var(--ink-700); /* ink-700, not ink-900: white text stays readable in dark mode */
   color: #fff;
   padding: 10px 16px;
   border-radius: 8px;

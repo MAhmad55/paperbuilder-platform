@@ -109,3 +109,71 @@ html[dir='rtl'],
     --motion-sheet: 0ms;
   }
 }
+
+/* ------------------------------------------------------------------
+   Dark theme — mirrors the Super Admin prototype's dark values.
+   Same Daftar tokens, remapped: canvas #0C1024, paper #151A33,
+   ink #E8EAF8 / #4B5BE0 / #6070F0, pen #FF6B83, mark #FFD84D.
+   Toggled from the shell TopBar, persisted in localStorage.
+------------------------------------------------------------------- */
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* Ink */
+  --ink-900: #e8eaf8;
+  --ink-700: #4b5be0;
+  --ink-600: #6070f0;
+  --ink-100: #222a55;
+
+  /* Pen (red) */
+  --pen-600: #ff6b83;
+  --pen-100: #3a1822;
+
+  /* Highlighter (unchanged) */
+  --mark-300: #ffd84d;
+
+  /* Surfaces */
+  --canvas: #0c1024;
+  --paper: #151a33;
+  --line: #2a3158;
+  --muted: #a9b1d0;
+
+  /* Status chips: background / text */
+  --status-draft-bg: #222a55;
+  --status-draft-fg: #a9b1d0;
+  --status-submitted-bg: #222a55;
+  --status-submitted-fg: #aeb8ff;
+  --status-review-bg: #3a2e10;
+  --status-review-fg: #ffd27a;
+  --status-approved-bg: #12342a;
+  --status-approved-fg: #5fd3a8;
+  --status-changes-bg: #3a1822;
+  --status-changes-fg: #ff9aaa;
+  --status-printed-bg: #222a55;
+  --status-printed-fg: #a9b1d0;
+  --status-archived-bg: #222a55;
+  --status-archived-fg: #a9b1d0;
+
+  /* Elevation — darker shadows read on dark surfaces */
+  --shadow-menu: 0 8px 24px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.35);
+  --shadow-sheet: 0 -4px 32px rgba(0, 0, 0, 0.45);
+  --shadow-paper: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+
+/* Paper sheets stay light in both themes: print output must be
+   identical in light and dark mode, so the sheet re-pins the light
+   Daftar tokens for itself and everything inside it. */
+[data-theme='dark'] .pb-paper {
+  --paper: #ffffff;
+  --ink-900: #0f1733;
+  --ink-700: #1e2a78;
+  --ink-600: #2d3ca0;
+  --ink-100: #e8eaf8;
+  --pen-600: #c92a45;
+  --pen-100: #fce4e8;
+  --mark-300: #ffd84d;
+  --canvas: #f4f5f9;
+  --muted: #4a5470;
+  --line: #dce0ec;
+}

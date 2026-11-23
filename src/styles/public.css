@@ -231,6 +231,11 @@
   color: var(--paper);
 }
 
+/* Dark theme: the pressed option's paper text is dark on the blue fill. */
+[data-theme='dark'] .pb-public-footer__lang .lang-toggle__option[aria-pressed='true'] {
+  color: #fff;
+}
+
 .pb-public-footer__bottom {
   max-width: 1280px;
   margin-inline: auto;

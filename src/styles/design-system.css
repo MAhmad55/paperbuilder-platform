@@ -1841,3 +1841,57 @@
 }
 
 .pb-paper__footer-page { font-variant-numeric: tabular-nums; }
+
+/* ------------------------------------------------------------------
+   Dark theme — component fixes.
+   Token remaps in tokens.css cover most components. These rules fix
+   the places where a light value is hardcoded, or where a token is
+   used as a background with white text (white on a light token fails
+   once the token flips light in dark mode).
+------------------------------------------------------------------- */
+
+[data-theme='dark'] .pb-toast,
+[data-theme='dark'] .pb-toast--info {
+  background: #222a55;
+}
+
+[data-theme='dark'] .pb-tooltip__bubble {
+  background: #222a55;
+}
+
+/* Destructive buttons: prototype uses dark text on the pink pen in dark mode. */
+[data-theme='dark'] .pb-btn--destructive {
+  color: #0c1024;
+}
+
+[data-theme='dark'] .pb-btn--destructive:active {
+  background: #ff8fa3;
+}
+
+/* Ghost buttons: ink-700 is too dark as text on the dark canvas. */
+[data-theme='dark'] .pb-btn--ghost {
+  color: #aeb8ff;
+}
+
+/* Yellow mark badge: dark text stays on the yellow fill. */
+[data-theme='dark'] .pb-badge--mark {
+  color: #0f1733;
+}
+
+/* Banners: hardcoded light error red and ink-700 info text fail on dark fills. */
+[data-theme='dark'] .pb-banner--info {
+  color: #aeb8ff;
+}
+
+[data-theme='dark'] .pb-banner--error {
+  color: #ff9aaa;
+}
+
+/* Table hover fills were light; light text on them fails in dark mode. */
+[data-theme='dark'] .pb-table tbody tr:hover {
+  background: var(--ink-100);
+}
+
+[data-theme='dark'] .pb-table tbody tr.is-selected:hover {
+  background: var(--ink-100);
+}

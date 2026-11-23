@@ -5,14 +5,18 @@
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 16px;
   margin-block-end: 24px;
+  /* Compact KPI density (prototype): cards do not stretch to the
+     tallest card in the row, so the short cards stay short. */
+  align-items: start;
 }
 
 .admin-kpi {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  min-height: 44px;
-  padding: 16px;
+  /* Prototype density: 88px minimum, 12px 14px padding. */
+  min-height: 88px;
+  padding: 12px 14px;
   background: var(--paper);
   border: var(--border-card);
   border-radius: var(--radius-card);
@@ -128,6 +132,47 @@ a.admin-kpi:focus-visible,
   display: flex;
   justify-content: flex-start;
   padding-block-start: 12px;
+}
+
+/* "Next in the queue" — prototype adoption: up to 3 pending requests
+   with a Review button each. */
+.admin-queue {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-queue__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block: 12px;
+  border-block-end: 1px solid var(--line);
+}
+
+.admin-queue__row:last-child {
+  border-block-end: none;
+}
+
+.admin-queue__row:first-child {
+  padding-block-start: 0;
+}
+
+.admin-queue__name {
+  display: block;
+  font-weight: 600;
+}
+
+.admin-queue__meta {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.admin-queue__empty {
+  color: var(--muted);
+  margin: 0;
 }
 
 .admin-dash__error {

@@ -220,3 +220,62 @@
   gap: 4px;
   margin-block-start: 12px;
 }
+
+/* Filter chips with counts (prototype adoption): one-tap status filter
+   replacing the Select dropdown. */
+.admin-approvals__chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 0 10px;
+  flex: 1 1 100%;
+}
+
+.admin-approvals__chip {
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink-900);
+  font: inherit;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.admin-approvals__chip:hover {
+  border-color: var(--ink-600);
+}
+
+.admin-approvals__chip:focus-visible {
+  outline: 2px solid var(--ink-700);
+  outline-offset: 2px;
+}
+
+.admin-approvals__chip[aria-pressed='true'] {
+  background: var(--ink-100);
+  border-color: var(--ink-700);
+  color: var(--ink-700);
+  font-weight: 600;
+}
+
+/* Dark theme: the pressed chip's ink-700 text is too dark on the tint fill. */
+[data-theme='dark'] .admin-approvals__chip[aria-pressed='true'] {
+  background: var(--ink-700);
+  border-color: var(--ink-700);
+  color: #fff;
+}
+
+/* Inline action flows (prototype adoption): the info/reject forms live
+   in the actions card instead of dialogs. */
+.admin-approvals__flow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-approvals__flow h3 {
+  margin: 0;
+  font-size: 16px;
+}

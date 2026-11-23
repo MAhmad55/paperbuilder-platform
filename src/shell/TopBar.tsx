@@ -1,7 +1,8 @@
-import { Bell, ChevronsUpDown, Menu as MenuIcon, Check } from 'lucide-react'
+import { Bell, ChevronsUpDown, Menu as MenuIcon, Check, Moon, Sun } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { setLanguage } from '../i18n'
+import { useTheme } from '../utils/theme'
 import { useAuth } from './AuthContext'
 import { roleLabelKey } from './navigation'
 import { Avatar } from '../design-system'
@@ -17,6 +18,7 @@ export function TopBar({ title, onMenuClick, notifications = 0 }: TopBarProps) {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const { role, currentUser, switchRole, signOut } = useAuth()
+  const { theme, toggleTheme } = useTheme()
 
   const isUrdu = i18n.language === 'ur'
 
@@ -78,6 +80,16 @@ export function TopBar({ title, onMenuClick, notifications = 0 }: TopBarProps) {
             اردو
           </button>
         </div>
+
+        <button
+          type="button"
+          className="pb-icon-btn"
+          aria-label={t(theme === 'dark' ? 'shell.theme.switchToLight' : 'shell.theme.switchToDark')}
+          aria-pressed={theme === 'dark'}
+          onClick={toggleTheme}
+        >
+          {theme === 'dark' ? <Sun size={19} aria-hidden="true" /> : <Moon size={19} aria-hidden="true" />}
+        </button>
 
         <button
           type="button"
