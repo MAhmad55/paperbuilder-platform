@@ -5,6 +5,7 @@ import { PublicLayout } from '../features/public/PublicLayout'
 type StateKey =
   | 'populated'
   | 'error'
+  | 'expired'
   | 'review'
   | 'pending'
   | 'info'
@@ -64,6 +65,7 @@ const SECTIONS: PreviewSection[] = [
     links: [
       { to: '/invite', state: 'populated' },
       { to: '/invite', state: 'error' },
+      { to: '/invite?expired=1', state: 'expired' },
     ],
   },
 ]

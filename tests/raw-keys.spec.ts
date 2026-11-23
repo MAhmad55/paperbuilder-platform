@@ -15,7 +15,7 @@ const ROLE_ROUTES: Record<string, string[]> = {
 const SHARED_ROUTES = ['/design-system', '/foundation-test', '/profile', '/settings', '/history', '/notifications', '/session-expired', '/does-not-exist']
 
 /** Phase 2 public & access screens — no session, language only. */
-const PUBLIC_ROUTES = ['/', '/sign-in', '/request-access', '/request-status', '/forgot-password', '/invite', '/public-preview']
+const PUBLIC_ROUTES = ['/', '/sign-in', '/request-access', '/request-status', '/forgot-password', '/invite', '/legal/terms', '/legal/privacy', '/public-preview']
 
 /** Scan the visible DOM for raw i18n keys. Sample-paper regions (data-sample-artifact) are excluded: they are bilingual fixtures, not demo copy. */
 async function scanVisibleText(page: Page) {

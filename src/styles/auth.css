@@ -12,6 +12,15 @@
   padding-inline: 20px;
 }
 
+/* The invite form's disabled fieldset (expired link) must not add the
+   browser's default fieldset border or padding. */
+.auth-fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
 .auth-card {
   background: var(--paper);
   border: var(--border-card);

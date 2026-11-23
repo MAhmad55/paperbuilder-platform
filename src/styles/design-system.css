@@ -1586,7 +1586,9 @@
   border-radius: var(--radius-paper);
   box-shadow: var(--shadow-paper);
   width: min(100%, 700px);
-  aspect-ratio: 210 / 297;
+  /* No fixed height: the sheet grows with its content, so Urdu text at
+     line-height 2.0 is never clipped and never overlaps the footer rule
+     (Phase 2 fixes A1). The A4 ratio is a width proportion only. */
   padding: 8% 8% 9%;
   display: flex;
   flex-direction: column;
@@ -1600,6 +1602,24 @@
   font-family: var(--font-urdu-head);
   line-height: 2.0;
   letter-spacing: 0;
+}
+
+/* Blueprint 7.3: Urdu paper text needs line-height >= 2.0. The container
+   rule above is not enough — the children below set their own tighter
+   line-heights, so Nastaliq lines overlapped. Every text element in the
+   Urdu sheet is forced back to 2.0 here (Phase 2 fixes A1). */
+.pb-paper--ur .pb-paper__school-name,
+.pb-paper--ur .pb-paper__school-note,
+.pb-paper--ur .pb-paper__marks-label,
+.pb-paper--ur .pb-paper__title,
+.pb-paper--ur .pb-paper__subtitle,
+.pb-paper--ur .pb-paper__meta,
+.pb-paper--ur .pb-paper__instructions,
+.pb-paper--ur .pb-paper__section-head,
+.pb-paper--ur .pb-paper__question,
+.pb-paper--ur .pb-paper__option,
+.pb-paper--ur .pb-paper__footer {
+  line-height: 2.0;
 }
 
 .pb-paper__header {
@@ -1663,7 +1683,7 @@
 
 .pb-paper__instructions { font-size: 1.55cqw; color: var(--muted); margin-top: 3.5%; line-height: 1.7; }
 
-.pb-paper__body { flex: 1; margin-top: 2.5%; overflow: hidden; }
+.pb-paper__body { flex: 1; margin-top: 2.5%; }
 
 .pb-paper__question { display: flex; gap: 4px; margin-bottom: 2.4%; font-size: 1.75cqw; line-height: 1.65; }
 
@@ -1800,10 +1820,11 @@
 
 .pb-paper__marks { color: var(--muted); font-weight: 500; font-size: 0.92em; white-space: nowrap; }
 
-/* Short-question answer ruled line */
+/* Short-question answer ruled line. A fixed ruled area (scales with the
+   sheet width) instead of flex-stretch: the sheet has no fixed height any
+   more, so there is no spare space to stretch into (Phase 2 fixes A1). */
 .pb-paper__answer-space {
-  flex: 1;
-  min-height: 5%;
+  min-height: 8cqw;
   border-bottom: 1px dashed var(--line);
 }
 

@@ -181,7 +181,7 @@ for (const lang of ['en', 'ur']) {
       await ctx.close()
     }
 
-    // ---- invite: populated + error (terms unchecked) ----
+    // ---- invite: populated + error (weak + mismatched + terms unchecked) ----
     {
       const { ctx, page } = await newPage(browser, lang, width, height)
       await page.goto(`${BASE}/invite`, { waitUntil: 'domcontentloaded' })
@@ -196,11 +196,37 @@ for (const lang of ['en', 'ur']) {
       const { ctx, page } = await newPage(browser, lang, width, height)
       await page.goto(`${BASE}/invite`, { waitUntil: 'domcontentloaded' })
       await page.waitForTimeout(900)
-      await page.locator('#invite-password').fill('Teach123!')
-      await page.locator('#invite-confirm-password').fill('Teach123!')
+      await page.locator('#invite-password').fill('abc')
+      await page.locator('#invite-confirm-password').fill('xyz')
       await page.locator('form button[type="submit"]').click()
-      await page.waitForTimeout(500)
-      await shoot(page, shotName('invite', 'error', lang, width))
+      await page.waitForTimeout(600)
+      // Full-page shot: the three errors sit at different heights in the
+      // form, so a viewport shot would hide some of them (Phase 2 fixes A3).
+      // The sticky top bar would stitch twice in a full-page capture, so
+      // it is made static for this one shot only.
+      await page.evaluate(() => {
+        const bar = document.querySelector('.pb-public-topbar')
+        if (bar) bar.style.position = 'static'
+      })
+      await page.screenshot({ path: path.join(OUT, shotName('invite', 'error', lang, width)), fullPage: true })
+      console.log(`✓ ${shotName('invite', 'error', lang, width)}`)
+      await ctx.close()
+    }
+    // ---- invite: expired link ----
+    {
+      const { ctx, page } = await newPage(browser, lang, width, height)
+      await page.goto(`${BASE}/invite?expired=1`, { waitUntil: 'domcontentloaded' })
+      await page.waitForTimeout(900)
+      await shoot(page, shotName('invite', 'expired', lang, width))
+      await ctx.close()
+    }
+
+    // ---- legal: terms + privacy ----
+    for (const doc of ['terms', 'privacy']) {
+      const { ctx, page } = await newPage(browser, lang, width, height)
+      await page.goto(`${BASE}/legal/${doc}`, { waitUntil: 'domcontentloaded' })
+      await page.waitForTimeout(900)
+      await shoot(page, shotName(`legal-${doc}`, 'populated', lang, width))
       await ctx.close()
     }
 

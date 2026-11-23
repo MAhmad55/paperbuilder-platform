@@ -34,6 +34,8 @@
       "acceptButton": "Accept invitation",
       "accepting": "Accepting…",
       "confirmPassword": "Confirm password",
+      "expiredText": "Ask your school admin to send a new invitation. This link no longer works.",
+      "expiredTitle": "This invitation has expired",
       "invitedBy": "Invited by",
       "language": "Interface language",
       "languageHint": "You can change this later in Settings.",

@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight } from 'lucide-react'
 import { Banner, Button, Card, Checkbox, SegmentedControl } from '../design-system'
@@ -33,12 +33,17 @@ const STRENGTH_KEY: Record<StrengthLabel, string> = {
 export function InvitePage() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
+  const [params] = useSearchParams()
   const { switchRole } = useAuth()
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [terms, setTerms] = useState(false)
   const [errors, setErrors] = useState<{ password?: string; confirmPassword?: string; terms?: string }>({})
   const [busy, setBusy] = useState(false)
+
+  /* Expired invitation link (?expired=1): the form is disabled and the
+     teacher is told to ask the school admin for a new invitation. */
+  const expired = params.get('expired') === '1'
 
   const school = SCHOOLS[0]
   const inviter = SCHOOL_ADMINS[0]
@@ -107,6 +112,14 @@ export function InvitePage() {
             {subtitleBefore}<Bidi>{inviter.name}</Bidi>{subtitleMiddle}<Bidi>{school.name}</Bidi>{subtitleAfter}
           </p>
 
+          {expired && (
+            <div style={{ marginBlockEnd: 16 }}>
+              <Banner variant="error" title={t('auth.invite.expiredTitle')}>
+                {t('auth.invite.expiredText')}
+              </Banner>
+            </div>
+          )}
+
           <Card className="auth-invite-card" padding="sm">
             <div className="auth-invite-row">
               <span className="auth-invite-row__label">{t('auth.invite.schoolLabel')}</span>
@@ -120,6 +133,7 @@ export function InvitePage() {
           </Card>
 
           <form onSubmit={onSubmit} noValidate>
+            <fieldset disabled={expired} className="auth-fieldset">
             <div className="auth-block">
               <h2 className="auth-section-label">{t('auth.invite.setPassword')}</h2>
               <div className="auth-field">
@@ -201,6 +215,7 @@ export function InvitePage() {
             >
               {busy ? t('auth.invite.accepting') : t('auth.invite.acceptButton')}
             </Button>
+            </fieldset>
           </form>
         </div>
       </div>

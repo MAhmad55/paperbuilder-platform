@@ -90,6 +90,10 @@ export function RequestStatusPage() {
   const stateOverride = stateParam ? (QUERY_STATE_MAP[stateParam] ?? null) : null
   const wasResubmitted = (location.state as { resubmitted?: boolean } | null)?.resubmitted === true
 
+  /* Dev-only state switcher: hidden unless ?dev=1. The ?state= preview
+     itself still works without it (Phase 2 fixes A4). */
+  const devMode = params.get('dev') === '1'
+
   /* Simulated fetch so the loading state is real (mock data is synchronous). */
   useEffect(() => {
     setLoading(true)
@@ -266,24 +270,26 @@ export function RequestStatusPage() {
               <Timeline items={timelineItems} ariaLabel={t('request.status.timelineTitle')} />
             </section>
 
-            <div className="req-dev" role="group" aria-label={t('request.status.devOnly')}>
-              <div className="req-dev__label">{t('request.status.devOnly')}</div>
-              <div className="req-dev__buttons">
-                {STATE_OVERRIDES.map((state) => (
-                  <Button
-                    key={state}
-                    variant={stateOverride === state ? 'primary' : 'secondary'}
-                    size="md"
-                    aria-pressed={stateOverride === state}
-                    onClick={() => setStatePreview(state)}
-                  >
-                    {state === 'info-requested'
-                      ? t('request.status.infoTitle')
-                      : t(`status.${state === 'pending' ? 'pending' : state}`)}
-                  </Button>
-                ))}
+            {devMode && (
+              <div className="req-dev" role="group" aria-label={t('request.status.devOnly')}>
+                <div className="req-dev__label">{t('request.status.devOnly')}</div>
+                <div className="req-dev__buttons">
+                  {STATE_OVERRIDES.map((state) => (
+                    <Button
+                      key={state}
+                      variant={stateOverride === state ? 'primary' : 'secondary'}
+                      size="md"
+                      aria-pressed={stateOverride === state}
+                      onClick={() => setStatePreview(state)}
+                    >
+                      {state === 'info-requested'
+                        ? t('request.status.infoTitle')
+                        : t(`status.${state === 'pending' ? 'pending' : state}`)}
+                    </Button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </>
         )}
       </div>

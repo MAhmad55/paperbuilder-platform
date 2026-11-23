@@ -37,10 +37,25 @@ export function PublicLayout({ children }: { children: ReactNode }) {
     { to: '/#faq', label: t('public.nav.faq') },
   ]
 
-  const footerLinks = [
-    ...navLinks,
-    { to: '/request-access', label: t('public.nav.requestAccess') },
-    { to: '/sign-in', label: t('signIn.signIn') },
+  const footerColumns: Array<{ title: string; links: Array<{ to: string; label: string }> }> = [
+    {
+      title: t('public.footer.productTitle'),
+      links: navLinks,
+    },
+    {
+      title: t('public.footer.accessTitle'),
+      links: [
+        { to: '/request-access', label: t('public.nav.requestAccess') },
+        { to: '/sign-in', label: t('signIn.signIn') },
+      ],
+    },
+    {
+      title: t('public.footer.legalTitle'),
+      links: [
+        { to: '/legal/terms', label: t('public.footer.terms') },
+        { to: '/legal/privacy', label: t('public.footer.privacy') },
+      ],
+    },
   ]
 
   const langToggle = (
@@ -130,7 +145,10 @@ export function PublicLayout({ children }: { children: ReactNode }) {
                 {t('signIn.signIn')}
               </Button>
             )}
-            {langToggle}
+            <div className="pb-public-menu__lang">
+              <span className="pb-public-menu__lang-label">{t('demo.chooseLanguage')}</span>
+              {langToggle}
+            </div>
           </div>
         </nav>
       </Drawer>
@@ -144,8 +162,13 @@ export function PublicLayout({ children }: { children: ReactNode }) {
             <p className="pb-public-footer__tagline">{t('public.footer.tagline')}</p>
           </div>
           <nav className="pb-public-footer__nav" aria-label={t('public.nav.primary')}>
-            {footerLinks.map(l => (
-              <Link key={l.to} to={l.to} className="pb-public-footer__link">{l.label}</Link>
+            {footerColumns.map((col) => (
+              <div key={col.title} className="pb-public-footer__col">
+                <h2 className="pb-public-footer__col-title">{col.title}</h2>
+                {col.links.map((l) => (
+                  <Link key={l.to} to={l.to} className="pb-public-footer__link">{l.label}</Link>
+                ))}
+              </div>
             ))}
           </nav>
           <div className="pb-public-footer__lang">{langToggle}</div>

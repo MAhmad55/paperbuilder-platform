@@ -121,6 +121,20 @@
   align-items: flex-start;
 }
 
+/* Mobile menu language toggle carries a visible label (Phase 2 fixes A6). */
+.pb-public-menu__lang {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.pb-public-menu__lang-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-900);
+}
+
 /* ---------- Main / footer ---------- */
 
 .pb-public-main {
@@ -162,9 +176,22 @@
 }
 
 .pb-public-footer__nav {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 24px 56px;
+}
+
+.pb-public-footer__col {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.pb-public-footer__col-title {
+  margin: 0 0 4px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .pb-public-footer__link {
@@ -189,7 +216,8 @@
   margin-inline-start: auto;
 }
 
-/* Footer language toggle on dark: keep the ink-700/ink-100 toggle readable. */
+/* Footer language toggle on dark: same active style as the top bar
+   (ink-700 fill, white text), not the yellow mark fill (Phase 2 fixes A5). */
 .pb-public-footer__lang .lang-toggle {
   background: rgba(255, 255, 255, 0.12);
 }
@@ -199,8 +227,8 @@
 }
 
 .pb-public-footer__lang .lang-toggle__option[aria-pressed='true'] {
-  background: var(--mark-300);
-  color: var(--ink-900);
+  background: var(--ink-700);
+  color: var(--paper);
 }
 
 .pb-public-footer__bottom {
@@ -237,6 +265,11 @@
     gap: 24px;
   }
 
+  .pb-public-footer__nav {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+
   .pb-public-footer__lang {
     margin-inline-start: 0;
   }
@@ -244,6 +277,29 @@
   .pb-public-footer__bottom {
     padding: 0 16px 20px;
   }
+}
+
+/* Short public legal pages (footer links, Phase 2 fixes A5). */
+.pb-legal {
+  max-width: 720px;
+  margin-inline: auto;
+  padding-block: 48px;
+  padding-inline: 24px;
+}
+
+.pb-legal h1 {
+  font-size: var(--text-2xl);
+  margin-block: 0 16px;
+}
+
+.pb-legal p {
+  color: var(--muted);
+  line-height: 1.8;
+  margin-block: 0 12px;
+}
+
+[dir='rtl'] .pb-legal p {
+  line-height: 2;
 }
 
 /* Public preview index (dev only, /public-preview) */

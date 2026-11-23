@@ -15,6 +15,8 @@ const AXE_ROUTES = [
   '/request-status?state=approved',
   '/forgot-password',
   '/invite',
+  '/legal/terms',
+  '/legal/privacy',
   '/public-preview',
 ]
 

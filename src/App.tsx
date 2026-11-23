@@ -10,6 +10,7 @@ import { RequestAccessPage } from './pages/RequestAccessPage'
 import { RequestStatusPage } from './pages/RequestStatusPage'
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
 import { InvitePage } from './pages/InvitePage'
+import { LegalPage } from './pages/LegalPage'
 import { PublicPreviewPage } from './pages/PublicPreviewPage'
 import { DesignSystemPage } from './pages/DesignSystemPage'
 import { FoundationTestPage } from './pages/FoundationTestPage'
@@ -102,6 +103,7 @@ export function App() {
           <Route path="/request-status" element={<RequestStatusPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/invite" element={<InvitePage />} />
+          <Route path="/legal/:doc" element={<LegalPage />} />
           <Route path="/public-preview" element={<PublicPreviewPage />} />
 
           <Route element={<ProtectedLayout />}>

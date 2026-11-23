@@ -15,7 +15,8 @@ const ORDER = [
   'request-access-populated', 'request-access-error', 'request-access-review',
   'request-status-pending', 'request-status-info', 'request-status-rejected', 'request-status-approved',
   'forgot-password-step1', 'forgot-password-step2', 'forgot-password-success',
-  'invite-populated', 'invite-error',
+  'invite-populated', 'invite-error', 'invite-expired',
+  'legal-terms-populated', 'legal-privacy-populated',
   'public-preview-populated',
 ]
 
@@ -26,10 +27,19 @@ function titleOf(file) {
 }
 
 function sortFiles(list) {
+  // Desktop (1280) shots first, then mobile (390): a 1280 shot (~120 mm
+  // tall) pairs with another 1280 shot on one A4 page, but a 390 shot
+  // (~250 mm at the max-height cap) pairs with nothing, so interleaving
+  // them by screen would put every figure on its own page.
+  const widthRank = (f) => (f.includes('-1280') ? 0 : 1)
   return [...list].sort((a, b) => {
     const ka = ORDER.findIndex((k) => titleOf(a).startsWith(k))
     const kb = ORDER.findIndex((k) => titleOf(b).startsWith(k))
-    return (ka === -1 ? 99 : ka) - (kb === -1 ? 99 : kb) || a.localeCompare(b)
+    return (
+      widthRank(a) - widthRank(b) ||
+      (ka === -1 ? 99 : ka) - (kb === -1 ? 99 : kb) ||
+      a.localeCompare(b)
+    )
   })
 }
 
@@ -45,8 +55,12 @@ for (const lang of ['en', 'ur']) {
   const figures = all
     .map((f) => {
       const b64 = readFileSync(path.join(OUT, f)).toString('base64')
+      // Tall captures take their own page at a readable size: mobile
+      // (390) shots, full-page error shots, and the hero paper crop.
+      // Desktop viewport shots pair two per page (Phase 2 format).
+      const tall = f.includes('-390') || f.includes('invite-error') || f.includes('hero-paper')
       return `
-      <figure>
+      <figure${tall ? ' class="tall"' : ''}>
         <img src="data:image/png;base64,${b64}" alt="${titleOf(f)}" />
         <figcaption>${titleOf(f)}</figcaption>
       </figure>`
@@ -59,7 +73,12 @@ for (const lang of ['en', 'ur']) {
     h1 { font-size: 20px; margin: 0 0 4mm; }
     figure { margin: 0 0 6mm; page-break-inside: avoid; }
     figure:nth-of-type(2n) { page-break-after: always; margin-bottom: 0; }
-    img { width: 100%; display: block; border: 1px solid #ccc; }
+    /* Full-page captures (invite-error) are far taller than A4: cap the
+       height so the figure stays on one page instead of forcing blank
+       overflow pages (Phase 2 fixes A7). Width shrinks to keep the ratio. */
+    /* Desktop viewport shots cap at 122 mm so two fit on one A4 page. */
+    img { width: 100%; max-height: 122mm; display: block; border: 1px solid #ccc; }
+    figure.tall img { max-height: 250mm; }
     figcaption { font-size: 11px; color: #333; padding-top: 1.5mm; }
   </style></head><body>
   <h1>PaperBuilder — Phase 2 screenshots (${lang.toUpperCase()})</h1>
