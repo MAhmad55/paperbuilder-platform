@@ -1,0 +1,78 @@
+{
+  "admin": {
+    "users": {
+      "allRoles": "All roles",
+      "allStatuses": "All statuses",
+      "confirmDeactivate": {
+        "body": "{{name}} will no longer be able to sign in. You can reactivate them later.",
+        "cancel": "Cancel",
+        "confirm": "Deactivate",
+        "title": "Deactivate user?"
+      },
+      "confirmReactivate": {
+        "body": "{{name}} will be able to sign in again.",
+        "cancel": "Cancel",
+        "confirm": "Reactivate",
+        "title": "Reactivate user?"
+      },
+      "deactivate": "Deactivate",
+      "emptyAction": "Invite user",
+      "emptyBody": "Try a different search or filter, or invite a new user.",
+      "emptyTitle": "No users found",
+      "error": {
+        "body": "Check your connection and try again.",
+        "retry": "Retry",
+        "title": "Users could not be loaded"
+      },
+      "filterRole": "Role",
+      "filterStatus": "Status",
+      "invite": "Invite user",
+      "inviteDialog": {
+        "cancel": "Cancel",
+        "email": "Email address",
+        "emailInvalid": "Enter a valid email address.",
+        "emailPlaceholder": "name@paperbuilder.example.pk",
+        "emailRequired": "Enter an email address.",
+        "emailTaken": "This email is already invited.",
+        "error": "The invite could not be sent. Try again.",
+        "name": "Full name",
+        "namePlaceholder": "For example, Sana Iqbal",
+        "nameRequired": "Enter the user's name.",
+        "role": "Role",
+        "submit": "Send invite",
+        "title": "Invite user"
+      },
+      "lead": "Super Admin staff and invited platform users.",
+      "loading": "Loading users…",
+      "reactivate": "Reactivate",
+      "role": {
+        "schoolAdmin": "School Admin",
+        "superAdmin": "Super Admin",
+        "teacher": "Teacher"
+      },
+      "searchPlaceholder": "Search by name or email",
+      "selfDeactivateNote": "You cannot deactivate your own account.",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "invited": "Invited"
+      },
+      "table": {
+        "actions": "Actions",
+        "email": "Email",
+        "joined": "Joined",
+        "name": "Name",
+        "role": "Role",
+        "school": "School",
+        "status": "Status"
+      },
+      "title": "Platform users",
+      "toast": {
+        "deactivated": "{{name}} deactivated.",
+        "error": "Something went wrong. Try again.",
+        "invited": "Invite sent to {{name}}.",
+        "reactivated": "{{name}} reactivated."
+      }
+    }
+  }
+}

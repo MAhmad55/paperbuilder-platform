@@ -1,0 +1,63 @@
+/* Admin Question bank library (Phase 3 B6) — Daftar tokens, logical properties only. */
+
+.admin-bank .pb-btn,
+.admin-bank .pb-input,
+.admin-bank .pb-select {
+  min-height: 44px;
+}
+
+.admin-bank__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-block-start: 8px;
+}
+
+.admin-bank__error {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
+  margin-block-start: 16px;
+}
+
+.admin-bank__controls {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-block: 16px 8px;
+}
+
+.admin-bank__controls > * {
+  flex: 1 1 220px;
+  min-inline-size: 200px;
+}
+
+.admin-bank__note {
+  color: var(--muted);
+  margin-block: 8px;
+}
+
+.admin-bank__summary {
+  font-weight: 600;
+  color: var(--ink-900);
+  margin-block: 8px 16px;
+}
+
+.admin-bank__mock-note {
+  text-align: center;
+  color: var(--muted);
+  margin-block: 16px 4px;
+}
+
+@media (max-width: 768px) {
+  .admin-bank__controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-bank__controls > * {
+    flex-basis: auto;
+  }
+}

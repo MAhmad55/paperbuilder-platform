@@ -1,0 +1,142 @@
+/* Admin Plans & limits (Phase 3 B5) — Daftar tokens, logical properties only. */
+
+.admin-plans .pb-btn,
+.admin-plans .pb-input,
+.admin-plans .pb-select {
+  min-height: 44px;
+}
+
+.admin-plans__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-block-start: 24px;
+}
+
+.admin-plans__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-block-start: 8px;
+}
+
+.admin-plans__error {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
+  margin-block-start: 16px;
+}
+
+.admin-plans__limits {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.admin-plans__limit {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 8px;
+  border-block-end: 1px solid var(--line);
+}
+
+.admin-plans__limit dt {
+  color: var(--muted);
+}
+
+.admin-plans__limit dd {
+  margin: 0;
+  font-weight: 600;
+  color: var(--ink-900);
+}
+
+.admin-plans__features {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-plans__features li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-plans__feature-icon--yes {
+  color: var(--status-approved-fg);
+  flex-shrink: 0;
+}
+
+.admin-plans__feature-icon--no {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.admin-plans__schools {
+  color: var(--muted);
+  margin-block: 16px;
+}
+
+.admin-plans__form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-plans__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-plans__field .pb-checkbox-row {
+  min-height: 44px;
+}
+
+.admin-plans__confirm > p {
+  margin-block: 0 16px;
+}
+
+.admin-plans__summary {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-plans__summary-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-block-end: 12px;
+  border-block-end: 1px solid var(--line);
+}
+
+.admin-plans__summary-row:last-child {
+  padding-block-end: 0;
+  border-block-end: none;
+}
+
+.admin-plans__summary-row dt {
+  font-weight: 600;
+}
+
+.admin-plans__summary-row dd {
+  margin: 0;
+}
+
+.admin-plans__summary-new {
+  font-weight: 600;
+  color: var(--ink-700);
+}
+
+@media (max-width: 768px) {
+  .admin-plans__grid {
+    grid-template-columns: 1fr;
+  }
+}

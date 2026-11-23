@@ -45,7 +45,8 @@
     "history": "History",
     "notifications": "Notifications",
     "settings": "Settings",
-    "help": "Help"
+    "help": "Help",
+    "platformSettings": "Platform settings"
   },
   "roles": {
     "superAdmin": "Super Admin",
@@ -954,6 +955,604 @@
       "termsBody1": "PaperBuilder is a school examination and paper management platform. Schools use it to build, approve and print exam papers from their own question banks.",
       "termsBody2": "This is a demo platform. Accounts, schools and papers shown here are sample data. Real terms are agreed when a school is onboarded.",
       "termsTitle": "Terms of use"
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "activity": {
+        "emptyBody": "Actions taken on the platform will appear here.",
+        "emptyTitle": "No activity yet",
+        "title": "Recent activity",
+        "viewAll": "View audit log"
+      },
+      "activityAction": {
+        "announcementPublished": "Published announcement",
+        "announcementScheduled": "Scheduled announcement",
+        "paperApproved": "Approved paper",
+        "paperPrinted": "Printed paper",
+        "paperSubmitted": "Submitted paper",
+        "planLimitChanged": "Changed plan limit",
+        "schoolApproved": "Approved school",
+        "schoolInfoRequested": "Requested information",
+        "schoolPlanChanged": "Changed school plan",
+        "schoolReactivated": "Reactivated school",
+        "schoolRejected": "Rejected school",
+        "schoolSuspended": "Suspended school",
+        "teacherInvited": "Invited teacher",
+        "templateCreated": "Created template",
+        "userDeactivated": "Deactivated user",
+        "userInvited": "Invited user"
+      },
+      "error": {
+        "body": "Something went wrong. Please try again.",
+        "title": "Dashboard could not be loaded"
+      },
+      "kpi": {
+        "approvals": "Approvals waiting",
+        "papers": "Papers this month",
+        "schools": "Schools",
+        "teachers": "Active teachers"
+      },
+      "lead": "Platform at a glance — schools, approvals, papers and teachers."
+    },
+    "schools": {
+      "columns": {
+        "city": "City",
+        "lastActive": "Last active",
+        "name": "School",
+        "papers": "Papers",
+        "plan": "Plan",
+        "status": "Status",
+        "teachers": "Teachers"
+      },
+      "empty": {
+        "body": "Try a different search or clear the filters.",
+        "clearFilters": "Clear filters",
+        "title": "No schools match these filters"
+      },
+      "error": {
+        "body": "Something went wrong. Please try again.",
+        "title": "Schools could not be loaded"
+      },
+      "filters": {
+        "all": "All",
+        "city": "City",
+        "plan": "Plan",
+        "search": "Search by name or city",
+        "status": "Status"
+      },
+      "lead": "Every school on the platform — status, plan, teachers, papers and last activity.",
+      "results": "Showing {{count}} of {{total}} schools",
+      "viewApprovals": "Review requests"
+    },
+    "detail": {
+      "actions": {
+        "reactivate": "Reactivate",
+        "suspend": "Suspend"
+      },
+      "activity": {
+        "audit": {
+          "schoolApproved": "School approved",
+          "schoolInfoRequested": "Information requested",
+          "schoolPlanChanged": "Plan changed",
+          "schoolReactivated": "School reactivated",
+          "schoolRejected": "School rejected",
+          "schoolSuspended": "School suspended"
+        },
+        "emptyBody": "No activity recorded for this school yet.",
+        "emptyTitle": "No activity yet",
+        "title": "Activity"
+      },
+      "backToSchools": "Back to schools",
+      "documents": {
+        "emptyBody": "No registration documents were attached to this school's request.",
+        "emptyTitle": "No documents",
+        "title": "Documents"
+      },
+      "error": {
+        "body": "The school could not be loaded. Try again.",
+        "title": "Could not load the school"
+      },
+      "notFound": {
+        "body": "There is no school with this ID. Go back to the schools list.",
+        "title": "School not found"
+      },
+      "overview": {
+        "adminContact": "School admin",
+        "adminNone": "No school admin yet",
+        "approvalPolicy": "Approval policy",
+        "city": "City",
+        "createdOn": "Joined on",
+        "defaultMedium": "Default medium",
+        "lastActive": "Last active",
+        "lastActiveDays": "{{count}} days ago",
+        "lastActiveNever": "Never",
+        "lastActiveToday": "Today",
+        "name": "School name",
+        "plan": "Plan",
+        "policyOptional": "Approval optional",
+        "policyRequired": "Approval required",
+        "status": "Status",
+        "title": "Overview"
+      },
+      "plan": {
+        "branding": "Custom branding",
+        "changePlan": "Change plan",
+        "currentPlan": "Current plan",
+        "no": "No",
+        "papersPerMonth": "Papers per month",
+        "prioritySupport": "Priority support",
+        "teachers": "Teachers",
+        "templates": "Templates",
+        "title": "Plan and limits",
+        "unlimited": "Unlimited",
+        "yes": "Yes"
+      },
+      "planChanged": "Plan changed",
+      "planDialog": {
+        "label": "Plan",
+        "title": "Change plan"
+      },
+      "reactivateDialog": {
+        "body": "The school can use PaperBuilder again.",
+        "confirm": "Reactivate",
+        "title": "Reactivate school"
+      },
+      "reactivatedToast": "School reactivated",
+      "suspendDialog": {
+        "confirm": "Suspend",
+        "reasonLabel": "Reason",
+        "reasonRequired": "A reason is required.",
+        "title": "Suspend school"
+      },
+      "suspendedToast": "School suspended. Reason: {{reason}}",
+      "tabs": {
+        "activity": "Activity",
+        "documents": "Documents",
+        "overview": "Overview",
+        "plan": "Plan and limits",
+        "usage": "Usage",
+        "users": "Users"
+      },
+      "title": "School details",
+      "usage": {
+        "papersThisMonth": "Papers this month",
+        "teachers": "Teachers",
+        "title": "Usage",
+        "totalPapers": "Total papers",
+        "unlimited": "Unlimited"
+      },
+      "users": {
+        "classes": "Classes",
+        "email": "Email",
+        "emptyBody": "No teachers or admins belong to this school yet.",
+        "emptyTitle": "No users yet",
+        "name": "Name",
+        "role": "Role",
+        "status": "Status",
+        "statusInactive": "Inactive",
+        "statusInvited": "Invited",
+        "subjects": "Subjects",
+        "subjectsNone": "None assigned",
+        "title": "Users"
+      }
+    },
+    "approvals": {
+      "actions": {
+        "approve": "Approve",
+        "decidedNote": "This request is already decided. Actions are closed.",
+        "reject": "Reject",
+        "requestInfo": "Request information"
+      },
+      "approveDialog": {
+        "body": "The school becomes active and can sign in.",
+        "confirm": "Approve",
+        "title": "Approve this school?"
+      },
+      "approvedToast": "Request approved",
+      "decided": {
+        "missingTitle": "What is missing",
+        "rejectionTitle": "Reason for rejection"
+      },
+      "details": {
+        "address": "Address",
+        "board": "Board",
+        "city": "City",
+        "contact": "Contact person",
+        "email": "Email",
+        "notes": "Notes",
+        "notesEmpty": "No notes",
+        "phone": "Phone",
+        "plan": "Plan",
+        "school": "School",
+        "schoolType": "School type",
+        "students": "Students"
+      },
+      "documents": {
+        "none": "No documents attached",
+        "title": "Documents"
+      },
+      "error": {
+        "body": "The requests could not be loaded. Try again.",
+        "title": "Could not load requests"
+      },
+      "filters": {
+        "all": "All requests",
+        "searchPlaceholder": "Search school or reference",
+        "statusLabel": "Status"
+      },
+      "infoDialog": {
+        "body": "Choose what the school must send.",
+        "confirm": "Send request",
+        "error": "Choose at least one item.",
+        "title": "Request information"
+      },
+      "infoRequestedToast": "Information requested",
+      "internalNotes": {
+        "label": "Notes for the team",
+        "placeholder": "Only your team can see this.",
+        "saved": "Notes saved",
+        "title": "Internal notes"
+      },
+      "lead": "Review school access requests and decide.",
+      "list": {
+        "count": "{{count}} requests",
+        "emptyBody": "No requests match this filter.",
+        "emptyTitle": "No requests",
+        "title": "Requests"
+      },
+      "rejectDialog": {
+        "confirm": "Reject",
+        "reasonLabel": "Reason",
+        "reasonRequired": "A reason is required.",
+        "title": "Reject this request"
+      },
+      "rejectedToast": "Request rejected",
+      "statusInfoRequested": "Information requested",
+      "title": "Approval queue"
+    },
+    "plans": {
+      "dialog": {
+        "back": "Back",
+        "cancel": "Cancel",
+        "confirm": "Confirm change",
+        "confirmLead": "Check the new limits before saving.",
+        "confirmTitle": "Confirm new limits",
+        "newValue": "New",
+        "oldValue": "Current",
+        "review": "Review change",
+        "title": "Edit limits for {{plan}}",
+        "unlimited": "Unlimited"
+      },
+      "editLimits": "Edit limits",
+      "empty": {
+        "body": "Plans will appear here once they are added.",
+        "title": "No plans yet"
+      },
+      "error": {
+        "body": "Something went wrong. Try again.",
+        "title": "Could not load plans"
+      },
+      "errors": {
+        "maxPapersPerMonth": "Enter a whole number of 1 or more.",
+        "maxTeachers": "Enter a whole number of 1 or more.",
+        "maxTemplates": "Enter a whole number of 0 or more.",
+        "noChange": "Change at least one limit to save."
+      },
+      "features": {
+        "customBranding": "Custom branding",
+        "prioritySupport": "Priority support"
+      },
+      "lead": "Set teacher seats, paper quotas and templates for each plan.",
+      "limits": {
+        "papersPerMonth": "Papers per month",
+        "teachers": "Teachers",
+        "templates": "Templates"
+      },
+      "schoolsOnPlan": "Schools on this plan: {{count}}",
+      "title": "Plans & limits",
+      "toast": {
+        "saveFailed": "Could not save the new limits.",
+        "saved": "Limits updated for {{plan}}."
+      },
+      "unlimited": "Unlimited"
+    },
+    "bank": {
+      "classLabel": "Class",
+      "classNote": "Coverage is the same for every class in this mock phase.",
+      "columns": {
+        "actions": "Actions",
+        "chapters": "Chapters",
+        "long": "Long",
+        "mcq": "MCQ",
+        "short": "Short",
+        "status": "Status",
+        "subject": "Subject",
+        "total": "Total"
+      },
+      "connect": "Connect data source",
+      "connectBody": "Connect the question bank to see coverage by class and subject.",
+      "connectTitle": "Connect a data source",
+      "disconnect": "Disconnect",
+      "emptyBody": "No subjects are available yet.",
+      "emptyTitle": "No subjects yet",
+      "errorBody": "Something went wrong. Try again.",
+      "errorTitle": "Could not load the question bank",
+      "imported": "Imported",
+      "lead": "See coverage by class and subject, and re-import subjects.",
+      "mockNote": "This phase uses a mock question bank. No real data source is connected.",
+      "noResultsBody": "Try a different search.",
+      "noResultsTitle": "No matching subjects",
+      "notImported": "Not imported",
+      "reimport": "Re-import",
+      "reimportToast": "Re-import started for {{subject}}.",
+      "searchPlaceholder": "Search subjects",
+      "summary": "{{total}} questions across {{subjects}} subjects",
+      "title": "Question bank library"
+    },
+    "users": {
+      "allRoles": "All roles",
+      "allStatuses": "All statuses",
+      "confirmDeactivate": {
+        "body": "{{name}} will no longer be able to sign in. You can reactivate them later.",
+        "cancel": "Cancel",
+        "confirm": "Deactivate",
+        "title": "Deactivate user?"
+      },
+      "confirmReactivate": {
+        "body": "{{name}} will be able to sign in again.",
+        "cancel": "Cancel",
+        "confirm": "Reactivate",
+        "title": "Reactivate user?"
+      },
+      "deactivate": "Deactivate",
+      "emptyAction": "Invite user",
+      "emptyBody": "Try a different search or filter, or invite a new user.",
+      "emptyTitle": "No users found",
+      "error": {
+        "body": "Check your connection and try again.",
+        "retry": "Retry",
+        "title": "Users could not be loaded"
+      },
+      "filterRole": "Role",
+      "filterStatus": "Status",
+      "invite": "Invite user",
+      "inviteDialog": {
+        "cancel": "Cancel",
+        "email": "Email address",
+        "emailInvalid": "Enter a valid email address.",
+        "emailPlaceholder": "name@paperbuilder.example.pk",
+        "emailRequired": "Enter an email address.",
+        "emailTaken": "This email is already invited.",
+        "error": "The invite could not be sent. Try again.",
+        "name": "Full name",
+        "namePlaceholder": "For example, Sana Iqbal",
+        "nameRequired": "Enter the user's name.",
+        "role": "Role",
+        "submit": "Send invite",
+        "title": "Invite user"
+      },
+      "lead": "Super Admin staff and invited platform users.",
+      "loading": "Loading users…",
+      "reactivate": "Reactivate",
+      "role": {
+        "schoolAdmin": "School Admin",
+        "superAdmin": "Super Admin",
+        "teacher": "Teacher"
+      },
+      "searchPlaceholder": "Search by name or email",
+      "selfDeactivateNote": "You cannot deactivate your own account.",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "invited": "Invited"
+      },
+      "table": {
+        "actions": "Actions",
+        "email": "Email",
+        "joined": "Joined",
+        "name": "Name",
+        "role": "Role",
+        "school": "School",
+        "status": "Status"
+      },
+      "title": "Platform users",
+      "toast": {
+        "deactivated": "{{name}} deactivated.",
+        "error": "Something went wrong. Try again.",
+        "invited": "Invite sent to {{name}}.",
+        "reactivated": "{{name}} reactivated."
+      }
+    },
+    "announcements": {
+      "compose": "Compose",
+      "composeTitle": "New announcement",
+      "error": {
+        "body": "Check your connection and try again.",
+        "retry": "Retry",
+        "title": "Announcements could not be loaded"
+      },
+      "errors": {
+        "bodyRequired": "Enter a message.",
+        "dateRequired": "Choose a date.",
+        "planRequired": "Choose a plan.",
+        "scheduleFuture": "Choose a date in the future.",
+        "schoolRequired": "Choose a school.",
+        "submitFailed": "The announcement could not be sent. Try again.",
+        "titleRequired": "Enter a title."
+      },
+      "form": {
+        "body": "Message",
+        "bodyPlaceholder": "Write the announcement…",
+        "date": "Date",
+        "dateHint": "Sent at 09:00 on the chosen date.",
+        "plan": "Plan",
+        "planPlaceholder": "Choose a plan",
+        "reset": "Clear",
+        "schedule": "When to send",
+        "scheduleFor": "Schedule for later",
+        "school": "School",
+        "schoolPlaceholder": "Choose a school",
+        "sendNow": "Send now",
+        "submit": "Send announcement",
+        "submitScheduled": "Schedule announcement",
+        "target": "Send to",
+        "targetAll": "All schools",
+        "targetPlan": "One plan",
+        "targetSchool": "One school",
+        "title": "Title",
+        "titlePlaceholder": "For example, New paper templates are live"
+      },
+      "lead": "Send platform announcements to all schools, one plan, or one school.",
+      "loading": "Loading announcements…",
+      "preview": {
+        "bodyPlaceholder": "The message will appear here.",
+        "scheduledFor": "Scheduled for {{date}}",
+        "sendNow": "Sends now",
+        "title": "Preview",
+        "titlePlaceholder": "Announcement title",
+        "toAll": "To all schools",
+        "toPlan": "To {{plan}} schools",
+        "toSchool": "To {{school}}"
+      },
+      "scheduled": {
+        "emptyAction": "Compose",
+        "emptyBody": "Announcements scheduled for later will appear here.",
+        "emptyTitle": "No scheduled announcements",
+        "title": "Scheduled"
+      },
+      "sent": {
+        "emptyAction": "Compose",
+        "emptyBody": "Sent announcements will appear here.",
+        "emptyTitle": "No announcements sent yet",
+        "title": "Sent"
+      },
+      "table": {
+        "author": "Author",
+        "date": "Date",
+        "target": "Sent to",
+        "title": "Title"
+      },
+      "title": "Announcements",
+      "toast": {
+        "error": "Something went wrong. Try again.",
+        "scheduled": "Announcement scheduled.",
+        "sent": "Announcement sent."
+      }
+    },
+    "audit": {
+      "actionLabel": "Action",
+      "actions": {
+        "announcement": {
+          "published": "Announcement published",
+          "scheduled": "Announcement scheduled"
+        },
+        "paper": {
+          "approved": "Paper approved",
+          "printed": "Paper printed",
+          "submitted": "Paper submitted"
+        },
+        "plan": {
+          "limit-changed": "Plan limit changed"
+        },
+        "school": {
+          "approved": "School approved",
+          "info-requested": "Information requested",
+          "plan-changed": "School plan changed",
+          "reactivated": "School reactivated",
+          "rejected": "School rejected",
+          "suspended": "School suspended"
+        },
+        "teacher": {
+          "invited": "Teacher invited"
+        },
+        "template": {
+          "created": "Template created"
+        },
+        "user": {
+          "deactivated": "User deactivated",
+          "invited": "User invited"
+        }
+      },
+      "actorLabel": "Actor",
+      "allActions": "All actions",
+      "allActors": "All actors",
+      "allSchools": "All schools",
+      "clearFilters": "Clear filters",
+      "columns": {
+        "action": "Action",
+        "actor": "Actor",
+        "date": "Date and time",
+        "target": "Target"
+      },
+      "emptyBody": "Actions on the platform will appear here.",
+      "emptyTitle": "No audit events yet",
+      "errorBody": "Something went wrong while loading the audit log. Try again.",
+      "errorTitle": "Could not load the audit log",
+      "export": "Export CSV",
+      "exported": "Exported {{count}} audit rows.",
+      "filtersTitle": "Filters",
+      "fromLabel": "From date",
+      "lead": "Every important action on the platform, newest first.",
+      "noResultsBody": "Try changing or clearing the filters.",
+      "noResultsTitle": "No matching events",
+      "results": "{{count}} events",
+      "schoolLabel": "School",
+      "targetTypes": {
+        "announcement": "Announcement",
+        "paper": "Paper",
+        "plan": "Plan",
+        "school": "School",
+        "template": "Template",
+        "user": "User"
+      },
+      "title": "Audit log",
+      "toLabel": "To date"
+    },
+    "settings": {
+      "brandingSubtitle": "Name and logo shown across the platform.",
+      "brandingTitle": "Branding",
+      "emptyBody": "Load the default settings to start.",
+      "emptyTitle": "No platform settings yet",
+      "errorBody": "Something went wrong while loading the settings. Try again.",
+      "errorTitle": "Could not load platform settings",
+      "errors": {
+        "emailInvalid": "Enter a valid email address.",
+        "nameRequired": "Enter a platform name.",
+        "phoneRequired": "Enter a support phone number."
+      },
+      "languageEnglish": "English",
+      "languageLabel": "Interface language",
+      "languageUrdu": "اردو",
+      "languagesSubtitle": "New schools and papers start with these languages.",
+      "languagesTitle": "Default languages",
+      "lead": "Branding, languages, legal text and support contacts for the whole platform.",
+      "legalNote": "The public Terms and Privacy pages read static copy in this phase. Edits here update the platform record, not the public pages.",
+      "legalSubtitle": "Terms of use and privacy policy.",
+      "legalTitle": "Legal text",
+      "loadDefaults": "Load defaults",
+      "logoHint": "PNG or JPG · Max 5 MB",
+      "logoMockNote": "Logo upload is mocked in this phase — the file is not saved.",
+      "logoTitle": "Platform logo",
+      "platformName": "Platform name",
+      "platformNamePlaceholder": "PaperBuilder",
+      "printBoth": "Both",
+      "printEnglish": "English",
+      "printLanguageLabel": "Default print language",
+      "printUrdu": "Urdu",
+      "privacyEn": "Privacy policy (English)",
+      "privacyUr": "Privacy policy (Urdu)",
+      "reset": "Reset changes",
+      "resetDone": "Unsaved changes discarded.",
+      "save": "Save settings",
+      "saved": "Settings saved.",
+      "supportEmail": "Support email",
+      "supportPhone": "Support phone",
+      "supportSubtitle": "Shown to schools when they need help.",
+      "supportTitle": "Support contacts",
+      "termsEn": "Terms of use (English)",
+      "termsUr": "Terms of use (Urdu)",
+      "title": "Platform settings"
     }
   }
 }

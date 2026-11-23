@@ -1,0 +1,153 @@
+/* ------------------------------------------------------------------
+   Announcements (B8). Daftar tokens only; logical properties only.
+   No scroll-reveal. Touch targets are 44px or taller.
+------------------------------------------------------------------- */
+
+.admin-ann {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-block: 32px 64px;
+  padding-inline: 24px;
+}
+
+.admin-ann__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-block-start: 24px;
+}
+
+.admin-ann__compose {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
+  gap: 24px;
+  align-items: start;
+  margin-block-start: 24px;
+}
+
+.admin-ann__form-card,
+.admin-ann__preview-card {
+  padding: 24px;
+}
+
+.admin-ann__form-card h2,
+.admin-ann__preview-card h2 {
+  margin: 0 0 20px;
+  font-size: var(--text-lg);
+}
+
+.admin-ann__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.admin-ann__fieldset {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-ann__fieldset legend {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--ink-900);
+  padding-inline: 6px;
+}
+
+.admin-ann__radios {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+}
+
+/* 44px touch targets on the radio rows (design-system base is 40px). */
+.admin-ann__radios .pb-radio-row {
+  min-height: 44px;
+}
+
+.admin-ann__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-block-start: 24px;
+}
+
+.admin-ann__banner-action {
+  margin-block-start: 12px;
+}
+
+/* Live preview — the announcement as recipients see it. */
+.admin-ann__preview-card {
+  position: sticky;
+  top: 88px;
+}
+
+.admin-ann__preview {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--canvas);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-ann__preview-title {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--ink-900);
+  line-height: 1.4;
+}
+
+.admin-ann__preview-body {
+  margin: 0;
+  color: var(--ink-900);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.admin-ann__preview-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-block-start: 1px solid var(--line);
+  padding-block-start: 12px;
+  color: var(--muted);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.admin-ann__list {
+  margin-block-start: 32px;
+}
+
+.admin-ann__list h2 {
+  margin: 0 0 12px;
+  font-size: var(--text-lg);
+}
+
+@media (max-width: 900px) {
+  .admin-ann__compose {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-ann__preview-card {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-ann {
+    padding-block: 24px 48px;
+    padding-inline: 16px;
+  }
+}

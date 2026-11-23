@@ -1,7 +1,9 @@
 import type {
-  School, Paper, PaperStatus, Person, PersonRole, Plan, AuditEvent, AppNotification,
+  School, Paper, PaperStatus, Person, PersonRole, Plan, PlanId, AuditEvent, AppNotification,
   Exam, Template, SavedQuestion, SubjectDef, ChapterDef, ClassDef,
+  Announcement, AnnouncementTarget, PlatformSettings,
 } from '../mock/data'
+import type { PlanLimitPatch } from './plan-limits'
 
 export type Result<T> = { ok: true; value: T } | { ok: false; error: string }
 
@@ -31,6 +33,7 @@ export interface SchoolService {
   list(): School[]
   get(id: string): School | undefined
   setStatus(id: string, status: School['status'], actor: Person): Result<School>
+  setPlan(id: string, planId: PlanId, actor: Person): Result<School>
   listTeachers(schoolId: string): Person[]
   listAdmins(schoolId: string): Person[]
 }
@@ -81,6 +84,18 @@ export interface QuestionBankProvider {
 
 export interface PlatformService {
   listPlans(): Plan[]
+  updatePlanLimit(planId: PlanId, patch: PlanLimitPatch, actor: Person): Result<{ plan: Plan; errors: string[] }>
+  listUsers(): Person[]
+  inviteUser(input: { name: string; email: string; role: PersonRole }, actor: Person): Result<Person>
+  setUserStatus(id: string, status: Person['status'], actor: Person): Result<Person>
+  listAnnouncements(): Announcement[]
+  createAnnouncement(input: {
+    title: string; body: string
+    targetType: AnnouncementTarget; targetPlanId?: PlanId; targetSchoolId?: string
+    scheduledAt: string | null
+  }, actor: Person): Result<Announcement>
+  getSettings(): PlatformSettings
+  updateSettings(patch: Partial<PlatformSettings>): PlatformSettings
   listAudit(): AuditEvent[]
   listNotifications(userId?: string): AppNotification[]
   markNotificationRead(id: string): AppNotification | undefined

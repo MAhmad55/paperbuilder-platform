@@ -1,0 +1,106 @@
+/* ------------------------------------------------------------------
+   Super Admin — Platform settings (B10).
+   Logical properties only; Daftar tokens only. No scroll-reveal.
+------------------------------------------------------------------- */
+
+.admin-settings {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-block: 32px 64px;
+  padding-inline: 24px;
+}
+
+.admin-settings__form {
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-settings__card {
+  padding: 24px;
+}
+
+.admin-settings__card h2 {
+  margin: 0 0 4px;
+  font-size: var(--text-lg);
+}
+
+.admin-settings__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-block-start: 16px;
+}
+
+.admin-settings__grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.admin-settings__label {
+  display: block;
+  margin-block-end: 8px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--ink-900);
+}
+
+.admin-settings__note {
+  margin: 12px 0 0;
+  font-size: var(--text-sm);
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.admin-settings__legal-note {
+  margin-block-end: 16px;
+}
+
+.admin-settings__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.admin-settings__actions .pb-btn {
+  min-height: 44px;
+}
+
+.admin-settings__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 720px;
+}
+
+.admin-settings__error {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
+  max-width: 720px;
+}
+
+.admin-settings__empty {
+  padding: 8px 24px;
+  max-width: 720px;
+}
+
+@media (max-width: 560px) {
+  .admin-settings {
+    padding-block: 24px 48px;
+    padding-inline: 16px;
+  }
+
+  .admin-settings__card {
+    padding: 16px;
+  }
+
+  .admin-settings__grid-2 {
+    grid-template-columns: 1fr;
+  }
+}

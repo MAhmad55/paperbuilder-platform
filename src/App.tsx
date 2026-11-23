@@ -1,5 +1,5 @@
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
-import { useMemo } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AuthProvider, useAuth } from './shell/AuthContext'
 import { ToastProvider } from './design-system'
@@ -16,6 +16,16 @@ import { DesignSystemPage } from './pages/DesignSystemPage'
 import { FoundationTestPage } from './pages/FoundationTestPage'
 import { PlaceholderPage } from './pages/PlaceholderPage'
 import { SystemStatePage } from './pages/SystemStatePage'
+import { AdminDashboardPage } from './pages/admin/AdminDashboardPage'
+import { AdminSchoolsPage } from './pages/admin/AdminSchoolsPage'
+import { AdminSchoolDetailPage } from './pages/admin/AdminSchoolDetailPage'
+import { AdminApprovalsPage } from './pages/admin/AdminApprovalsPage'
+import { AdminPlansPage } from './pages/admin/AdminPlansPage'
+import { AdminBankPage } from './pages/admin/AdminBankPage'
+import { AdminUsersPage } from './pages/admin/AdminUsersPage'
+import { AdminAnnouncementsPage } from './pages/admin/AdminAnnouncementsPage'
+import { AdminAuditPage } from './pages/admin/AdminAuditPage'
+import { AdminSettingsPage } from './pages/admin/AdminSettingsPage'
 import { railNavForRole, type NavItem } from './shell/navigation'
 import type { Role } from './services/types'
 
@@ -41,6 +51,14 @@ function RoleHomeRedirect() {
   const { role } = useAuth()
   if (!role) return <Navigate to="/sign-in" replace />
   return <Navigate to={roleHome(role)} replace />
+}
+
+/** Guards a route group to one role; other roles get the no-permission state. */
+function RequireRole({ role, children }: { role: Role; children?: ReactNode }) {
+  const { role: currentRole } = useAuth()
+  if (!currentRole) return <Navigate to="/sign-in" replace />
+  if (currentRole !== role) return <SystemStatePage kind="no-permission" />
+  return <>{children ?? <Outlet />}</>
 }
 
 /* ------------------------------------------------------------------
@@ -110,7 +128,19 @@ export function App() {
             <Route path="/home" element={<RoleHomeRedirect />} />
             <Route path="/design-system" element={<DesignSystemPage />} />
             <Route path="/foundation-test" element={<FoundationTestPage />} />
-            <Route path="/admin/*" element={<RolePlaceholder role="super-admin" />} />
+            {/* Super Admin screens (Phase 3, blueprint 4.2) */}
+            <Route element={<RequireRole role="super-admin" />}>
+              <Route path="/admin" element={<AdminDashboardPage />} />
+              <Route path="/admin/schools" element={<AdminSchoolsPage />} />
+              <Route path="/admin/schools/:id" element={<AdminSchoolDetailPage />} />
+              <Route path="/admin/approvals" element={<AdminApprovalsPage />} />
+              <Route path="/admin/plans" element={<AdminPlansPage />} />
+              <Route path="/admin/bank" element={<AdminBankPage />} />
+              <Route path="/admin/users" element={<AdminUsersPage />} />
+              <Route path="/admin/announcements" element={<AdminAnnouncementsPage />} />
+              <Route path="/admin/audit" element={<AdminAuditPage />} />
+              <Route path="/admin/settings" element={<AdminSettingsPage />} />
+            </Route>
             <Route path="/school/*" element={<RolePlaceholder role="school-admin" />} />
             <Route path="/teacher/*" element={<RolePlaceholder role="teacher" />} />
             <Route path="/profile" element={<AnyPlaceholder titleKey="shell.profile" />} />

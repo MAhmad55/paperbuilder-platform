@@ -34,7 +34,7 @@ export function railNavForRole(role: Role): NavItem[] {
       { to: '/admin/users', icon: Users, labelKey: 'nav.users' },
       { to: '/admin/announcements', icon: Megaphone, labelKey: 'nav.announcements' },
       { to: '/admin/audit', icon: ShieldCheck, labelKey: 'nav.auditLog' },
-      { to: '/admin/settings', icon: Settings, labelKey: 'nav.schoolSettings' },
+      { to: '/admin/settings', icon: Settings, labelKey: 'nav.platformSettings' },
     ]
   }
   if (role === 'school-admin') {

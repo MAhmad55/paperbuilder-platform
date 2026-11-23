@@ -1,0 +1,80 @@
+{
+  "admin": {
+    "announcements": {
+      "compose": "نیا اعلان",
+      "composeTitle": "نیا اعلان",
+      "error": {
+        "body": "اپنا کنکشن چیک کریں اور دوبارہ کوشش کریں۔",
+        "retry": "دوبارہ کوشش کریں",
+        "title": "اعلانات لوڈ نہیں ہو سکے"
+      },
+      "errors": {
+        "bodyRequired": "پیغام لکھیں۔",
+        "dateRequired": "تاریخ منتخب کریں۔",
+        "planRequired": "پلان منتخب کریں۔",
+        "scheduleFuture": "مستقبل کی تاریخ منتخب کریں۔",
+        "schoolRequired": "اسکول منتخب کریں۔",
+        "submitFailed": "اعلان نہیں بھیجا جا سکا۔ دوبارہ کوشش کریں۔",
+        "titleRequired": "عنوان لکھیں۔"
+      },
+      "form": {
+        "body": "پیغام",
+        "bodyPlaceholder": "اعلان لکھیں…",
+        "date": "تاریخ",
+        "dateHint": "منتخب تاریخ کو صبح 9 بجے بھیجا جائے گا۔",
+        "plan": "پلان",
+        "planPlaceholder": "پلان منتخب کریں",
+        "reset": "صاف کریں",
+        "schedule": "کب بھیجیں",
+        "scheduleFor": "بعد کے لیے طے کریں",
+        "school": "اسکول",
+        "schoolPlaceholder": "اسکول منتخب کریں",
+        "sendNow": "ابھی بھیجیں",
+        "submit": "اعلان بھیجیں",
+        "submitScheduled": "اعلان طے کریں",
+        "target": "کس کو بھیجیں",
+        "targetAll": "تمام اسکول",
+        "targetPlan": "ایک پلان",
+        "targetSchool": "ایک اسکول",
+        "title": "عنوان",
+        "titlePlaceholder": "مثلاً نئے پرچہ ٹیمپلیٹس دستیاب ہیں"
+      },
+      "lead": "تمام اسکولوں، ایک پلان، یا ایک اسکول کو پلیٹ فارم اعلان بھیجیں۔",
+      "loading": "اعلانات لوڈ ہو رہے ہیں…",
+      "preview": {
+        "bodyPlaceholder": "پیغام یہاں نظر آئے گا۔",
+        "scheduledFor": "{{date}} کے لیے طے شدہ",
+        "sendNow": "ابھی بھیجا جائے گا",
+        "title": "پیش نظارہ",
+        "titlePlaceholder": "اعلان کا عنوان",
+        "toAll": "تمام اسکولوں کو",
+        "toPlan": "{{plan}} پلان کے اسکولوں کو",
+        "toSchool": "{{school}} کو"
+      },
+      "scheduled": {
+        "emptyAction": "نیا اعلان",
+        "emptyBody": "بعد کے لیے طے شدہ اعلانات یہاں نظر آئیں گے۔",
+        "emptyTitle": "کوئی طے شدہ اعلان نہیں",
+        "title": "طے شدہ"
+      },
+      "sent": {
+        "emptyAction": "نیا اعلان",
+        "emptyBody": "بھیجے گئے اعلانات یہاں نظر آئیں گے۔",
+        "emptyTitle": "ابھی کوئی اعلان نہیں بھیجا گیا",
+        "title": "بھیجے گئے"
+      },
+      "table": {
+        "author": "بھیجنے والا",
+        "date": "تاریخ",
+        "target": "کس کو",
+        "title": "عنوان"
+      },
+      "title": "اعلانات",
+      "toast": {
+        "error": "کچھ غلط ہو گیا۔ دوبارہ کوشش کریں۔",
+        "scheduled": "اعلان طے کر دیا گیا۔",
+        "sent": "اعلان بھیج دیا گیا۔"
+      }
+    }
+  }
+}

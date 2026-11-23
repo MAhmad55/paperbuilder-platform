@@ -435,16 +435,17 @@ export const PAPERS: Paper[] = (() => {
 /* ---------------- Audit events ---------------- */
 
 export type AuditAction =
-  | 'school.approved' | 'school.rejected' | 'school.suspended' | 'school.reactivated' | 'school.plan-changed'
-  | 'paper.approved' | 'paper.submitted' | 'paper.printed' | 'teacher.invited' | 'user.invited'
-  | 'template.created' | 'announcement.published'
+  | 'school.approved' | 'school.rejected' | 'school.suspended' | 'school.reactivated' | 'school.plan-changed' | 'school.info-requested'
+  | 'paper.approved' | 'paper.submitted' | 'paper.printed' | 'teacher.invited' | 'user.invited' | 'user.deactivated'
+  | 'plan.limit-changed'
+  | 'template.created' | 'announcement.published' | 'announcement.scheduled'
 
 export interface AuditEvent {
   id: string
   actorId: string
   actorName: string
   action: AuditAction
-  targetType: 'school' | 'paper' | 'user' | 'template' | 'announcement'
+  targetType: 'school' | 'paper' | 'user' | 'template' | 'announcement' | 'plan'
   targetId: string
   targetLabel: string
   createdAt: string
@@ -760,6 +761,8 @@ export interface ApprovalRequest {
   documentNames?: string[]
   missingItems?: ApprovalMissingItem[]
   rejectionReason?: string
+  /** Internal note written by the reviewing Super Admin (not shown to the school). */
+  internalNotes?: string
   timeline: ApprovalTimelineEvent[]
 }
 
@@ -863,3 +866,91 @@ export const APPROVAL_REQUESTS: ApprovalRequest[] = [
     ],
   },
 ]
+
+/* ---------------- Announcements (platform, B8) ---------------- */
+
+export type AnnouncementTarget = 'all' | 'plan' | 'school'
+export type AnnouncementStatus = 'scheduled' | 'sent'
+
+export interface Announcement {
+  id: string
+  title: string
+  body: string
+  targetType: AnnouncementTarget
+  targetPlanId?: PlanId
+  targetSchoolId?: string
+  status: AnnouncementStatus
+  scheduledAt: string | null // ISO — null means "send now"
+  sentAt: string | null // ISO
+  createdById: string
+  createdByName: string
+  createdAt: string // ISO
+}
+
+/** Seed announcements — newest first. */
+export const ANNOUNCEMENTS: Announcement[] = [
+  {
+    id: 'ann-01',
+    title: 'Weekly board review call',
+    body: 'Join the Friday board review call at 11:00. Bring one paper your school printed this week.',
+    targetType: 'all',
+    status: 'sent',
+    scheduledAt: null,
+    sentAt: daysAgo(4),
+    createdById: 'u-adm-01',
+    createdByName: 'Adnan Butt',
+    createdAt: daysAgo(4),
+  },
+  {
+    id: 'ann-02',
+    title: 'November papers report is ready',
+    body: 'Your November papers report is available in Reports. Papers per class, subject and teacher are included.',
+    targetType: 'all',
+    status: 'sent',
+    scheduledAt: null,
+    sentAt: daysAgo(1),
+    createdById: 'u-adm-01',
+    createdByName: 'Adnan Butt',
+    createdAt: daysAgo(1),
+  },
+  {
+    id: 'ann-03',
+    title: 'New paper templates for Growth schools',
+    body: 'Growth plan schools can now use the new board-pattern header templates. Open Templates to try them.',
+    targetType: 'plan',
+    targetPlanId: 'growth',
+    status: 'scheduled',
+    scheduledAt: daysAhead(2),
+    sentAt: null,
+    createdById: 'u-adm-02',
+    createdByName: 'Liaquat Shah',
+    createdAt: daysAgo(0),
+  },
+]
+
+/* ---------------- Platform settings (B10) ---------------- */
+
+export interface PlatformSettings {
+  platformName: string
+  supportEmail: string
+  supportPhone: string
+  defaultLanguage: 'en' | 'ur'
+  defaultPrintLanguage: 'english' | 'urdu' | 'both'
+  legalTermsEn: string
+  legalTermsUr: string
+  legalPrivacyEn: string
+  legalPrivacyUr: string
+}
+
+/** Seed settings. Legal copy matches the public /legal pages (i18n public.legal.*). */
+export const DEFAULT_PLATFORM_SETTINGS: PlatformSettings = {
+  platformName: 'PaperBuilder',
+  supportEmail: 'support@paperbuilder.example.pk',
+  supportPhone: '0800-12345',
+  defaultLanguage: 'en',
+  defaultPrintLanguage: 'both',
+  legalTermsEn: 'PaperBuilder is a school examination and paper management platform. Schools use it to build, approve and print exam papers from their own question banks.',
+  legalTermsUr: 'پیپر بلڈر اسکول امتحانات اور پرچوں کے انتظام کا پلیٹ فارم ہے۔ اسکول اس سے اپنے سوالیہ بینک سے پرچے بناتے ہیں، منظور کرواتے ہیں اور پرنٹ کرتے ہیں۔',
+  legalPrivacyEn: 'PaperBuilder stores school, teacher and student information only to run the school\'s exams and papers. It is never sold or shared with advertisers.',
+  legalPrivacyUr: 'پیپر بلڈر اسکول، استاد اور طالب علم کی معلومات صرف اسکول کے امتحانات اور پرچوں کے لیے محفوظ کرتا ہے۔ یہ کبھی فروخت نہیں ہوتیں اور مشتہرین سے شیئر نہیں کی جاتیں۔',
+}

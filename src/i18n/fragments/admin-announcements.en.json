@@ -1,0 +1,80 @@
+{
+  "admin": {
+    "announcements": {
+      "compose": "Compose",
+      "composeTitle": "New announcement",
+      "error": {
+        "body": "Check your connection and try again.",
+        "retry": "Retry",
+        "title": "Announcements could not be loaded"
+      },
+      "errors": {
+        "bodyRequired": "Enter a message.",
+        "dateRequired": "Choose a date.",
+        "planRequired": "Choose a plan.",
+        "scheduleFuture": "Choose a date in the future.",
+        "schoolRequired": "Choose a school.",
+        "submitFailed": "The announcement could not be sent. Try again.",
+        "titleRequired": "Enter a title."
+      },
+      "form": {
+        "body": "Message",
+        "bodyPlaceholder": "Write the announcement…",
+        "date": "Date",
+        "dateHint": "Sent at 09:00 on the chosen date.",
+        "plan": "Plan",
+        "planPlaceholder": "Choose a plan",
+        "reset": "Clear",
+        "schedule": "When to send",
+        "scheduleFor": "Schedule for later",
+        "school": "School",
+        "schoolPlaceholder": "Choose a school",
+        "sendNow": "Send now",
+        "submit": "Send announcement",
+        "submitScheduled": "Schedule announcement",
+        "target": "Send to",
+        "targetAll": "All schools",
+        "targetPlan": "One plan",
+        "targetSchool": "One school",
+        "title": "Title",
+        "titlePlaceholder": "For example, New paper templates are live"
+      },
+      "lead": "Send platform announcements to all schools, one plan, or one school.",
+      "loading": "Loading announcements…",
+      "preview": {
+        "bodyPlaceholder": "The message will appear here.",
+        "scheduledFor": "Scheduled for {{date}}",
+        "sendNow": "Sends now",
+        "title": "Preview",
+        "titlePlaceholder": "Announcement title",
+        "toAll": "To all schools",
+        "toPlan": "To {{plan}} schools",
+        "toSchool": "To {{school}}"
+      },
+      "scheduled": {
+        "emptyAction": "Compose",
+        "emptyBody": "Announcements scheduled for later will appear here.",
+        "emptyTitle": "No scheduled announcements",
+        "title": "Scheduled"
+      },
+      "sent": {
+        "emptyAction": "Compose",
+        "emptyBody": "Sent announcements will appear here.",
+        "emptyTitle": "No announcements sent yet",
+        "title": "Sent"
+      },
+      "table": {
+        "author": "Author",
+        "date": "Date",
+        "target": "Sent to",
+        "title": "Title"
+      },
+      "title": "Announcements",
+      "toast": {
+        "error": "Something went wrong. Try again.",
+        "scheduled": "Announcement scheduled.",
+        "sent": "Announcement sent."
+      }
+    }
+  }
+}

@@ -1,17 +1,19 @@
 import {
   SCHOOLS, TEACHERS, SUPER_ADMINS, SCHOOL_ADMINS, USERS, PAPERS, PLANS, AUDIT_EVENTS,
   NOTIFICATIONS, EXAMS, TEMPLATES, SAVED_QUESTIONS, CLASSES, SUBJECTS, CHAPTERS,
-  APPROVAL_REQUESTS,
+  APPROVAL_REQUESTS, ANNOUNCEMENTS, DEFAULT_PLATFORM_SETTINGS,
   personRole, currentMarks,
 } from '../mock/data'
 import type {
-  School, Paper, PaperStatus, Person, PersonRole, Plan, AuditEvent, AppNotification,
+  School, Paper, PaperStatus, Person, PersonRole, Plan, PlanId, AuditEvent, AppNotification,
   Exam, Template, SavedQuestion, Medium, ExamType, Term, AuditAction,
   ApprovalRequest, ApprovalRequestStatus, ApprovalTimelineEvent,
+  ApprovalMissingItem, Announcement, AnnouncementTarget, AnnouncementStatus, PlatformSettings,
 } from '../mock/data'
 import type { Session, Role, PaperFilter, Result } from './types'
 import { PAPER_TRANSITIONS, canTransition, validateTransition, type ActorRole } from './paper-transitions'
 import type { SchoolStatus } from '../mock/data'
+import { validatePlanLimits, applyPlanLimits, type PlanLimitPatch } from './plan-limits'
 
 /* ------------------------------------------------------------------
    Mock store — in-memory + localStorage persistence.
@@ -27,6 +29,18 @@ interface PersistedState {
   session: Session | null
   schoolOverrides: Record<string, SchoolStatus>
   approvalRequests: ApprovalRequest[]
+  /** B5: per-plan limit edits (applied over the PLANS seed). */
+  planOverrides: Record<string, PlanLimitPatch>
+  /** B3: per-school plan changes (school id -> plan id). */
+  schoolPlanOverrides: Record<string, PlanId>
+  /** B7: per-user status changes (user id -> status). */
+  userStatusOverrides: Record<string, Person['status']>
+  /** B7: platform users invited from the admin screen. */
+  invitedUsers: Person[]
+  /** B8: platform announcements (seed + created). */
+  announcements: Announcement[]
+  /** B10: platform settings. */
+  platformSettings: PlatformSettings
 }
 
 function loadPersisted(): PersistedState | null {
@@ -50,22 +64,38 @@ function persist(state: PersistedState) {
 }
 
 function seed(): PersistedState {
+  // Deep-copy the seed collections: the store mutates paper/request/
+  // notification objects in place, so a shallow copy would let a decision
+  // leak into the next reset (and across tests).
+  const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v))
   return {
-    papers: [...PAPERS],
-    audit: [...AUDIT_EVENTS],
-    notifications: [...NOTIFICATIONS],
+    papers: clone(PAPERS),
+    audit: clone(AUDIT_EVENTS),
+    notifications: clone(NOTIFICATIONS),
     session: loadPersisted()?.session ?? null,
     schoolOverrides: {},
-    approvalRequests: [...APPROVAL_REQUESTS],
+    approvalRequests: clone(APPROVAL_REQUESTS),
+    planOverrides: {},
+    schoolPlanOverrides: {},
+    userStatusOverrides: {},
+    invitedUsers: [],
+    announcements: clone(ANNOUNCEMENTS),
+    platformSettings: clone(DEFAULT_PLATFORM_SETTINGS),
   }
 }
 
 let state: PersistedState = loadPersisted() ?? seed()
 
-/* States persisted before approval requests existed lack the field. */
+/* States persisted before a field existed lack it — fill from seed. */
 if (!Array.isArray(state.approvalRequests)) {
   state.approvalRequests = [...APPROVAL_REQUESTS]
 }
+if (!state.planOverrides) state.planOverrides = {}
+if (!state.schoolPlanOverrides) state.schoolPlanOverrides = {}
+if (!state.userStatusOverrides) state.userStatusOverrides = {}
+if (!Array.isArray(state.invitedUsers)) state.invitedUsers = []
+if (!Array.isArray(state.announcements)) state.announcements = [...ANNOUNCEMENTS]
+if (!state.platformSettings) state.platformSettings = { ...DEFAULT_PLATFORM_SETTINGS }
 
 function save() {
   persist(state)
@@ -119,6 +149,7 @@ function listSchools(): School[] {
     return {
       ...s,
       status: state.schoolOverrides[s.id] ?? s.status,
+      plan: state.schoolPlanOverrides[s.id] ?? s.plan,
       teacherCount: teachers.length,
       paperCount: papers.length,
     }
@@ -127,6 +158,16 @@ function listSchools(): School[] {
 
 function getSchool(id: string): School | undefined {
   return listSchools().find(s => s.id === id)
+}
+
+/** Find a seeded school by its (display) name — links an approval request to its school row. */
+function getSchoolByName(name: string): School | undefined {
+  return listSchools().find(s => s.name.toLowerCase() === name.toLowerCase())
+}
+
+/** Quiet status change used by approval decisions (writes no audit of its own). */
+function setSchoolStatusQuiet(id: string, status: School['status']) {
+  state.schoolOverrides[id] = status
 }
 
 function setSchoolStatus(id: string, status: School['status'], actor: Person): Result<School> {
@@ -150,6 +191,27 @@ function setSchoolStatus(id: string, status: School['status'], actor: Person): R
   })
   save()
   return { ok: true, value: { ...school, status } }
+}
+
+/** Change a school's plan (B3). Writes a school.plan-changed audit event. */
+function setSchoolPlan(id: string, planId: PlanId, actor: Person): Result<School> {
+  const school = getSchool(id)
+  if (!school) return { ok: false, error: 'School not found' }
+  if (!PLANS.some(p => p.id === planId)) return { ok: false, error: 'Unknown plan' }
+  if (school.plan === planId) return { ok: false, error: 'School is already on this plan' }
+  state.schoolPlanOverrides[id] = planId
+  state.audit.unshift({
+    id: `aud-${Date.now().toString(36)}`,
+    actorId: actor.id,
+    actorName: actor.name,
+    action: 'school.plan-changed',
+    targetType: 'school',
+    targetId: school.id,
+    targetLabel: school.name,
+    createdAt: new Date().toISOString(),
+  })
+  save()
+  return { ok: true, value: { ...school, plan: planId } }
 }
 
 /* ---------------- Papers ---------------- */
@@ -393,7 +455,7 @@ function createApprovalRequest(input: {
 
 function updateApprovalRequest(
   id: string,
-  patch: Partial<Pick<ApprovalRequest, 'status' | 'missingItems' | 'rejectionReason' | 'documentNames'>>,
+  patch: Partial<Pick<ApprovalRequest, 'status' | 'missingItems' | 'rejectionReason' | 'documentNames' | 'internalNotes'>>,
   timelineType?: ApprovalTimelineEvent['type'],
 ): ApprovalRequest | undefined {
   const request = getApprovalRequest(id)
@@ -446,6 +508,239 @@ function resubmitApprovalRequest(
   return request
 }
 
+export type ApprovalDecision = 'approved' | 'info-requested' | 'rejected'
+
+/**
+ * Super Admin decision on an approval request (B4). This is the one place
+ * that changes what the school sees on /request-status: the request status
+ * flips, the timeline gains an event, and the matching school row follows
+ * (approved -> active, rejected -> rejected). Every decision writes one
+ * audit event. Info-requested requires missingItems; rejected requires a
+ * reason; both are validated here so the UI cannot send an empty one.
+ */
+function decideApprovalRequest(
+  id: string,
+  decision: ApprovalDecision,
+  actor: Person,
+  opts: { missingItems?: ApprovalMissingItem[]; rejectionReason?: string; internalNotes?: string } = {},
+): Result<ApprovalRequest> {
+  const request = getApprovalRequest(id)
+  if (!request) return { ok: false, error: 'Request not found' }
+  if (request.status !== 'pending' && request.status !== 'info-requested') {
+    return { ok: false, error: 'Request already decided' }
+  }
+  if (decision === 'info-requested' && (!opts.missingItems || opts.missingItems.length === 0)) {
+    return { ok: false, error: 'Choose what is missing' }
+  }
+  if (decision === 'rejected' && !opts.rejectionReason?.trim()) {
+    return { ok: false, error: 'A reason is required' }
+  }
+  const status: ApprovalRequestStatus = decision === 'approved' ? 'approved' : decision
+  const timelineType: ApprovalTimelineEvent['type'] = decision
+  request.status = status
+  request.missingItems = decision === 'info-requested' ? opts.missingItems : undefined
+  request.rejectionReason = decision === 'rejected' ? opts.rejectionReason!.trim() : undefined
+  if (opts.internalNotes !== undefined) request.internalNotes = opts.internalNotes
+  request.timeline.push({
+    id: `tl-${Date.now().toString(36)}`,
+    type: timelineType,
+    at: new Date().toISOString(),
+  })
+  // The school row follows the decision (quiet — the audit below is the record).
+  const school = getSchoolByName(request.schoolName)
+  if (school) {
+    if (decision === 'approved') setSchoolStatusQuiet(school.id, 'active')
+    if (decision === 'rejected') setSchoolStatusQuiet(school.id, 'rejected')
+  }
+  const action: AuditAction = decision === 'approved' ? 'school.approved'
+    : decision === 'rejected' ? 'school.rejected' : 'school.info-requested'
+  state.audit.unshift({
+    id: `aud-${Date.now().toString(36)}`,
+    actorId: actor.id,
+    actorName: actor.name,
+    action,
+    targetType: 'school',
+    targetId: school?.id ?? request.id,
+    targetLabel: request.schoolName,
+    createdAt: new Date().toISOString(),
+  })
+  save()
+  return { ok: true, value: request }
+}
+
+/* ---------------- Plans & limits (B5) ---------------- */
+
+/** Plans with any Super Admin limit edits applied. */
+function listPlans(): Plan[] {
+  return PLANS.map(p => {
+    const override = state.planOverrides[p.id]
+    return override ? applyPlanLimits(p, override) : p
+  })
+}
+
+function getPlan(id: PlanId): Plan | undefined {
+  return listPlans().find(p => p.id === id)
+}
+
+/**
+ * Edit a plan's limits (B5). Validated by validatePlanLimits; on success
+ * the override is stored and a plan.limit-changed audit event is written.
+ * Returns the error keys from the validator when invalid.
+ */
+function updatePlanLimit(
+  planId: PlanId,
+  patch: PlanLimitPatch,
+  actor: Person,
+): Result<{ plan: Plan; errors: string[] }> {
+  const plan = getPlan(planId)
+  if (!plan) return { ok: false, error: 'Plan not found' }
+  const errors = validatePlanLimits(plan, patch)
+  if (errors.length > 0) return { ok: false, error: errors.join(',') }
+  state.planOverrides[planId] = { ...(state.planOverrides[planId] ?? {}), ...patch }
+  const updated = applyPlanLimits(plan, patch)
+  state.audit.unshift({
+    id: `aud-${Date.now().toString(36)}`,
+    actorId: actor.id,
+    actorName: actor.name,
+    action: 'plan.limit-changed',
+    targetType: 'plan',
+    targetId: plan.id,
+    targetLabel: plan.name,
+    createdAt: new Date().toISOString(),
+  })
+  save()
+  return { ok: true, value: { plan: updated, errors: [] } }
+}
+
+/* ---------------- Platform users (B7) ---------------- */
+
+/** All platform users: seeded users + invited users, with status overrides applied. */
+function listUsers(): Person[] {
+  const all = [...USERS, ...state.invitedUsers]
+  return all.map(u => ({ ...u, status: state.userStatusOverrides[u.id] ?? u.status }))
+}
+
+function getUser(id: string): Person | undefined {
+  return listUsers().find(u => u.id === id)
+}
+
+/** Invite a platform user (Super Admin staff). Starts as 'invited'. */
+function inviteUser(input: { name: string; email: string; role: PersonRole }, actor: Person): Result<Person> {
+  const name = input.name.trim()
+  const email = input.email.trim().toLowerCase()
+  if (!name || !email) return { ok: false, error: 'Name and email are required' }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: 'Enter a valid email' }
+  if (listUsers().some(u => u.email.toLowerCase() === email)) return { ok: false, error: 'This email is already invited' }
+  const user: Person = {
+    id: `u-inv-${Date.now().toString(36)}`,
+    name,
+    email,
+    role: input.role,
+    schoolId: null,
+    status: 'invited',
+    joinedDaysAgo: 0,
+    subjects: [],
+    classes: [],
+  }
+  state.invitedUsers.push(user)
+  state.audit.unshift({
+    id: `aud-${Date.now().toString(36)}`,
+    actorId: actor.id,
+    actorName: actor.name,
+    action: 'user.invited',
+    targetType: 'user',
+    targetId: user.id,
+    targetLabel: user.name,
+    createdAt: new Date().toISOString(),
+  })
+  save()
+  return { ok: true, value: user }
+}
+
+/** Deactivate (or reactivate) a platform user. Writes a user.deactivated audit event on deactivate. */
+function setUserStatus(id: string, status: Person['status'], actor: Person): Result<Person> {
+  const user = getUser(id)
+  if (!user) return { ok: false, error: 'User not found' }
+  if (user.status === status) return { ok: false, error: 'User is already in this state' }
+  state.userStatusOverrides[id] = status
+  if (status === 'inactive') {
+    state.audit.unshift({
+      id: `aud-${Date.now().toString(36)}`,
+      actorId: actor.id,
+      actorName: actor.name,
+      action: 'user.deactivated',
+      targetType: 'user',
+      targetId: user.id,
+      targetLabel: user.name,
+      createdAt: new Date().toISOString(),
+    })
+  }
+  save()
+  return { ok: true, value: { ...user, status } }
+}
+
+/* ---------------- Announcements (B8) ---------------- */
+
+function listAnnouncements(): Announcement[] {
+  return [...state.announcements].sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+}
+
+function createAnnouncement(
+  input: {
+    title: string; body: string
+    targetType: AnnouncementTarget; targetPlanId?: PlanId; targetSchoolId?: string
+    scheduledAt: string | null
+  },
+  actor: Person,
+): Result<Announcement> {
+  const title = input.title.trim()
+  const body = input.body.trim()
+  if (!title || !body) return { ok: false, error: 'Title and message are required' }
+  if (input.targetType === 'plan' && !input.targetPlanId) return { ok: false, error: 'Choose a plan' }
+  if (input.targetType === 'school' && !input.targetSchoolId) return { ok: false, error: 'Choose a school' }
+  const now = new Date().toISOString()
+  const scheduled = input.scheduledAt && input.scheduledAt > now
+  const announcement: Announcement = {
+    id: `ann-${Date.now().toString(36)}`,
+    title,
+    body,
+    targetType: input.targetType,
+    targetPlanId: input.targetPlanId,
+    targetSchoolId: input.targetSchoolId,
+    status: scheduled ? 'scheduled' : 'sent',
+    scheduledAt: scheduled ? input.scheduledAt : null,
+    sentAt: scheduled ? null : now,
+    createdById: actor.id,
+    createdByName: actor.name,
+    createdAt: now,
+  }
+  state.announcements.unshift(announcement)
+  state.audit.unshift({
+    id: `aud-${Date.now().toString(36)}`,
+    actorId: actor.id,
+    actorName: actor.name,
+    action: scheduled ? 'announcement.scheduled' : 'announcement.published',
+    targetType: 'announcement',
+    targetId: announcement.id,
+    targetLabel: announcement.title,
+    createdAt: now,
+  })
+  save()
+  return { ok: true, value: announcement }
+}
+
+/* ---------------- Platform settings (B10) ---------------- */
+
+function getPlatformSettings(): PlatformSettings {
+  return { ...state.platformSettings }
+}
+
+function updatePlatformSettings(patch: Partial<PlatformSettings>): PlatformSettings {
+  state.platformSettings = { ...state.platformSettings, ...patch }
+  save()
+  return { ...state.platformSettings }
+}
+
 /* ---------------- Facade ---------------- */
 
 export const AuthService = {
@@ -461,6 +756,7 @@ export const SchoolService = {
   list: listSchools,
   get: getSchool,
   setStatus: setSchoolStatus,
+  setPlan: setSchoolPlan,
   listTeachers: (schoolId: string) => TEACHERS.filter(t => t.schoolId === schoolId),
   listAdmins: (schoolId: string) => SCHOOL_ADMINS.filter(a => a.schoolId === schoolId),
 } as const
@@ -487,12 +783,21 @@ export const ApprovalRequestService = {
   getLatest: getLatestApprovalRequest,
   create: createApprovalRequest,
   update: updateApprovalRequest,
+  decide: decideApprovalRequest,
   resubmit: resubmitApprovalRequest,
   nextReference: nextApprovalReference,
 } as const
 
 export const PlatformService = {
-  listPlans: () => PLANS,
+  listPlans,
+  updatePlanLimit,
+  listUsers,
+  inviteUser,
+  setUserStatus,
+  listAnnouncements,
+  createAnnouncement,
+  getSettings: getPlatformSettings,
+  updateSettings: updatePlatformSettings,
   listAudit,
   listNotifications,
   markNotificationRead,
@@ -508,16 +813,21 @@ export const PlatformService = {
 /** Reset mock mutations back to seed (demo helper). */
 export function resetMockData() {
   state = seed()
-  localStorage.removeItem(STORAGE_KEY)
+  try {
+    localStorage.removeItem(STORAGE_KEY)
+  } catch {
+    /* no localStorage in the test environment — in-memory reset is enough */
+  }
 }
 
 export {
   SCHOOLS, TEACHERS, SUPER_ADMINS, SCHOOL_ADMINS, USERS, PAPERS, PLANS, AUDIT_EVENTS,
   NOTIFICATIONS, EXAMS, TEMPLATES, SAVED_QUESTIONS, CLASSES, SUBJECTS, CHAPTERS,
-  APPROVAL_REQUESTS,
+  APPROVAL_REQUESTS, ANNOUNCEMENTS, DEFAULT_PLATFORM_SETTINGS,
   personRole, currentMarks,
 }
 export type {
-  School, Paper, PaperStatus, Person, PersonRole, Plan, AuditEvent, AppNotification,
+  School, Paper, PaperStatus, Person, PersonRole, Plan, PlanId, AuditEvent, AppNotification,
   Exam, Template, SavedQuestion, ApprovalRequest, ApprovalRequestStatus,
+  Announcement, AnnouncementTarget, AnnouncementStatus, PlatformSettings,
 }

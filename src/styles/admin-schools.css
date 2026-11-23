@@ -1,0 +1,67 @@
+/* Super Admin schools list — Phase 3 B2. Daftar tokens only, logical properties only. */
+
+.admin-schools__filters {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 12px;
+  align-items: end;
+  margin-block-end: 12px;
+}
+
+.admin-schools__filters .pb-field {
+  margin-block: 0;
+}
+
+/* Design-system inputs are 40px; admin touch targets are 44px. */
+.admin-schools__filters .pb-select,
+.admin-schools__filters .pb-search {
+  min-height: 44px;
+}
+
+.admin-schools__count {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.admin-schools__name {
+  font-weight: 600;
+  color: var(--ink-700);
+  text-decoration: none;
+}
+
+.admin-schools__name:hover {
+  text-decoration: underline;
+}
+
+.admin-schools__name:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+.admin-schools__error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.admin-schools__error .pb-btn {
+  min-height: 44px;
+}
+
+.admin-schools__loading .admin-schools__filters {
+  margin-block-end: 16px;
+}
+
+@media (max-width: 768px) {
+  .admin-schools__filters {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-schools__filters {
+    grid-template-columns: 1fr;
+  }
+}

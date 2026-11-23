@@ -1,0 +1,78 @@
+/* ------------------------------------------------------------------
+   Platform users (B7). Daftar tokens only; logical properties only.
+   No scroll-reveal. Touch targets are 44px or taller.
+------------------------------------------------------------------- */
+
+.admin-users {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-block: 32px 64px;
+  padding-inline: 24px;
+}
+
+.admin-users__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-block-start: 24px;
+}
+
+.admin-users__filters {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.5fr) minmax(160px, 1fr) minmax(160px, 1fr);
+  gap: 16px;
+  align-items: end;
+  margin-block: 24px 16px;
+}
+
+/* 44px touch targets on the filter controls (design-system base is 40px). */
+.admin-users__filters .pb-search__input,
+.admin-users__filters .pb-select {
+  min-height: 44px;
+}
+
+.admin-users__filters .pb-field {
+  margin: 0;
+}
+
+.admin-users__name {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: var(--ink-900);
+}
+
+/* Row actions meet the 44px touch target (design-system base is 40px). */
+.admin-users__row-action {
+  min-height: 44px;
+}
+
+.admin-users__banner-action {
+  margin-block-start: 12px;
+}
+
+.admin-users__dialog-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-users__confirm-body {
+  margin: 0;
+  color: var(--ink-900);
+  font-size: var(--text-base);
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .admin-users {
+    padding-block: 24px 48px;
+    padding-inline: 16px;
+  }
+
+  .admin-users__filters {
+    grid-template-columns: 1fr;
+  }
+}

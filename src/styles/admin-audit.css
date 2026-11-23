@@ -1,0 +1,113 @@
+/* ------------------------------------------------------------------
+   Super Admin — Audit log (B9).
+   Logical properties only; Daftar tokens only. No scroll-reveal.
+------------------------------------------------------------------- */
+
+.admin-audit {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-block: 32px 64px;
+  padding-inline: 24px;
+}
+
+.admin-audit__filters {
+  margin-block-end: 16px;
+  padding: 20px 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--paper);
+}
+
+.admin-audit__filters-title {
+  margin: 0 0 16px;
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--ink-900);
+}
+
+.admin-audit__filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  align-items: end;
+}
+
+.admin-audit__filters-actions {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.admin-audit__filters-actions .pb-btn {
+  min-height: 44px;
+}
+
+.admin-audit__count {
+  margin: 0 0 12px;
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.admin-audit__table-card {
+  padding: 20px 24px 24px;
+}
+
+.admin-audit__target-label {
+  color: var(--ink-900);
+  overflow-wrap: anywhere;
+}
+
+.admin-audit__target-type {
+  display: block;
+  margin-block-start: 2px;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.admin-audit__pagination {
+  display: flex;
+  justify-content: center;
+  margin-block-start: 20px;
+}
+
+.admin-audit__pagination .pb-pagination__btn {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.admin-audit__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-audit__error {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.admin-audit__empty {
+  padding: 8px 24px;
+}
+
+@media (max-width: 560px) {
+  .admin-audit {
+    padding-block: 24px 48px;
+    padding-inline: 16px;
+  }
+
+  .admin-audit__filters {
+    padding: 16px;
+  }
+
+  .admin-audit__filters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-audit__table-card {
+    padding: 16px;
+  }
+}

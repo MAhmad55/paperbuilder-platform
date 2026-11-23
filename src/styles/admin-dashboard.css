@@ -1,0 +1,163 @@
+/* Super Admin dashboard — Phase 3 B1. Daftar tokens only, logical properties only. */
+
+.admin-dash__kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-block-end: 24px;
+}
+
+.admin-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 44px;
+  padding: 16px;
+  background: var(--paper);
+  border: var(--border-card);
+  border-radius: var(--radius-card);
+  color: var(--ink-900);
+  text-decoration: none;
+}
+
+a.admin-kpi:hover {
+  border-color: var(--ink-700);
+}
+
+a.admin-kpi:focus-visible,
+.admin-kpi a:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+/* Approvals waiting is the primary KPI: red-pen marker on the leading edge. */
+.admin-kpi--primary {
+  border-inline-start: 3px solid var(--pen-600);
+}
+
+.admin-kpi--primary .admin-kpi__value {
+  color: var(--pen-600);
+}
+
+.admin-kpi__main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.admin-kpi__main:hover .admin-kpi__label {
+  color: var(--ink-700);
+  text-decoration: underline;
+}
+
+.admin-kpi__value {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.admin-kpi__label {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.admin-kpi__rows {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 8px 0 0;
+  border-block-start: 1px solid var(--line);
+}
+
+.admin-kpi__rows a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+  font-size: var(--text-sm);
+  color: var(--ink-900);
+  text-decoration: none;
+}
+
+.admin-kpi__rows a:hover {
+  color: var(--ink-700);
+  text-decoration: underline;
+}
+
+.admin-activity {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-activity__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  padding-block: 12px;
+  border-block-end: 1px solid var(--line);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.admin-activity__item:last-child {
+  border-block-end: none;
+}
+
+.admin-activity__actor {
+  font-weight: 600;
+}
+
+.admin-activity__target {
+  color: var(--muted);
+}
+
+.admin-activity__time {
+  margin-inline-start: auto;
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.admin-activity__more {
+  display: flex;
+  justify-content: flex-start;
+  padding-block-start: 12px;
+}
+
+.admin-dash__error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.admin-dash__error .pb-btn {
+  min-height: 44px;
+}
+
+.admin-dash__loading .admin-kpi {
+  gap: 8px;
+}
+
+@media (max-width: 768px) {
+  .admin-dash__kpis {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .admin-activity__time {
+    margin-inline-start: 0;
+    flex-basis: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-dash__kpis {
+    grid-template-columns: 1fr;
+  }
+}

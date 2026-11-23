@@ -7,7 +7,7 @@ const ROLE_SESSIONS: Record<string, { userId: string; schoolId: string | null }>
 }
 
 const ROLE_ROUTES: Record<string, string[]> = {
-  'super-admin': ['/admin', '/admin/schools', '/admin/approvals', '/admin/plans', '/admin/bank', '/admin/users', '/admin/announcements', '/admin/audit', '/admin/settings'],
+  'super-admin': ['/admin', '/admin/schools', '/admin/schools/sch-beacon', '/admin/approvals', '/admin/plans', '/admin/bank', '/admin/users', '/admin/announcements', '/admin/audit', '/admin/settings'],
   'school-admin': ['/school', '/school/approvals', '/school/teachers', '/school/classes', '/school/calendar', '/school/papers', '/school/templates', '/school/reports', '/school/settings'],
   teacher: ['/teacher', '/teacher/studio', '/teacher/papers', '/teacher/templates', '/teacher/questions'],
 }
@@ -30,7 +30,9 @@ async function scanVisibleText(page: Page) {
       if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') return
       const isLeaf = el.children.length === 0
       const text = (el.textContent ?? '').trim()
-      if (isLeaf && text && re.test(text)) {
+      // File names are data, not UI copy: registration-certificate.pdf etc.
+      const isFileName = /\.(pdf|docx?|xlsx?|csv|txt|png|jpe?g|webp)$/i.test(text)
+      if (isLeaf && text && !isFileName && re.test(text)) {
         out.push({ text, tag: el.tagName.toLowerCase() })
       }
       for (const child of Array.from(el.children)) walk(child)
