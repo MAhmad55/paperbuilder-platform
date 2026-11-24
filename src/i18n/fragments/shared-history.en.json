@@ -1,0 +1,71 @@
+{
+  "shared": {
+    "history": {
+      "actions": {
+        "announcement.published": "Announcement published",
+        "announcement.scheduled": "Announcement scheduled",
+        "approved": "Paper approved",
+        "archived": "Paper archived",
+        "changes-requested": "Changes requested",
+        "created": "Paper created",
+        "edited": "Paper edited",
+        "in-review": "Paper in review",
+        "paper.approved": "Paper approved",
+        "paper.archived": "Paper archived",
+        "paper.changes-requested": "Changes requested",
+        "paper.in-review": "Paper in review",
+        "paper.printed": "Paper printed",
+        "paper.submitted": "Paper submitted",
+        "plan.limit-changed": "Plan limit changed",
+        "printed": "Paper printed",
+        "school.approved": "School approved",
+        "school.info-requested": "Information requested",
+        "school.plan-changed": "School plan changed",
+        "school.plan-upgrade-requested": "Plan upgrade requested",
+        "school.reactivated": "School reactivated",
+        "school.rejected": "School rejected",
+        "school.settings-changed": "School settings changed",
+        "school.suspended": "School suspended",
+        "submitted": "Paper submitted",
+        "teacher.assignment-changed": "Teacher assignment changed",
+        "teacher.invited": "Teacher invited",
+        "template.created": "Template created",
+        "template.default-changed": "Default template changed",
+        "user.deactivated": "User deactivated",
+        "user.invited": "User invited",
+        "user.password-changed": "Password changed",
+        "user.profile-updated": "Profile updated"
+      },
+      "count": "{{count}} activities",
+      "emptyBody": "Nothing happened in this period. Change the filters or come back later.",
+      "emptyClear": "Clear filters",
+      "emptyTitle": "No activity found",
+      "error": {
+        "body": "Try again — your history is unchanged.",
+        "title": "History could not be loaded"
+      },
+      "filters": {
+        "all": "All activity",
+        "approval": "Approvals",
+        "clear": "Clear filters",
+        "edit": "Edits",
+        "fromLabel": "From",
+        "paper": "Papers created",
+        "print": "Printed",
+        "school": "Schools and people",
+        "searchPlaceholder": "Search by name",
+        "system": "Other",
+        "toLabel": "To",
+        "typeLabel": "Activity type"
+      },
+      "lead": "Everything you did — papers, approvals, prints and changes.",
+      "listTitle": "Your activity",
+      "title": "History",
+      "open": "Open",
+      "sort": {
+        "newest": "Newest first",
+        "oldest": "Oldest first"
+      }
+    }
+  }
+}

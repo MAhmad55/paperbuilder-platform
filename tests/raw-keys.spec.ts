@@ -12,7 +12,7 @@ const ROLE_ROUTES: Record<string, string[]> = {
   teacher: ['/teacher', '/teacher/studio', '/teacher/papers', '/teacher/papers/paper-001', '/teacher/templates', '/teacher/questions'],
 }
 
-const SHARED_ROUTES = ['/design-system', '/foundation-test', '/profile', '/settings', '/history', '/notifications', '/session-expired', '/does-not-exist']
+const SHARED_ROUTES = ['/design-system', '/foundation-test', '/profile', '/settings', '/history', '/notifications', '/help', '/system-states', '/session-expired', '/does-not-exist']
 
 /** Phase 2 public & access screens — no session, language only. */
 const PUBLIC_ROUTES = ['/', '/sign-in', '/request-access', '/request-status', '/forgot-password', '/invite', '/legal/terms', '/legal/privacy', '/public-preview']

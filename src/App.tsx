@@ -1,6 +1,5 @@
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import { type ReactNode } from 'react'
-import { useTranslation } from 'react-i18next'
 import { AuthProvider, useAuth } from './shell/AuthContext'
 import { ToastProvider } from './design-system'
 import { AppShell } from './shell/AppShell'
@@ -14,7 +13,6 @@ import { LegalPage } from './pages/LegalPage'
 import { PublicPreviewPage } from './pages/PublicPreviewPage'
 import { DesignSystemPage } from './pages/DesignSystemPage'
 import { FoundationTestPage } from './pages/FoundationTestPage'
-import { PlaceholderPage } from './pages/PlaceholderPage'
 import { SystemStatePage } from './pages/SystemStatePage'
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage'
 import { AdminSchoolsPage } from './pages/admin/AdminSchoolsPage'
@@ -42,6 +40,12 @@ import { TeacherPapersPage } from './pages/teacher/TeacherPapersPage'
 import { TeacherPaperDetailPage } from './pages/teacher/TeacherPaperDetailPage'
 import { TeacherTemplatesPage } from './pages/teacher/TeacherTemplatesPage'
 import { TeacherSavedQuestionsPage } from './pages/teacher/TeacherSavedQuestionsPage'
+import { ProfilePage } from './pages/shared/ProfilePage'
+import { SettingsPage } from './pages/shared/SettingsPage'
+import { HistoryPage } from './pages/shared/HistoryPage'
+import { NotificationsPage } from './pages/shared/NotificationsPage'
+import { HelpPage } from './pages/shared/HelpPage'
+import { SystemStatesPage } from './pages/shared/SystemStatesPage'
 
 import type { Role } from './services/types'
 
@@ -75,22 +79,6 @@ function RequireRole({ role, children }: { role: Role; children?: ReactNode }) {
   if (!currentRole) return <Navigate to="/sign-in" replace />
   if (currentRole !== role) return <SystemStatePage kind="no-permission" />
   return <>{children ?? <Outlet />}</>
-}
-
-/* ------------------------------------------------------------------
-   Role-gated placeholder routes
------------------------------------------------------------------- */
-
-function AnyPlaceholder({ titleKey }: { titleKey: string }) {
-  const { t } = useTranslation()
-  const { role } = useAuth()
-  if (!role) return <Navigate to="/sign-in" replace />
-  const title = t(titleKey)
-  const breadcrumb = [
-    { label: t('nav.dashboard'), to: roleHome(role) },
-    { label: title },
-  ]
-  return <PlaceholderPage title={title} breadcrumb={breadcrumb} />
 }
 
 /* ------------------------------------------------------------------
@@ -150,10 +138,14 @@ export function App() {
               <Route path="/teacher/templates" element={<TeacherTemplatesPage />} />
               <Route path="/teacher/questions" element={<TeacherSavedQuestionsPage />} />
             </Route>
-            <Route path="/profile" element={<AnyPlaceholder titleKey="shell.profile" />} />
-            <Route path="/settings" element={<AnyPlaceholder titleKey="shell.settings" />} />
-            <Route path="/history" element={<AnyPlaceholder titleKey="shell.history" />} />
-            <Route path="/notifications" element={<AnyPlaceholder titleKey="shell.notifications" />} />
+            {/* Shared screens (Phase 6, blueprint 4.5) — role-neutral paths,
+                any authenticated role; the shell rail links them for all roles. */}
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/history" element={<HistoryPage />} />
+            <Route path="/notifications" element={<NotificationsPage />} />
+            <Route path="/help" element={<HelpPage />} />
+            <Route path="/system-states" element={<SystemStatesPage />} />
             <Route path="/session-expired" element={<SystemStatePage kind="session-expired" />} />
             <Route path="*" element={<SystemStatePage kind="not-found" />} />
           </Route>

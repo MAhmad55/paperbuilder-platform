@@ -246,7 +246,9 @@
     "sessionExpiredLead": "Your session has ended. Please sign in again.",
     "maintenance": "Maintenance",
     "maintenanceLead": "We are doing maintenance. Back shortly.",
-    "goHome": "Go home"
+    "goHome": "Go home",
+    "signInAgain": "Sign in again",
+    "tryAgain": "Try again"
   },
   "error": {
     "title": "Something went wrong",
@@ -1010,7 +1012,9 @@
         "empty": "No requests waiting for approval",
         "review": "Review",
         "title": "Next in the queue"
-      }
+      },
+      "userProfileUpdated": "Profile updated",
+      "userPasswordChanged": "Password changed"
     },
     "schools": {
       "columns": {
@@ -2189,6 +2193,261 @@
         "history": "History",
         "paper": "Paper"
       }
+    }
+  },
+  "shared": {
+    "profile": {
+      "avatar": {
+        "amber": "Amber",
+        "green": "Green",
+        "initials": "Initials only",
+        "navy": "Navy",
+        "note": "Choose a colour for your initials. Photo upload comes with the real accounts.",
+        "red": "Red",
+        "title": "Photo"
+      },
+      "cardTitle": "Your profile",
+      "classesEmpty": "No classes assigned yet.",
+      "classesTitle": "Classes you teach",
+      "email": "Email",
+      "error": {
+        "body": "Try again — your saved details are unchanged.",
+        "title": "Profile could not be loaded"
+      },
+      "errors": {
+        "emailInvalid": "Enter a valid email address.",
+        "nameRequired": "Enter your name.",
+        "phoneInvalid": "Enter a valid phone number."
+      },
+      "lead": "Your name, photo, subjects and contact details.",
+      "name": "Full name",
+      "noSchool": "No school assigned",
+      "password": {
+        "change": "Change password",
+        "changed": "Password changed.",
+        "confirm": "Repeat new password",
+        "current": "Current password",
+        "errors": {
+          "currentRequired": "Enter your current password.",
+          "mismatch": "The new passwords do not match.",
+          "sameAsCurrent": "The new password must be different from the current one.",
+          "tooShort": "The new password must be at least 8 characters."
+        },
+        "next": "New password",
+        "title": "Change password"
+      },
+      "phone": "Phone",
+      "phoneHelper": "Optional. Used only to contact you about your papers.",
+      "role": "Role",
+      "save": "Save profile",
+      "saved": "Profile saved.",
+      "school": "School",
+      "scopeSchoolAdmin": "You manage this school and its teachers.",
+      "scopeSuperAdmin": "You manage every school on the platform.",
+      "scopeTeacher": "You teach the subjects and classes below.",
+      "scopeTitle": "Your scope",
+      "subjectsEmpty": "No subjects assigned yet.",
+      "subjectsTitle": "Subjects you teach",
+      "title": "Profile"
+    },
+    "settings": {
+      "empty": {
+        "body": "Nothing is saved yet. Restore the recommended defaults to start.",
+        "restore": "Restore defaults",
+        "title": "No preferences saved"
+      },
+      "error": {
+        "body": "Try again — your saved settings are unchanged.",
+        "title": "Settings could not be loaded"
+      },
+      "font": {
+        "label": "Text size",
+        "large": "Large",
+        "note": "Large text makes labels and lists easier to read on small screens.",
+        "standard": "Standard",
+        "title": "Text size"
+      },
+      "language": {
+        "english": "English",
+        "label": "Interface language",
+        "note": "Switches the whole app, including the menu and buttons.",
+        "title": "Language",
+        "urdu": "Urdu"
+      },
+      "lead": "Language, printing and notifications — saved for your account.",
+      "notifications": {
+        "announcements": "Announcements",
+        "approvals": "Approvals",
+        "comments": "Comments on your papers",
+        "invitations": "Invitations",
+        "note": "Turned-off types stay in your Notifications list, marked as read.",
+        "title": "Notifications"
+      },
+      "print": {
+        "both": "Urdu and English",
+        "english": "English only",
+        "label": "Default print language",
+        "note": "Used when a paper is printed without choosing a language.",
+        "title": "Printing",
+        "urdu": "Urdu only"
+      },
+      "reset": "Reset to defaults",
+      "resetDone": "Settings reset to defaults.",
+      "saved": "Settings saved.",
+      "title": "Settings"
+    },
+    "history": {
+      "actions": {
+        "announcement.published": "Announcement published",
+        "announcement.scheduled": "Announcement scheduled",
+        "approved": "Paper approved",
+        "archived": "Paper archived",
+        "changes-requested": "Changes requested",
+        "created": "Paper created",
+        "edited": "Paper edited",
+        "in-review": "Paper in review",
+        "paper.approved": "Paper approved",
+        "paper.archived": "Paper archived",
+        "paper.changes-requested": "Changes requested",
+        "paper.in-review": "Paper in review",
+        "paper.printed": "Paper printed",
+        "paper.submitted": "Paper submitted",
+        "plan.limit-changed": "Plan limit changed",
+        "printed": "Paper printed",
+        "school.approved": "School approved",
+        "school.info-requested": "Information requested",
+        "school.plan-changed": "School plan changed",
+        "school.plan-upgrade-requested": "Plan upgrade requested",
+        "school.reactivated": "School reactivated",
+        "school.rejected": "School rejected",
+        "school.settings-changed": "School settings changed",
+        "school.suspended": "School suspended",
+        "submitted": "Paper submitted",
+        "teacher.assignment-changed": "Teacher assignment changed",
+        "teacher.invited": "Teacher invited",
+        "template.created": "Template created",
+        "template.default-changed": "Default template changed",
+        "user.deactivated": "User deactivated",
+        "user.invited": "User invited",
+        "user.password-changed": "Password changed",
+        "user.profile-updated": "Profile updated"
+      },
+      "count": "{{count}} activities",
+      "emptyBody": "Nothing happened in this period. Change the filters or come back later.",
+      "emptyClear": "Clear filters",
+      "emptyTitle": "No activity found",
+      "error": {
+        "body": "Try again — your history is unchanged.",
+        "title": "History could not be loaded"
+      },
+      "filters": {
+        "all": "All activity",
+        "approval": "Approvals",
+        "clear": "Clear filters",
+        "edit": "Edits",
+        "fromLabel": "From",
+        "paper": "Papers created",
+        "print": "Printed",
+        "school": "Schools and people",
+        "searchPlaceholder": "Search by name",
+        "system": "Other",
+        "toLabel": "To",
+        "typeLabel": "Activity type"
+      },
+      "lead": "Everything you did — papers, approvals, prints and changes.",
+      "listTitle": "Your activity",
+      "title": "History",
+      "open": "Open",
+      "sort": {
+        "newest": "Newest first",
+        "oldest": "Oldest first"
+      }
+    },
+    "notifications": {
+      "allRead": "All caught up",
+      "count": "{{count}} unread",
+      "emptyBody": "When someone approves your paper or comments on it, it shows up here.",
+      "emptyTitle": "No notifications yet",
+      "error": {
+        "body": "Try again — your notifications are unchanged.",
+        "title": "Notifications could not be loaded"
+      },
+      "lead": "Approvals, comments, announcements and invitations.",
+      "markAll": "Mark all read",
+      "markRead": "Mark as read",
+      "markedAll": "All notifications marked as read.",
+      "noTarget": "This announcement has no page of its own in the demo.",
+      "read": "Read",
+      "title": "Notifications",
+      "types": {
+        "announcement": "Announcement",
+        "approval": "Approval",
+        "comment": "Comment",
+        "invitation": "Invitation"
+      },
+      "unread": "Unread"
+    },
+    "help": {
+      "error": {
+        "body": "Try again.",
+        "title": "Help could not be loaded"
+      },
+      "guides": {
+        "announce": {
+          "a": "Open Announcements, write a short title and message, choose who it is for, and send it now or schedule it. Sent announcements appear in every targeted user's Notifications.",
+          "q": "How do I send an announcement?"
+        },
+        "approvePaper": {
+          "a": "Open Approvals, read the paper preview, then Approve it or Request changes with a comment. The teacher sees your comment on the paper.",
+          "q": "How do I approve a paper?"
+        },
+        "approveSchool": {
+          "a": "Open the Approval queue, read the school's details and documents, then Approve it, ask for missing information, or Reject it with a reason.",
+          "q": "How do I approve a school?"
+        },
+        "buildPaper": {
+          "a": "Open the Paper Studio, pick the class, subject and chapters, set the marks pattern, and let it fill the questions. Save a draft any time — it is saved automatically.",
+          "q": "How do I build a paper?"
+        },
+        "inviteTeacher": {
+          "a": "Open Teachers, then Invite teacher, and enter the teacher's name and email. They join with the invitation link and appear as invited until they sign in.",
+          "q": "How do I invite a teacher?"
+        },
+        "printPaper": {
+          "a": "Open an approved paper and choose Print. The paper and its answer key print as separate documents, in the language you chose in Settings.",
+          "q": "How do I print a paper?"
+        },
+        "submitPaper": {
+          "a": "In the Studio, finish the paper and choose Submit for approval. It moves to Submitted, and your school admin is notified to review it.",
+          "q": "How do I submit a paper for approval?"
+        },
+        "viewAudit": {
+          "a": "Open the Audit log to see who did what and when. Filter by action or search by school or paper name, and export the list as a CSV file.",
+          "q": "How do I check the audit log?"
+        }
+      },
+      "guidesTitle": "Short guides",
+      "lead": "Guides for your role, and a way to reach support.",
+      "support": {
+        "email": "Email",
+        "errors": {
+          "invalidEmail": "Enter a valid email address.",
+          "required": "Fill in every field before sending."
+        },
+        "message": "Message",
+        "name": "Your name",
+        "send": "Send message",
+        "sentBody": "Support will reply to the email above. Keep this reference for your records.",
+        "sentTitle": "Message sent",
+        "title": "Contact support",
+        "reference": "Reference"
+      },
+      "title": "Help"
+    },
+    "system": {
+      "demoLead": "Pick a state to preview it. Each one has a way back.",
+      "demoNote": "Demo only — these states also appear from real routing: an unknown address shows Not found, and a page for another role shows No permission.",
+      "demoTitle": "System states"
     }
   }
 }

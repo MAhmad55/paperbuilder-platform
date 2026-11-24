@@ -96,6 +96,20 @@ export interface QuestionBankProvider {
   getBankQuestion(id: string): BankQuestion | undefined
 }
 
+/* ---------------- Shared screens (Phase 6) ---------------- */
+
+export interface SharedService {
+  /** Edit the signed-in user's name / contact / avatar. Validated; writes a user.profile-updated audit event. */
+  updateProfile(userId: string, patch: import('./shared').ProfilePatch, actor: Person): Result<Person>
+  /** Change password (mock: validated only, no real credential is stored). */
+  changePassword(userId: string, input: import('./shared').PasswordChangeInput, actor: Person): Result<boolean>
+  getUserSettings(userId: string): import('./shared').UserSettings
+  updateUserSettings(userId: string, patch: Partial<import('./shared').UserSettings>): import('./shared').UserSettings
+  /** Personal activity: audit events + paper history for this user, filtered. */
+  listUserHistory(userId: string, filter?: import('./shared').HistoryFilter): import('./shared').HistoryItem[]
+  unreadNotificationCount(userId: string): number
+}
+
 /* ---------------- Plans / audit / notifications / misc ---------------- */
 
 export interface PlatformService {

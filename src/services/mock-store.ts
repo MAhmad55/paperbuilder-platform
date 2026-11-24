@@ -15,6 +15,12 @@ import type { Session, Role, PaperFilter, Result } from './types'
 import { PAPER_TRANSITIONS, canTransition, validateTransition, type ActorRole } from './paper-transitions'
 import type { SchoolStatus } from '../mock/data'
 import { validatePlanLimits, applyPlanLimits, type PlanLimitPatch } from './plan-limits'
+import {
+  buildUserHistory, filterHistoryItems, mergeUserSettings, unreadCount,
+  validatePasswordChange, validateProfileUpdate,
+  type HistoryFilter, type HistoryItem, type PasswordChangeInput, type ProfilePatch,
+  type UserSettings,
+} from './shared'
 
 /* ------------------------------------------------------------------
    Mock store — in-memory + localStorage persistence.
@@ -56,6 +62,10 @@ interface PersistedState {
   savedQuestions: SavedQuestion[]
   /** Phase 5: teacher personal patterns (saved in /teacher/templates). */
   personalPatterns: PersonalPattern[]
+  /** Phase 6: per-user profile edits (name / email / phone / avatar). */
+  profileOverrides: Record<string, Partial<Person>>
+  /** Phase 6: per-user settings (language, print language, font size, notification prefs). */
+  userSettings: Record<string, UserSettings>
 }
 
 function loadPersisted(): PersistedState | null {
@@ -103,6 +113,8 @@ function seed(): PersistedState {
     upgradeRequests: {},
     savedQuestions: clone(SAVED_QUESTIONS),
     personalPatterns: [],
+    profileOverrides: {},
+    userSettings: {},
   }
 }
 
@@ -125,6 +137,8 @@ if (!state.templateDefaultOverrides) state.templateDefaultOverrides = {}
 if (!state.upgradeRequests) state.upgradeRequests = {}
 if (!Array.isArray(state.savedQuestions)) state.savedQuestions = [...SAVED_QUESTIONS]
 if (!Array.isArray(state.personalPatterns)) state.personalPatterns = []
+if (!state.profileOverrides) state.profileOverrides = {}
+if (!state.userSettings) state.userSettings = {}
 
 function save() {
   persist(state)
@@ -146,7 +160,9 @@ function getSession(): Session | null {
 
 function currentUser(): Person | null {
   if (!state.session) return null
-  return USERS.find(u => u.id === state.session!.userId) ?? null
+  const user = USERS.find(u => u.id === state.session!.userId)
+  if (!user) return null
+  return { ...user, ...(state.profileOverrides[user.id] ?? {}) }
 }
 
 function signIn(role: Role): Session {
@@ -725,17 +741,29 @@ function listNotifications(userId?: string) {
   return [...items].sort((a, b) => b.createdAt.localeCompare(a.createdAt))
 }
 
+/** The TopBar badge listens for this: the store is not reactive, so the
+    shell re-counts unread notifications whenever one is marked read. */
+function notifyNotificationsChanged() {
+  try {
+    window.dispatchEvent(new CustomEvent('paperbuilder:notifications'))
+  } catch {
+    /* non-browser environment (tests) */
+  }
+}
+
 function markNotificationRead(id: string) {
   const n = state.notifications.find(x => x.id === id)
   if (!n) return undefined
   n.read = true
   save()
+  notifyNotificationsChanged()
   return n
 }
 
 function markAllNotificationsRead(userId: string) {
   for (const n of state.notifications) if (n.userId === userId) n.read = true
   save()
+  notifyNotificationsChanged()
 }
 
 /* ---------------- Approval requests (school onboarding, B3/B4) ---------------- */
@@ -975,7 +1003,11 @@ function updatePlanLimit(
 /** All platform users: seeded users + invited users, with status overrides applied. */
 function listUsers(): Person[] {
   const all = [...USERS, ...state.invitedUsers]
-  return all.map(u => ({ ...u, status: state.userStatusOverrides[u.id] ?? u.status }))
+  return all.map(u => ({
+    ...u,
+    ...(state.profileOverrides[u.id] ?? {}),
+    status: state.userStatusOverrides[u.id] ?? u.status,
+  }))
 }
 
 function getUser(id: string): Person | undefined {
@@ -1156,6 +1188,78 @@ function setDefaultTemplate(id: string, actor: Person): Result<Template> {
   return { ok: true, value: { ...template, isDefault: true } }
 }
 
+
+/* ---------------- Shared screens (Phase 6, /profile /settings /history /notifications) ---------------- */
+
+/**
+ * Edit the signed-in user's profile. Stored as an override (the seeded
+ * USERS records are module constants, so mutating them would leak across
+ * resetMockData). Writes one user.profile-updated audit event.
+ */
+function updateProfile(userId: string, patch: ProfilePatch, actor: Person): Result<Person> {
+  const user = getUser(userId)
+  if (!user) return { ok: false, error: 'User not found' }
+  const errors = validateProfileUpdate(patch)
+  if (errors.length > 0) return { ok: false, error: errors.join(',') }
+  const clean: Partial<Person> = {}
+  if (patch.name !== undefined) clean.name = patch.name.trim()
+  if (patch.email !== undefined) clean.email = patch.email.trim().toLowerCase()
+  if (patch.phone !== undefined) clean.phone = patch.phone.trim()
+  if (patch.avatar !== undefined) clean.avatar = patch.avatar
+  state.profileOverrides[userId] = { ...(state.profileOverrides[userId] ?? {}), ...clean }
+  state.audit.unshift({
+    id: `aud-${Date.now().toString(36)}`,
+    actorId: actor.id,
+    actorName: actor.name,
+    action: 'user.profile-updated',
+    targetType: 'user',
+    targetId: user.id,
+    targetLabel: clean.name ?? user.name,
+    createdAt: new Date().toISOString(),
+  })
+  save()
+  return { ok: true, value: getUser(userId)! }
+}
+
+/** Change password (mock: validated only — no real credential is stored). */
+function changePassword(userId: string, input: PasswordChangeInput, actor: Person): Result<boolean> {
+  const user = getUser(userId)
+  if (!user) return { ok: false, error: 'User not found' }
+  const errors = validatePasswordChange(input)
+  if (errors.length > 0) return { ok: false, error: errors.join(',') }
+  state.audit.unshift({
+    id: `aud-${Date.now().toString(36)}`,
+    actorId: actor.id,
+    actorName: actor.name,
+    action: 'user.password-changed',
+    targetType: 'user',
+    targetId: user.id,
+    targetLabel: user.name,
+    createdAt: new Date().toISOString(),
+  })
+  save()
+  return { ok: true, value: true }
+}
+
+function getUserSettings(userId: string): UserSettings {
+  return mergeUserSettings(state.userSettings[userId])
+}
+
+function updateUserSettings(userId: string, patch: Partial<UserSettings>): UserSettings {
+  const next = mergeUserSettings({ ...state.userSettings[userId], ...patch })
+  state.userSettings[userId] = next
+  save()
+  return next
+}
+
+function listUserHistory(userId: string, filter: HistoryFilter = {}): HistoryItem[] {
+  return filterHistoryItems(buildUserHistory(userId, state.audit, state.papers), filter)
+}
+
+function unreadNotificationCount(userId: string): number {
+  return unreadCount(state.notifications.filter((n) => n.userId === userId))
+}
+
 /* ---------------- Facade ---------------- */
 
 export const AuthService = {
@@ -1214,6 +1318,15 @@ export const ApprovalRequestService = {
   nextReference: nextApprovalReference,
 } as const
 
+export const SharedService = {
+  updateProfile,
+  changePassword,
+  getUserSettings,
+  updateUserSettings,
+  listUserHistory,
+  unreadNotificationCount,
+} as const
+
 export const PlatformService = {
   listPlans,
   updatePlanLimit,
@@ -1265,3 +1378,4 @@ export type {
   Announcement, AnnouncementTarget, AnnouncementStatus, PlatformSettings, SchoolSettings,
   BankQuestion, PaperQuestion, PersonalPattern,
 }
+export type { UserSettings, HistoryItem, HistoryFilter, HistoryKind } from './shared'

@@ -1,0 +1,61 @@
+{
+  "shared": {
+    "help": {
+      "error": {
+        "body": "Try again.",
+        "title": "Help could not be loaded"
+      },
+      "guides": {
+        "announce": {
+          "a": "Open Announcements, write a short title and message, choose who it is for, and send it now or schedule it. Sent announcements appear in every targeted user's Notifications.",
+          "q": "How do I send an announcement?"
+        },
+        "approvePaper": {
+          "a": "Open Approvals, read the paper preview, then Approve it or Request changes with a comment. The teacher sees your comment on the paper.",
+          "q": "How do I approve a paper?"
+        },
+        "approveSchool": {
+          "a": "Open the Approval queue, read the school's details and documents, then Approve it, ask for missing information, or Reject it with a reason.",
+          "q": "How do I approve a school?"
+        },
+        "buildPaper": {
+          "a": "Open the Paper Studio, pick the class, subject and chapters, set the marks pattern, and let it fill the questions. Save a draft any time — it is saved automatically.",
+          "q": "How do I build a paper?"
+        },
+        "inviteTeacher": {
+          "a": "Open Teachers, then Invite teacher, and enter the teacher's name and email. They join with the invitation link and appear as invited until they sign in.",
+          "q": "How do I invite a teacher?"
+        },
+        "printPaper": {
+          "a": "Open an approved paper and choose Print. The paper and its answer key print as separate documents, in the language you chose in Settings.",
+          "q": "How do I print a paper?"
+        },
+        "submitPaper": {
+          "a": "In the Studio, finish the paper and choose Submit for approval. It moves to Submitted, and your school admin is notified to review it.",
+          "q": "How do I submit a paper for approval?"
+        },
+        "viewAudit": {
+          "a": "Open the Audit log to see who did what and when. Filter by action or search by school or paper name, and export the list as a CSV file.",
+          "q": "How do I check the audit log?"
+        }
+      },
+      "guidesTitle": "Short guides",
+      "lead": "Guides for your role, and a way to reach support.",
+      "support": {
+        "email": "Email",
+        "errors": {
+          "invalidEmail": "Enter a valid email address.",
+          "required": "Fill in every field before sending."
+        },
+        "message": "Message",
+        "name": "Your name",
+        "send": "Send message",
+        "sentBody": "Support will reply to the email above. Keep this reference for your records.",
+        "sentTitle": "Message sent",
+        "title": "Contact support",
+        "reference": "Reference"
+      },
+      "title": "Help"
+    }
+  }
+}

@@ -180,6 +180,10 @@ export interface Person {
   joinedDaysAgo: number
   subjects: string[]  // subjectIds
   classes: string[]   // classIds
+  /** Contact phone (editable on /profile; mock phase, no verification). */
+  phone?: string
+  /** Avatar choice: 'initials' or a seeded colour key (no upload in the mock phase). */
+  avatar?: string
 }
 
 const TEACHER_NAMES = [
@@ -465,6 +469,7 @@ export type AuditAction =
   | 'school.settings-changed' | 'school.plan-upgrade-requested'
   | 'paper.approved' | 'paper.submitted' | 'paper.printed' | 'paper.changes-requested' | 'paper.archived' | 'paper.in-review'
   | 'teacher.invited' | 'teacher.assignment-changed' | 'user.invited' | 'user.deactivated'
+  | 'user.profile-updated' | 'user.password-changed'
   | 'plan.limit-changed'
   | 'template.created' | 'template.default-changed' | 'announcement.published' | 'announcement.scheduled'
 
@@ -590,6 +595,9 @@ export interface AppNotification {
   bodyUr: string
   read: boolean
   createdAt: string
+  /** Where clicking the notification goes (paper / approval queue / teachers). */
+  targetType?: 'paper' | 'approval' | 'announcement' | 'teachers'
+  targetId?: string
 }
 
 export const NOTIFICATIONS: AppNotification[] = (() => {
@@ -602,21 +610,21 @@ export const NOTIFICATIONS: AppNotification[] = (() => {
   const paperB = PAPERS.find(p => p.status === 'changes-requested')
   const paperC = PAPERS.find(p => p.status === 'in-review')
   items.push(
-    { id: 'ntf-01', userId: t1.id, type: 'approval', titleEn: 'Paper approved', titleUr: 'کاغذ منظور شد', bodyEn: `\"${paperA?.title ?? 'Midterm paper'}\" was approved.`, bodyUr: 'کاغذ منظور کر دیا گیا۔', read: false, createdAt: daysAgo(0) },
-    { id: 'ntf-02', userId: t1.id, type: 'comment', titleEn: 'Changes requested', titleUr: 'تبدیلیاں درکار', bodyEn: `${paperB?.title ?? 'A paper'} needs changes.`, bodyUr: 'کوئی تبدیلیاں درکار ہیں۔', read: false, createdAt: daysAgo(0) },
-    { id: 'ntf-03', userId: t2.id, type: 'comment', titleEn: 'Comment on your paper', titleUr: 'آپ کی کاپی میں تبصرہ', bodyEn: `${paperB?.title ?? 'A paper'} — please add marks.`, bodyUr: 'مارک شامل کریں۔', read: true, createdAt: daysAgo(1) },
-    { id: 'ntf-04', userId: t3.id, type: 'approval', titleEn: 'Paper approved', titleUr: 'کاغذ منظور شد', bodyEn: `\"${paperA?.title ?? 'Chapter test'}\" was approved.`, bodyUr: 'کاغذ منظور کر دیا گیا۔', read: false, createdAt: daysAgo(1) },
-    { id: 'ntf-05', userId: adminUser.id, type: 'approval', titleEn: 'Paper ready for review', titleUr: 'جائزہ کے لیے تیار', bodyEn: `${paperC?.title ?? 'A paper'} is waiting for review.`, bodyUr: 'جائزہ کے لیے تیار ہے۔', read: false, createdAt: daysAgo(0) },
-    { id: 'ntf-06', userId: adminUser.id, type: 'announcement', titleEn: 'New announcement', titleUr: 'نئی اطلاع', bodyEn: 'Weekly board review call on Friday.', bodyUr: 'جمعہ کو ہفتہ وار بورڈ ادائیگی کال۔', read: true, createdAt: daysAgo(2) },
-    { id: 'ntf-07', userId: superAdmin.id, type: 'invitation', titleEn: 'New school request', titleUr: 'نئی اسکول درخواست', bodyEn: 'Taj Mirza Academy requested access.', bodyUr: 'تاج میرزا ایسوسی ایشی نے درخواست دی۔', read: false, createdAt: daysAgo(0) },
-    { id: 'ntf-08', userId: t2.id, type: 'invitation', titleEn: 'You are invited as a teacher', titleUr: 'استاد کے طور پر مدعو ہیں', bodyEn: 'Aurora College invited you.', bodyUr: 'Aurora College نے آپ کو مدعو کیا۔', read: false, createdAt: daysAgo(3) },
-    { id: 'ntf-09', userId: adminUser.id, type: 'approval', titleEn: 'Paper approved', titleUr: 'کاغذ منظور شد', bodyEn: `\"${paperA?.title ?? 'Midterm'}\" was approved by the principal.`, bodyUr: 'کاغذ منظور کر دیا گیا۔', read: true, createdAt: daysAgo(4) },
-    { id: 'ntf-10', userId: t1.id, type: 'approval', titleEn: 'Paper printed', titleUr: 'کاغذ پرنٹ ہوا', bodyEn: 'Your printed copy is ready.', bodyUr: 'پرنٹ شدہ کاپی تیار ہے۔', read: false, createdAt: daysAgo(5) },
-    { id: 'ntf-11', userId: t3.id, type: 'comment', titleEn: 'Approved with comment', titleUr: 'تبصرہ کے ساتھ منظور شدہ', bodyEn: 'Nice work — consider adding a section.', bodyUr: 'عمدہ کام — ایک حصے کو شامل کرنے پر غور کریں۔', read: true, createdAt: daysAgo(6) },
-    { id: 'ntf-12', userId: superAdmin.id, type: 'announcement', titleEn: 'Monthly report ready', titleUr: 'ماہانہ رپورٹ تیار', bodyEn: 'November report is available.', bodyUr: 'نومبر کی رپورٹ موجود ہے۔', read: false, createdAt: daysAgo(1) },
-    { id: 'ntf-13', userId: adminUser.id, type: 'invitation', titleEn: 'Teacher invited', titleUr: 'استاد مدعو', bodyEn: 'A teacher has been invited to your school.', bodyUr: 'اسکول میں استاد مدعو ہے۔', read: false, createdAt: daysAgo(7) },
-    { id: 'ntf-14', userId: t2.id, type: 'announcement', titleEn: 'New school policy', titleUr: 'نئی اسکول پالیسی', bodyEn: 'Approval policy is now required.', bodyUr: 'منظوری پالیسی اب لازمی ہے۔', read: false, createdAt: daysAgo(8) },
-    { id: 'ntf-15', userId: t1.id, type: 'comment', titleEn: 'Changes requested', titleUr: 'تبدیلیاں درکار', bodyEn: `${paperB?.title ?? 'A paper'} — please add marks.`, bodyUr: 'مارک شامل کریں۔', read: true, createdAt: daysAgo(9) },
+    { id: 'ntf-01', userId: t1.id, type: 'approval', titleEn: 'Paper approved', titleUr: 'کاغذ منظور شد', bodyEn: `\"${paperA?.title ?? 'Midterm paper'}\" was approved.`, bodyUr: 'کاغذ منظور کر دیا گیا۔', read: false, createdAt: daysAgo(0), targetType: 'paper', targetId: paperA?.id },
+    { id: 'ntf-02', userId: t1.id, type: 'comment', titleEn: 'Changes requested', titleUr: 'تبدیلیاں درکار', bodyEn: `${paperB?.title ?? 'A paper'} needs changes.`, bodyUr: 'کوئی تبدیلیاں درکار ہیں۔', read: false, createdAt: daysAgo(0), targetType: 'paper', targetId: paperB?.id },
+    { id: 'ntf-03', userId: t2.id, type: 'comment', titleEn: 'Comment on your paper', titleUr: 'آپ کی کاپی میں تبصرہ', bodyEn: `${paperB?.title ?? 'A paper'} — please add marks.`, bodyUr: 'مارک شامل کریں۔', read: true, createdAt: daysAgo(1), targetType: 'paper', targetId: paperB?.id },
+    { id: 'ntf-04', userId: t3.id, type: 'approval', titleEn: 'Paper approved', titleUr: 'کاغذ منظور شد', bodyEn: `\"${paperA?.title ?? 'Chapter test'}\" was approved.`, bodyUr: 'کاغذ منظور کر دیا گیا۔', read: false, createdAt: daysAgo(1), targetType: 'paper', targetId: paperA?.id },
+    { id: 'ntf-05', userId: adminUser.id, type: 'approval', titleEn: 'Paper ready for review', titleUr: 'جائزہ کے لیے تیار', bodyEn: `${paperC?.title ?? 'A paper'} is waiting for review.`, bodyUr: 'جائزہ کے لیے تیار ہے۔', read: false, createdAt: daysAgo(0), targetType: 'paper', targetId: paperC?.id },
+    { id: 'ntf-06', userId: adminUser.id, type: 'announcement', titleEn: 'New announcement', titleUr: 'نئی اطلاع', bodyEn: 'Weekly board review call on Friday.', bodyUr: 'جمعہ کو ہفتہ وار بورڈ ادائیگی کال۔', read: true, createdAt: daysAgo(2), targetType: 'announcement' },
+    { id: 'ntf-07', userId: superAdmin.id, type: 'invitation', titleEn: 'New school request', titleUr: 'نئی اسکول درخواست', bodyEn: 'Taj Mirza Academy requested access.', bodyUr: 'تاج میرزا ایسوسی ایشی نے درخواست دی۔', read: false, createdAt: daysAgo(0), targetType: 'approval' },
+    { id: 'ntf-08', userId: t2.id, type: 'invitation', titleEn: 'You are invited as a teacher', titleUr: 'استاد کے طور پر مدعو ہیں', bodyEn: 'Aurora College invited you.', bodyUr: 'Aurora College نے آپ کو مدعو کیا۔', read: false, createdAt: daysAgo(3), targetType: 'teachers' },
+    { id: 'ntf-09', userId: adminUser.id, type: 'approval', titleEn: 'Paper approved', titleUr: 'کاغذ منظور شد', bodyEn: `\"${paperA?.title ?? 'Midterm'}\" was approved by the principal.`, bodyUr: 'کاغذ منظور کر دیا گیا۔', read: true, createdAt: daysAgo(4), targetType: 'paper', targetId: paperA?.id },
+    { id: 'ntf-10', userId: t1.id, type: 'approval', titleEn: 'Paper printed', titleUr: 'کاغذ پرنٹ ہوا', bodyEn: 'Your printed copy is ready.', bodyUr: 'پرنٹ شدہ کاپی تیار ہے۔', read: false, createdAt: daysAgo(5), targetType: 'paper', targetId: paperA?.id },
+    { id: 'ntf-11', userId: t3.id, type: 'comment', titleEn: 'Approved with comment', titleUr: 'تبصرہ کے ساتھ منظور شدہ', bodyEn: 'Nice work — consider adding a section.', bodyUr: 'عمدہ کام — ایک حصے کو شامل کرنے پر غور کریں۔', read: true, createdAt: daysAgo(6), targetType: 'paper', targetId: paperB?.id },
+    { id: 'ntf-12', userId: superAdmin.id, type: 'announcement', titleEn: 'Monthly report ready', titleUr: 'ماہانہ رپورٹ تیار', bodyEn: 'November report is available.', bodyUr: 'نومبر کی رپورٹ موجود ہے۔', read: false, createdAt: daysAgo(1), targetType: 'announcement' },
+    { id: 'ntf-13', userId: adminUser.id, type: 'invitation', titleEn: 'Teacher invited', titleUr: 'استاد مدعو', bodyEn: 'A teacher has been invited to your school.', bodyUr: 'اسکول میں استاد مدعو ہے۔', read: false, createdAt: daysAgo(7), targetType: 'teachers' },
+    { id: 'ntf-14', userId: t2.id, type: 'announcement', titleEn: 'New school policy', titleUr: 'نئی اسکول پالیسی', bodyEn: 'Approval policy is now required.', bodyUr: 'منظوری پالیسی اب لازمی ہے۔', read: false, createdAt: daysAgo(8), targetType: 'announcement' },
+    { id: 'ntf-15', userId: t1.id, type: 'comment', titleEn: 'Changes requested', titleUr: 'تبدیلیاں درکار', bodyEn: `${paperB?.title ?? 'A paper'} — please add marks.`, bodyUr: 'مارک شامل کریں۔', read: true, createdAt: daysAgo(9), targetType: 'paper', targetId: paperB?.id },
   )
   return items
 })()

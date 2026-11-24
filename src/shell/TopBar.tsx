@@ -39,6 +39,7 @@ export function TopBar({ title, onMenuClick, notifications = 0 }: TopBarProps) {
     { id: 'settings', label: t('shell.settings'), onSelect: () => navigate('/settings') },
     { id: 'history', label: t('shell.history'), onSelect: () => navigate('/history') },
     { id: 'notifications', label: t('shell.notifications'), onSelect: () => navigate('/notifications') },
+    { id: 'help', label: t('shell.help'), onSelect: () => navigate('/help') },
     { id: 'sep-1', divider: true },
     { id: 'role-header', label: t('shell.roleSwitcher'), disabled: true },
     { id: 'switch-super-admin', label: t('roles.superAdmin'), icon: role === 'super-admin' ? <Check size={15} aria-hidden="true" /> : undefined, onSelect: () => handleSwitchRole('super-admin') },

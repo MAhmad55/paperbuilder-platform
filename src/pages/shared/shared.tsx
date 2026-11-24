@@ -1,0 +1,44 @@
+import { useAuth } from '../../shell/AuthContext'
+import { SchoolService } from '../../services/mock-store'
+import { CLASSES, SUBJECTS } from '../../mock/data'
+import type { Person, School } from '../../mock/data'
+import type { AppLanguage } from '../../i18n'
+import { demoModeOf, useSchoolDemo } from '../school/shared'
+
+export { demoModeOf, useSchoolDemo }
+export type { DemoMode } from '../school/shared'
+
+/** The signed-in user (the shell guarantees a session on these routes). */
+export function useSharedUser(): Person | null {
+  const { currentUser } = useAuth()
+  return currentUser
+}
+
+export function userSchool(user: Person | null): School | undefined {
+  return user?.schoolId ? SchoolService.get(user.schoolId) : undefined
+}
+
+export function subjectName(id: string, lang: AppLanguage): string {
+  const s = SUBJECTS.find((x) => x.id === id)
+  return s ? (lang === 'ur' ? s.nameUr : s.nameEn) : id
+}
+
+export function className(id: string): string {
+  return CLASSES.find((c) => c.id === id)?.name ?? id
+}
+
+/** Avatar colour choices (seeded, no upload in the mock phase). */
+export const AVATAR_COLOURS: Record<string, { bg: string; fg: string }> = {
+  initials: { bg: 'var(--ink-100)', fg: 'var(--ink-700)' },
+  navy: { bg: '#1E2A78', fg: '#FFFFFF' },
+  green: { bg: '#0B6B50', fg: '#FFFFFF' },
+  red: { bg: '#C92A45', fg: '#FFFFFF' },
+  amber: { bg: '#FFD84D', fg: '#0F1733' },
+}
+
+export function avatarInitials(name: string): string {
+  const parts = name.trim().split(/\s+/)
+  const first = parts[0]?.[0] ?? ''
+  const last = parts.length > 1 ? parts[parts.length - 1][0] : ''
+  return (first + last).toUpperCase() || '?'
+}

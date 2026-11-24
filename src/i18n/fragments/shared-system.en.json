@@ -1,0 +1,13 @@
+{
+  "shared": {
+    "system": {
+      "demoLead": "Pick a state to preview it. Each one has a way back.",
+      "demoNote": "Demo only — these states also appear from real routing: an unknown address shows Not found, and a page for another role shows No permission.",
+      "demoTitle": "System states"
+    }
+  },
+  "system": {
+    "signInAgain": "Sign in again",
+    "tryAgain": "Try again"
+  }
+}

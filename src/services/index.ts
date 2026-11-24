@@ -5,6 +5,7 @@ export {
   PaperService,
   QuestionBankProvider,
   PlatformService,
+  SharedService,
   resetMockData,
   SCHOOLS,
   TEACHERS,

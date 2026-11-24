@@ -1,0 +1,28 @@
+{
+  "shared": {
+    "notifications": {
+      "allRead": "All caught up",
+      "count": "{{count}} unread",
+      "emptyBody": "When someone approves your paper or comments on it, it shows up here.",
+      "emptyTitle": "No notifications yet",
+      "error": {
+        "body": "Try again — your notifications are unchanged.",
+        "title": "Notifications could not be loaded"
+      },
+      "lead": "Approvals, comments, announcements and invitations.",
+      "markAll": "Mark all read",
+      "markRead": "Mark as read",
+      "markedAll": "All notifications marked as read.",
+      "noTarget": "This announcement has no page of its own in the demo.",
+      "read": "Read",
+      "title": "Notifications",
+      "types": {
+        "announcement": "Announcement",
+        "approval": "Approval",
+        "comment": "Comment",
+        "invitation": "Invitation"
+      },
+      "unread": "Unread"
+    }
+  }
+}

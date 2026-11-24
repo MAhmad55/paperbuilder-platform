@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink, useLocation } from 'react-router-dom'
 import { Rail } from './Rail'
@@ -7,6 +7,7 @@ import { BottomTabs } from './BottomTabs'
 import { Drawer, Avatar } from '../design-system'
 import { useAuth } from './AuthContext'
 import { railNavForRole, type NavItem, ROUTES } from './navigation'
+import { SharedService } from '../services/mock-store'
 
 export interface AppShellProps {
   title?: string
@@ -49,6 +50,18 @@ export function AppShell({ title, notifications = 0, children }: AppShellProps) 
   const [collapsed, setCollapsed] = useState(false)
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
+  /* Unread badge: re-counted on navigation (useShellTitle subscribes to
+     the location) and whenever the store reports a notification was
+     marked read (the store itself is not reactive). */
+  const [, setNotifTick] = useState(0)
+  useEffect(() => {
+    const onChange = () => setNotifTick((n) => n + 1)
+    window.addEventListener('paperbuilder:notifications', onChange)
+    return () => window.removeEventListener('paperbuilder:notifications', onChange)
+  }, [])
+  const unread = currentUser ? SharedService.unreadNotificationCount(currentUser.id) : 0
+  const badgeCount = notifications > 0 ? notifications : unread
+
   return (
     <div className="app-shell">
       <a href="#main" className="skip-link">{t('shell.skipToContent')}</a>
@@ -75,7 +88,7 @@ export function AppShell({ title, notifications = 0, children }: AppShellProps) 
       <div className="app-body">
         <TopBar
           title={resolvedTitle}
-          notifications={notifications}
+          notifications={badgeCount}
           onMenuClick={() => setMobileNavOpen(true)}
         />
         <main id="main" className="app-content" tabIndex={-1}>

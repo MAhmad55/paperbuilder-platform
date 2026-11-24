@@ -1,0 +1,71 @@
+{
+  "shared": {
+    "history": {
+      "actions": {
+        "announcement.published": "اعلان شائع ہوا",
+        "announcement.scheduled": "اعلان طے ہوا",
+        "approved": "پرچہ منظور ہوا",
+        "archived": "پرچہ محفوظ ہوا",
+        "changes-requested": "تبدیلیاں مانگی گئیں",
+        "created": "پرچہ بنا",
+        "edited": "پرچہ بدلا گیا",
+        "in-review": "پرچہ جائزے میں",
+        "paper.approved": "پرچہ منظور ہوا",
+        "paper.archived": "پرچہ محفوظ ہوا",
+        "paper.changes-requested": "تبدیلیاں مانگی گئیں",
+        "paper.in-review": "پرچہ جائزے میں",
+        "paper.printed": "پرچہ چھاپا گیا",
+        "paper.submitted": "پرچہ جمع ہوا",
+        "plan.limit-changed": "منصوبے کی حد بدلی",
+        "printed": "پرچہ چھاپا گیا",
+        "school.approved": "اسکول منظور ہوا",
+        "school.info-requested": "معلومات مانگی گئیں",
+        "school.plan-changed": "اسکول کا منصوبہ بدلا",
+        "school.plan-upgrade-requested": "منصوبے کی بہتری مانگی گئی",
+        "school.reactivated": "اسکول بحال ہوا",
+        "school.rejected": "اسکول مسترد ہوا",
+        "school.settings-changed": "اسکول کی ترتیبات بدلیں",
+        "school.suspended": "اسکول معطل ہوا",
+        "submitted": "پرچہ جمع ہوا",
+        "teacher.assignment-changed": "استاد کی ذمہ داری بدلی",
+        "teacher.invited": "استاد مدعو ہوا",
+        "template.created": "سانچہ بنا",
+        "template.default-changed": "طے شدہ سانچہ بدلا",
+        "user.deactivated": "صارف غیر فعال ہوا",
+        "user.invited": "صارف مدعو ہوا",
+        "user.password-changed": "پاس ورڈ بدلا",
+        "user.profile-updated": "پروفائل تازہ ہوا"
+      },
+      "count": "{{count}} سرگرمیاں",
+      "emptyBody": "اس مدت میں کچھ نہیں ہوا۔ فلٹر بدلیں یا بعد میں دیکھیں۔",
+      "emptyClear": "فلٹر صاف کریں",
+      "emptyTitle": "کوئی سرگرمی نہیں ملی",
+      "error": {
+        "body": "دوبارہ کوشش کریں — آپ کی تاریخ ویسی ہی ہے۔",
+        "title": "تاریخ لوڈ نہیں ہو سکی"
+      },
+      "filters": {
+        "all": "تمام سرگرمیاں",
+        "approval": "منظوریاں",
+        "clear": "فلٹر صاف کریں",
+        "edit": "تبدیلیاں",
+        "fromLabel": "سے",
+        "paper": "بنائے گئے پرچے",
+        "print": "چھاپے گئے",
+        "school": "اسکول اور افراد",
+        "searchPlaceholder": "نام سے تلاش کریں",
+        "system": "دیگر",
+        "toLabel": "تک",
+        "typeLabel": "سرگرمی کی قسم"
+      },
+      "lead": "آپ نے جو کچھ کیا — پرچے، منظوریاں، طباعت اور تبدیلیاں۔",
+      "listTitle": "آپ کی سرگرمی",
+      "title": "تاریخ",
+      "open": "کھولیں",
+      "sort": {
+        "newest": "تازہ ترین پہلے",
+        "oldest": "پرانے پہلے"
+      }
+    }
+  }
+}

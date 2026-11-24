@@ -31,6 +31,8 @@ const ACTION_KEY: Record<AuditAction, string> = {
   'teacher.assignment-changed': 'teacherAssignmentChanged',
   'user.invited': 'userInvited',
   'user.deactivated': 'userDeactivated',
+  'user.profile-updated': 'userProfileUpdated',
+  'user.password-changed': 'userPasswordChanged',
   'plan.limit-changed': 'planLimitChanged',
   'template.created': 'templateCreated',
   'template.default-changed': 'templateDefaultChanged',

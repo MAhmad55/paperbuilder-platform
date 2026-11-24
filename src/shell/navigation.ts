@@ -2,7 +2,7 @@ import {
   LayoutDashboard, School, ClipboardCheck, ListChecks, BookOpen, Users,
   Megaphone, ShieldCheck, Settings, GraduationCap, UsersRound, CalendarDays,
   FileText, LayoutTemplate, BarChart3, Compass, Files, BookMarked,
-  PenTool, Wrench, CreditCard,
+  PenTool, Wrench, CreditCard, User, History, Bell, CircleHelp,
   type LucideIcon,
 } from 'lucide-react'
 import type { Role } from '../services/types'
@@ -23,6 +23,15 @@ export const ROUTES = {
 const DASHBOARD_ICON = LayoutDashboard
 const DESIGN_ICON = Compass
 
+/** Shared screens — appended to every role's rail (blueprint 4.5). */
+const SHARED_NAV: NavItem[] = [
+  { to: '/profile', icon: User, labelKey: 'nav.profile' },
+  { to: '/settings', icon: Settings, labelKey: 'nav.settings' },
+  { to: '/history', icon: History, labelKey: 'nav.history' },
+  { to: '/notifications', icon: Bell, labelKey: 'nav.notifications' },
+  { to: '/help', icon: CircleHelp, labelKey: 'nav.help' },
+]
+
 export function railNavForRole(role: Role): NavItem[] {
   if (role === 'super-admin') {
     return [
@@ -35,6 +44,7 @@ export function railNavForRole(role: Role): NavItem[] {
       { to: '/admin/announcements', icon: Megaphone, labelKey: 'nav.announcements' },
       { to: '/admin/audit', icon: ShieldCheck, labelKey: 'nav.auditLog' },
       { to: '/admin/settings', icon: Settings, labelKey: 'nav.platformSettings' },
+      ...SHARED_NAV,
     ]
   }
   if (role === 'school-admin') {
@@ -49,6 +59,7 @@ export function railNavForRole(role: Role): NavItem[] {
       { to: '/school/reports', icon: BarChart3, labelKey: 'nav.reports' },
       { to: '/school/settings', icon: Wrench, labelKey: 'nav.schoolSettings' },
       { to: '/school/plan', icon: CreditCard, labelKey: 'nav.planAndUsage' },
+      ...SHARED_NAV,
     ]
   }
   return [
@@ -57,6 +68,7 @@ export function railNavForRole(role: Role): NavItem[] {
     { to: '/teacher/papers', icon: Files, labelKey: 'nav.myPapers' },
     { to: '/teacher/templates', icon: LayoutTemplate, labelKey: 'nav.templates' },
     { to: '/teacher/questions', icon: BookMarked, labelKey: 'nav.savedQuestions' },
+    ...SHARED_NAV,
   ]
 }
 
