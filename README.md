@@ -44,3 +44,52 @@ src/styles/            tokens.css, global.css, design-system.css, shell.css, sho
 - `/design-system` is a showcase, not a real screen — it is reachable from the shell rail for demoing purposes.
 - Phase 0 acceptance passes: language toggle flips layout/direction correctly, spacing/chevrons mirror, numbers render in-context.
 - Phase 1 acceptance rests on: all §7.6 components exist + showcase in both languages + every state visible + keyboard/focus works. The accessibility audit (full keyboard pass + screen-reader check) is not yet done and is flagged in `DECISIONS.md` ⚑.
+
+## Legacy domain merge integration pass (2026-11-24)
+
+The Gemini-merged tree added a "legacy domain" layer (board-paper engine,
+offline KaTeX, local fonts, textbook-cover images). This pass integrated
+what the app uses and quarantined the rest — no new screens, no redesign,
+no new dependencies.
+
+- **Used:** `src/services/math-format.ts` (splitMathText / formatMathText /
+  containsMath) powers the new `src/design-system/MathText.tsx`, which
+  renders question, option, answer and instruction text with inline TeX
+  ($...$ / $$...$$). KaTeX loads lazily via `ensureKatex()` in
+  `src/utils/katex-offline.ts` — only when text actually contains math,
+  once per page; pages without math make zero requests to /vendor/katex/*.
+  `printWithTitle()` awaits KaTeX first when the paper has math.
+- **Quarantined:** `src/services/legacy/` holds board-paper.ts,
+  question-selection.ts and subjects.ts (+ their tests) with a README —
+  reference only, imported by nothing. The Studio engine in
+  `src/services/studio.ts` is the single paper engine.
+  `legacy-domain-ref/` is reference material only (never compiled, never
+  picked up by Vitest).
+- **Fonts:** the Urdu paper face is local Noto Nastaliq Urdu (159 KB) as
+  'Noto Nastaliq Paper' under --font-urdu-paper; Jameel Noori Nastaleeq
+  (5.5 MB) was subset-tried and dropped (subset still 5.38 MB — the
+  Nastaliq ligature closure keeps the whole font). 'Inter Paper' is the
+  paper-only Latin face. Outfit is gone (unused). Non-paper screens
+  download no local fonts; an Urdu paper preview requests the paper font
+  once. See DECISIONS.md for the measured sizes.
+- **Images:** `public/assets/subjects/*.jpg` are textbook covers; the
+  owner must confirm usage rights before any public launch; they are not
+  shown in the app yet.
+- **Demo data:** four bank questions (Algebra MCQ 1, Geometry short 1,
+  Physics Mechanics MCQ 1 + short 1) carry inline TeX so the math path is
+  demonstrable; seeded paper-007 (physics, approved) contains two of them.
+  Gates: tsc 0, i18n parity, Vitest 257/257, Playwright 194+1, axe clean,
+  keyboard + announcer pass.
+
+## Fonts and licences
+
+- Inter (SIL OFL 1.1) — app chrome, via Google Fonts; local variable file
+  `public/fonts/inter-latin-variable.woff2` is the paper-only 'Inter
+  Paper' face (see `public/fonts/INTER-OFL-1.1.txt`).
+- Noto Nastaliq Urdu (SIL OFL 1.1) — Urdu paper face, local file
+  `public/fonts/noto-nastaliq-urdu-arabic-400.woff2` (see
+  `public/fonts/NOTO-NASTALIQ-URDU-OFL-1.1.txt`).
+- Jameel Noori Nastaleeq — not shipped; source note kept in
+  `public/fonts/JAMEEL-NOORI-SOURCE.txt`.
+- KaTeX (MIT) — local vendor copy under `public/vendor/katex/` (JS, CSS
+  and fonts), loaded lazily only for math.

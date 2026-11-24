@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { MathText } from './MathText'
 
 export interface PaperMetaItem { label: string; value: string }
 
@@ -74,7 +75,7 @@ export function PaperSheet({
 
         {instructions && instructions.length > 0 && (
           <div className="pb-paper__instructions">
-            {instructions.map((line, i) => <p key={i} style={{ margin: i ? '2px 0 0' : 0 }}>{line}</p>)}
+            {instructions.map((line, i) => <p key={i} style={{ margin: i ? '2px 0 0' : 0 }}><MathText text={line} /></p>)}
           </div>
         )}
 

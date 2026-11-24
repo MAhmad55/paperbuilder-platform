@@ -13,7 +13,7 @@ import { Bidi } from '../../utils/bidi'
 import { formatDate } from '../../utils/date'
 import type { AppLanguage } from '../../i18n'
 import {
-  classLabel, demoModeOf, demoTeacher, demoTeacherSchool, paperFileTitle, paperStatusChip,
+  classLabel, demoModeOf, demoTeacher, demoTeacherSchool, paperFileTitle, paperHasMath, paperStatusChip,
   printWithTitle, subjectLabel, useSchoolDemo,
 } from './shared'
 import { shouldOpenPrintDialog } from './shared'
@@ -124,7 +124,7 @@ export function TeacherPapersPage() {
       subjectName: subjectLabel(paper.subjectId, 'en'),
       examType: t(`examType.${paper.examType === 'board-pattern' ? 'boardPattern' : paper.examType === 'chapter-test' ? 'chapterTest' : paper.examType}`),
       schoolName: school?.name ?? '',
-    }))
+    }), paperHasMath(paper.questions ?? []))
     setVersion((v) => v + 1)
     toast({ variant: 'success', message: t('teacher.studio.toasts.printed') })
   }

@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Lock, LockOpen, ArrowLeftRight, Trash2 } from 'lucide-react'
 import { Badge } from './Badge'
 import { IconButton } from './IconButton'
+import { MathText } from './MathText'
 import Bidi from '../utils/bidi'
 
 export type QuestionType = 'mcq' | 'short' | 'long'
@@ -40,7 +41,7 @@ export function QuestionRow({
   return (
     <div className={['pb-question-row', locked && 'pb-question-row--locked'].filter(Boolean).join(' ')}>
       <div className="pb-question-row__preview">
-        <p className="pb-question-row__text">{text}</p>
+        <p className="pb-question-row__text"><MathText text={text} /></p>
         <div className="pb-question-row__meta">
           <Badge tone={type === 'mcq' ? 'ink' : type === 'short' ? 'neutral' : 'mark'}>{typeLabel}</Badge>
           {chapter && <span className="pb-muted" style={{ fontSize: 'var(--text-xs)' }}>{chapter}</span>}

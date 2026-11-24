@@ -115,3 +115,36 @@ The owner sent a single-file Super Admin prototype and said to apply its five be
 8. Known gaps: total-JS-sum target 225 KB not met (256.96 KB) — needs a follow-up decision on removing zod and/or @tanstack/react-table; Vite warns "Circular chunk: ui -> core -> ui" (build passes, runtime verified); coverage is 0 for subjects a class has no papers in — truthful for the mock data, but a real bank needs a class dimension in `CHAPTERS` for true per-class bank coverage; screen-reader check is live-region verification, not a screen-reader run; Studio "Download PDF" still opens the print dialog (no real PDF); History "Open" on a non-paper row only shows a toast; announcements have no dedicated page for school-admin/teacher; in `?demo=empty` on Notifications the TopBar bell badge still shows the real unread count (demo-mode artifact).
 9. Files: 62 files in the commit (56 modified + staged `tsconfig.tsbuildinfo` deletion + 3 new test files + DECISIONS.md + REPORT.md); `tsconfig.tsbuildinfo` is untracked and gitignored, and is not in the commit. No new screens, no redesign, no new npm dependencies.
 10. Next: Final fix pass is verified and committed locally (no push, no deploy — push is a separate gate needing the owner's word). The platform is complete through Phase 7 plus this fix pass; any further work (including the bundle-sum follow-up) starts only on the owner's approval.
+
+# 9th Math bank — real bank wired (2026-11-24)
+
+1. Wired: the real Class 9 Mathematics bank (PECTAA 2026, 1,549 records = 689 MCQ + 685 Short + 175 Long) into QuestionBankProvider for Class 9 Maths only, as a runtime-fetched static asset (public/data/9th-math-bank.json, never bundled); every other class/subject stays on the mock bank.
+2. Mapping: bank units map to REAL_MATH9_CHAPTERS (math9-u1…u13, real counts, Urdu titles written natively); MCQ "A) " option prefixes stripped (preview prints its own letters), letter answers become option text; bank text served verbatim, plain sqrt() renders as plain text (verified at 390/1280).
+3. No-answer rule: all 685 Short + 175 Long records (860) carry no answer, so answers are null, never invented; Review counts null as "no answer in bank" (not a blocker), Review + answer-key tab show the count, and unanswered items read "No answer in bank" (Board 75 paper: 9).
+4. Figures: the 4 fig records (U1 long 1, U6 short 63, U9 short 2, U9 long 3) are dropped on mapping — the files do not exist in the platform — so no broken-image icon can appear; the bracketed figure descriptions in the text stay.
+5. Loading: cached one-fetch-per-page load when Class 9 Maths is scoped; auto-fill disabled while loading; on failure the Studio falls back to mock questions for that scope with an error toast + note; B6 bank library is class-aware (Class 9 Maths: 13 / 689 / 685 / 175 / 1,549).
+6. Gates (all live): tsc 0 errors; check-i18n pass (1,875 keys, was 1,870); Vitest 256/256 (243 + 13 new); Playwright 193 passed + 1 skipped (191 + 2 new); axe clean light + dark (80/80 each); keyboard pass (336 light + 96 dark stops, 0 without visible focus, drawer 0 → 1 → 0).
+7. Bundle: entry chunk unchanged at 2.56 KB gzip; total JS gzip 256.96 → 258.91 KB (+1.95 KB); worst per-route first-paint ~193 KB (admin), under the 225 KB target; the 661 KB bank JSON ships as a static asset, not JS.
+8. Known gaps: school-wide Reports coverage still counts the 4 mock Maths chapters (B6 is the class-aware source); figure questions are text-only; the bank `source` field is not shown in the UI; `subjectChapters()` still returns mock chapters only.
+9. Screenshots: screenshots/real-bank-9math/ (Review step, Urdu preview, real questions, en UI at 390 + 1280); script scripts/real-bank-9math-shots.mjs; E2E tests/real-bank-9math.spec.ts; unit tests src/services/real-bank.test.ts.
+10. Next: this is the pilot — which bank is wired next is the owner's call. Committed locally (no push, no deploy).
+
+## Gemini merged project adoption (2026-11-24)
+1. Gemini's merged zip adopted as the new base on the owner's word; 9th Math bank wiring removed with it and to be re-added later.
+2. New: board-paper engine, question selection, subjects, offline KaTeX (math-format + katex-offline + vendor files + fonts), subject assets, legacy-domain-ref, BLUEPRINT.md at app root.
+3. Fix on adoption: 6 tsc TS1484 type-import errors in Gemini's two new files, fixed with `import type` splits.
+4. Gates (all live): tsc 0; check-i18n pass (1,870 keys); Vitest 249/249; Playwright 191 passed + 1 skipped; build entry chunk 2.56 KB gzip.
+5. DECISIONS.md and REPORT.md kept from our tree, so the bundle-target decision and the bank record stay on file.
+6. Next: re-add the 9th Math bank when the owner says so. Committed locally (no push, no deploy).
+
+## Merge integration pass (2026-11-24)
+1. Built: lazy KaTeX (memoised ensureKatex) + MathText wired into QuestionRow, StudioPreview/SavedPaperPreview, Studio manual/swap dialogs, answer-key tab, saved questions, PaperSheet instructions and showcase SamplePaper; printWithTitle awaits KaTeX when the paper has math; 4 bank questions carry inline TeX; legacy engine quarantined to src/services/legacy/; subject images unused.
+2. Decided: Jameel subset tried and dropped (5.54 MB → 5.38 MB) so Noto Nastaliq Urdu (159 KB) is the paper face as 'Noto Nastaliq Paper'; Inter renamed 'Inter Paper' (paper-only); Outfit removed; .pb-paper--ur uses --font-urdu-paper; legacy presets match Studio only by pattern (75 = 75), physics ALP 60 has no Studio counterpart; subject covers need owner rights confirmation.
+3. Gates (live): tsc 0 errors; check-i18n pass (1,870 keys en/ur parity).
+4. Gates (live): Vitest 257/257 (249 + 6 MathText + 2 preset-parity); Playwright 194 passed + 1 skipped (191 + 3 new merge-integration).
+5. Gates (live): axe 80/80 clean light + 80/80 dark; keyboard pass (30 screens, 336 stops, 0 without visible focus); announcer pass (28 checks).
+6. Bundle before/after (npm run build): entry chunk 2.56 KB gzip unchanged; total JS gzip 256.96 → 258.34 KB (+1.38 KB, MathText + splitMathText + paperHasMath); the sum is accepted, per-route first-paint is the rule.
+7. First-paint per route (static-import closure, Vite gzip): / 204.23, admin 192.99, school 189.28, teacher 188.62, shared 183.45, showcase 212.16 KB (worst) — all ≤ 225 KB (before: 203.00 / 191.77 / 188.06 / 187.27 / 182.22 / 210.92).
+8. Font bytes before/after: public/fonts on disk 5,778,816 → 207,624 bytes (Jameel 5,538,900 + Outfit 32,292 removed); an Urdu paper view downloads 250,336 bytes of fonts (Noto 159,368 + Inter Paper 48,256 + KaTeX Main/Math-Italic 42,712) plus KaTeX JS/CSS 298,749 — under the ~700 KB font goal; non-paper screens download zero local fonts.
+9. Remaining gaps: screen-reader check is live-region verification, not a screen-reader run; Download PDF still opens the print dialog; "Circular chunk: ui -> core -> ui" warning persists; KaTeX JS (275 KB) loads on first math render, not bundled; subject cover images unused pending rights.
+10. Next: commit locally (no push, no deploy); re-add the 9th Math bank when the owner says so. Zip PaperBuilder_platform_merged_final.zip.

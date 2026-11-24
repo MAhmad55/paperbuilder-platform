@@ -1599,7 +1599,7 @@
 }
 
 .pb-paper--ur {
-  font-family: var(--font-urdu-head);
+  font-family: var(--font-urdu-paper);
   line-height: 2.0;
   letter-spacing: 0;
 }

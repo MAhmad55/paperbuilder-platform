@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { PageHeader } from '../../shell/PageHeader'
 import {
   Banner, BottomSheet, Button, Card, ChapterRow, Dialog, EmptyState, Input,
-  Meter, PatternEditor, QuestionRow, SearchField, Select, Skeleton, Stepper,
+  MathText, Meter, PatternEditor, QuestionRow, SearchField, Select, Skeleton, Stepper,
   Switch, Textarea, useToast,
 } from '../../design-system'
 import type { StepperStep } from '../../design-system'
@@ -22,7 +22,7 @@ import {
 import type { StudioDraft } from '../../services/studio'
 import {
   chapterLabel, classLabel, demoModeOf, demoTeacher, demoTeacherSchool, paperFileTitle,
-  printWithTitle, shouldOpenPrintDialog, StudioPreview, subjectLabel, useSchoolDemo,
+  paperHasMath, printWithTitle, shouldOpenPrintDialog, StudioPreview, subjectLabel, useSchoolDemo,
 } from './shared'
 import '../../styles/teacher.css'
 
@@ -350,7 +350,7 @@ export function PaperStudioPage() {
       subjectName: subjectLabel(paper.subjectId, 'en'),
       examType: t(`examType.${paper.examType === 'board-pattern' ? 'boardPattern' : paper.examType === 'chapter-test' ? 'chapterTest' : paper.examType}`),
       schoolName: school?.name ?? '',
-    }))
+    }), paperHasMath(paper.questions ?? []))
     toast({ variant: 'success', message: t('teacher.studio.toasts.printed') })
   }
 
@@ -790,7 +790,7 @@ export function PaperStudioPage() {
                           subjectName: subjectLabel(draft.subjectId, 'en'),
                           examType: t(`examType.${draft.examType === 'board-pattern' ? 'boardPattern' : draft.examType === 'chapter-test' ? 'chapterTest' : draft.examType}`),
                           schoolName: school?.name ?? '',
-                        }))
+                        }), paperHasMath(draft.questions))
                       }}
                     >
                       {t('teacher.studio.finish.download')}
@@ -918,7 +918,7 @@ export function PaperStudioPage() {
             {manualPool.length === 0 && <p className="teacher-note">{t('teacher.studio.questions.manualEmpty')}</p>}
             {manualPool.map((b) => (
               <div key={b.id} className="teacher-studio__swap-item">
-                <span><Bidi>{lang === 'ur' ? b.textUr : b.textEn}</Bidi></span>
+                <span><Bidi><MathText text={lang === 'ur' ? b.textUr : b.textEn} /></Bidi></span>
                 <div className="teacher-actions">
                   <Button
                     variant="secondary"
@@ -960,7 +960,7 @@ export function PaperStudioPage() {
           {swapPool.length === 0 && <p className="teacher-note">{t('teacher.studio.questions.swapEmpty')}</p>}
           {swapPool.map((b) => (
             <div key={b.id} className="teacher-studio__swap-item">
-              <span><Bidi>{lang === 'ur' ? b.textUr : b.textEn}</Bidi></span>
+              <span><Bidi><MathText text={lang === 'ur' ? b.textUr : b.textEn} /></Bidi></span>
               <Button variant="secondary" onClick={() => swapQuestion(b)}>
                 {t('common.add')}
               </Button>

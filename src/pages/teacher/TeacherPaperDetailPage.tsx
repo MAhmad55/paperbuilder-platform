@@ -3,7 +3,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { PageHeader } from '../../shell/PageHeader'
 import {
-  Banner, Button, Card, EmptyState, Skeleton, Tabs, Timeline, useToast,
+  Banner, Button, Card, EmptyState, MathText, Skeleton, Tabs, Timeline, useToast,
 } from '../../design-system'
 import type { TimelineItem } from '../../design-system'
 import { PaperService, SchoolService } from '../../services/mock-store'
@@ -13,7 +13,7 @@ import { formatDate, formatDateTime } from '../../utils/date'
 import type { AppLanguage } from '../../i18n'
 import {
   chapterLabel, classLabel, demoModeOf, demoTeacher, demoTeacherSchool,
-  paperFileTitle, paperStatusChip, printWithTitle, SavedPaperPreview, shouldOpenPrintDialog, subjectLabel, useSchoolDemo,
+  paperFileTitle, paperHasMath, paperStatusChip, printWithTitle, SavedPaperPreview, shouldOpenPrintDialog, subjectLabel, useSchoolDemo,
 } from './shared'
 import '../../styles/teacher.css'
 
@@ -85,7 +85,7 @@ export function TeacherPaperDetailPage() {
       subjectName: subjectLabel(paper.subjectId, 'en'),
       examType: t(`examType.${examTypeKey(paper.examType)}`),
       schoolName: school?.name ?? '',
-    }))
+    }), paperHasMath(paper.questions ?? []))
     setVersion((v) => v + 1)
     toast({ variant: 'success', message: t('teacher.studio.toasts.printed') })
   }
@@ -269,10 +269,10 @@ export function TeacherPaperDetailPage() {
                   {(paper.questions ?? []).map((q, i) => (
                     <li key={q.id} className="teacher-list__item">
                       <span>
-                        <Bidi>{i + 1}. {lang === 'ur' ? q.textUr : q.textEn}</Bidi>
+                        <Bidi>{i + 1}. <MathText text={lang === 'ur' ? q.textUr : q.textEn} /></Bidi>
                       </span>
                       <span className="teacher-list__meta">
-                        <Bidi>{lang === 'ur' ? q.answerUr : q.answerEn}</Bidi>
+                        <Bidi><MathText text={lang === 'ur' ? q.answerUr : q.answerEn} /></Bidi>
                       </span>
                     </li>
                   ))}

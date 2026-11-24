@@ -1,0 +1,65 @@
+/* Paper-only fonts (lazy by construction: a @font-face file downloads only
+   when rendered text actually uses the family, and unicode-range keeps
+   Latin-only text from ever triggering the Urdu faces).
+   - Noto Nastaliq Urdu (159 KB) is the Urdu paper face, under the
+     family name 'Noto Nastaliq Paper': the name 'Noto Nastaliq Urdu'
+     belongs to the app chrome (Google Fonts, via --font-heading and
+     --font-urdu-head), and a local face under the same name was
+     downloaded on plain landing/admin pages whenever a heading glyph
+     (e.g. the em dash) fell through to the fallback. The paper-only
+     name downloads only where --font-urdu-paper is used: the paper
+     sheet. Jameel Noori Nastaleeq was tried as the primary face and
+     dropped: subsetting it to the Urdu ranges still left 5.38 MB of
+     5.54 MB, because the Nastaliq GSUB ligature closure retains nearly
+     the whole font — it can never meet the ~700 KB paper budget. Its
+     source note stays in public/fonts/JAMEEL-NOORI-SOURCE.txt; the
+     woff2 is removed.
+   - 'Inter Paper' is the merged layer's Inter file renamed: the family
+     name 'Inter' belongs to the app chrome (Google Fonts), so the local
+     file must never hijack it. It is used only through --font-latin-paper,
+     on paper math runs.
+   - Outfit was unused (no --font-display consumer anywhere) and is gone. */
+@font-face {
+  font-family: 'Noto Nastaliq Paper';
+  src: url('/fonts/noto-nastaliq-urdu-arabic-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200F, U+0020-007E, U+2013-2014, U+2018-201E, U+2026;
+}
+
+@font-face {
+  font-family: 'Inter Paper';
+  src: url('/fonts/inter-latin-variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0020-007E;
+}
+
+:root {
+  --font-urdu-paper: 'Noto Nastaliq Paper', 'Noto Naskh Arabic', serif;
+  --font-latin-paper: 'Inter Paper', system-ui, -apple-system, sans-serif;
+}
+
+.katex,
+.katex-display,
+.math-inline-span,
+.math-display-block {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* Display math is a block of its own, even inside a <p> (MathText renders
+   it as a span, so the block display comes from here, not from a <div>). */
+.math-display-block {
+  display: block;
+}
+
+/* Latin runs on paper — the raw-TeX fallback before KaTeX loads — use the
+   paper-only Inter face, never the app chrome's Inter. (Rendered KaTeX
+   sets its own fonts inside the span.) */
+.math-inline-span,
+.math-display-block {
+  font-family: var(--font-latin-paper);
+}

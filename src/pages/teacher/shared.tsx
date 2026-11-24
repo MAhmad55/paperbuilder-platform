@@ -1,6 +1,8 @@
 import { useAuth } from '../../shell/AuthContext'
 import { useTranslation } from 'react-i18next'
-import { PaperSheet } from '../../design-system'
+import { MathText, PaperSheet } from '../../design-system'
+import { containsMath } from '../../services/math-format'
+import { ensureKatex } from '../../utils/katex-offline'
 import { AuthService, SchoolService, TEACHERS } from '../../services/mock-store'
 import { CHAPTERS, SUBJECTS } from '../../mock/data'
 import type { Paper, PaperQuestion, PaperSection, Person, School } from '../../mock/data'
@@ -60,21 +62,43 @@ export function paperFileTitle(parts: {
     saved PDF is named after the paper instead of "PaperBuilder". The
     previous title is restored on afterprint (which fires when the dialog
     closes, even on cancel). Callers gate on shouldOpenPrintDialog() first,
-    so the title only changes when a real print dialog opens. */
-export function printWithTitle(title: string): void {
-  const previous = document.title
-  const clean = title.trim().replace(/\s+/g, ' ')
-  if (clean) document.title = clean
-  const restore = () => {
-    document.title = previous
-    window.removeEventListener('afterprint', restore)
+    so the title only changes when a real print dialog opens. When the
+    paper contains math, KaTeX is loaded first so the printed sheet shows
+    rendered math instead of raw TeX. */
+export function printWithTitle(title: string, hasMath = false): void {
+  const doPrint = () => {
+    const previous = document.title
+    const clean = title.trim().replace(/\s+/g, ' ')
+    if (clean) document.title = clean
+    const restore = () => {
+      document.title = previous
+      window.removeEventListener('afterprint', restore)
+    }
+    window.addEventListener('afterprint', restore)
+    try {
+      window.print()
+    } catch {
+      restore()
+    }
   }
-  window.addEventListener('afterprint', restore)
-  try {
-    window.print()
-  } catch {
-    restore()
+  if (hasMath) {
+    void ensureKatex().then(doPrint)
+  } else {
+    doPrint()
   }
+}
+
+/** True when any question, option or answer of the paper contains TeX. */
+export function paperHasMath(questions: readonly PaperQuestion[]): boolean {
+  return questions.some(
+    (q) =>
+      containsMath(q.textEn) ||
+      containsMath(q.textUr) ||
+      (q.optionsEn ?? []).some((o) => containsMath(o)) ||
+      (q.optionsUr ?? []).some((o) => containsMath(o)) ||
+      containsMath(q.answerEn) ||
+      containsMath(q.answerUr),
+  )
 }
 
 export interface StudioPreviewData {
@@ -160,14 +184,14 @@ export function StudioPreview({
                   {qs.map((q) => (
                     <li key={q.id} className="pb-paper__question">
                       <span>
-                        {mode === 'ur' ? q.textUr : q.textEn}
+                        <MathText text={mode === 'ur' ? q.textUr : q.textEn} />
                         {' '}
                         <span className="teacher-paper__q-marks">({q.marks})</span>
                         {q.type === 'mcq' && q.optionsEn && (
                           <span className="pb-paper__mcq">
                             {(mode === 'ur' ? q.optionsUr ?? q.optionsEn : q.optionsEn).map((opt, oi) => (
                               <span key={oi} className="pb-paper__option">
-                                {String.fromCharCode(65 + oi)}. {opt}
+                                {String.fromCharCode(65 + oi)}. <MathText text={opt} />
                               </span>
                             ))}
                           </span>

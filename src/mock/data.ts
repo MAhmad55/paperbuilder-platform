@@ -956,6 +956,38 @@ export const BANK_QUESTIONS: BankQuestion[] = (() => {
     mk('short', ch.counts.short)
     mk('long', ch.counts.long)
   }
+  // Merge integration pass: four questions carry inline TeX so the lazy
+  // KaTeX + MathText path is demonstrable in the Studio preview, the
+  // answer key and print. Text only — ids, kinds, marks, chapters, counts
+  // and ordering are untouched, so seeded-paper determinism holds. The
+  // round-robin auto-fill takes the first question of each chapter, so
+  // these four land in any auto-filled paper scoped to their chapters.
+  // Urdu runs follow the bidi law: Latin/math stays inside $...$.
+  const TEX_OVERRIDES: Record<string, { textEn: string; textUr: string }> = {
+    'bq-math-algebra-mcq-1': {
+      textEn: 'Solve $x^2 + y^2 = r^2$ for $x$ when $y = 3$ and $r = 5$.',
+      textUr: '$x^2 + y^2 = r^2$ میں $y = 3$ اور $r = 5$ ہو تو $x$ معلوم کریں۔',
+    },
+    'bq-math-geometry-short-1': {
+      textEn: 'Find the area of a circle of radius $r = 7$ cm using $A = \\pi r^2$.',
+      textUr: '$r = 7$ سینٹی میٹر رداس والے دائرے کا رقبہ $A = \\pi r^2$ سے معلوم کریں۔',
+    },
+    'bq-physics-mechanics-mcq-1': {
+      textEn: 'A body moves with $v = u + at$. If $u = 0$, $a = 2$ and $t = 5$, what is $v$?',
+      textUr: 'ایک جسم $v = u + at$ کے مطابق حرکت کرتا ہے۔ اگر $u = 0$، $a = 2$ اور $t = 5$ ہو تو $v$ کیا ہے؟',
+    },
+    'bq-physics-mechanics-short-1': {
+      textEn: 'State the equation $s = ut + \\frac{1}{2}at^2$ and define each symbol in it.',
+      textUr: 'مساوات $s = ut + \\frac{1}{2}at^2$ لکھیں اور اس میں ہر علامت کی تعریف کریں۔',
+    },
+  }
+  for (const q of out) {
+    const o = TEX_OVERRIDES[q.id]
+    if (o) {
+      q.textEn = o.textEn
+      q.textUr = o.textUr
+    }
+  }
   return out
 })()
 

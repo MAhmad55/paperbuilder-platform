@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { PageHeader } from '../../shell/PageHeader'
 import {
-  Banner, Button, Card, EmptyState, SearchField, Skeleton, Table, useToast,
+  Banner, Button, Card, EmptyState, MathText, SearchField, Skeleton, Table, useToast,
 } from '../../design-system'
 import type { TableColumn } from '../../design-system'
 import { PlatformService } from '../../services/mock-store'
@@ -71,7 +71,7 @@ export function TeacherSavedQuestionsPage() {
   }
 
   const columns: TableColumn<SavedQuestion>[] = [
-    { id: 'text', header: t('common.questions'), sortable: false, cell: (q) => <Bidi>{q.text}</Bidi> },
+    { id: 'text', header: t('common.questions'), sortable: false, cell: (q) => <Bidi><MathText text={q.text} /></Bidi> },
     { id: 'type', header: t('common.type'), sortable: false, cell: (q) => t(TYPE_KEY[q.type]) },
     { id: 'subject', header: t('school.calendar.columns.subject'), sortable: false, cell: (q) => subjectLabel(q.subjectId, lang) },
     { id: 'chapter', header: t('common.chapters'), sortable: false, cell: (q) => chapterLabel(q.chapterId, lang) },
@@ -166,7 +166,7 @@ export function TeacherSavedQuestionsPage() {
                 {filtered.map((q) => (
                   <article key={q.id} className="teacher-card">
                     <div className="teacher-card__head">
-                      <span className="teacher-card__name"><Bidi>{q.text}</Bidi></span>
+                      <span className="teacher-card__name"><Bidi><MathText text={q.text} /></Bidi></span>
                       <span>{t(TYPE_KEY[q.type])}</span>
                     </div>
                     <div className="teacher-card__rows">
