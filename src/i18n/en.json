@@ -1949,5 +1949,246 @@
       },
       "upgradeToast": "Upgrade request sent."
     }
+  },
+  "teacher": {
+    "dashboard": {
+      "byStatusTitle": "My papers by status",
+      "continueEmptyBody": "Start a new paper and it will wait for you here.",
+      "continueEmptyTitle": "No draft yet",
+      "continueOpen": "Continue paper",
+      "continueTitle": "Continue where you left off",
+      "counts": {
+        "approved": "Approved",
+        "drafts": "Drafts",
+        "printed": "Printed",
+        "submitted": "Submitted"
+      },
+      "error": {
+        "body": "Something went wrong. Please try again.",
+        "title": "Dashboard could not be loaded"
+      },
+      "examsEmpty": "No upcoming exams assigned to you.",
+      "examsTitle": "Upcoming exams assigned to me",
+      "examsViewAll": "View exam calendar",
+      "lead": "Your papers, your exams, and where you left off.",
+      "startNew": "Start a new paper",
+      "title": "Teacher dashboard"
+    },
+    "studio": {
+      "alreadySubmitted": "This paper is already submitted. You can follow it in My papers.",
+      "approvedBody": "Your paper was approved directly because your school does not need approval for papers.",
+      "approvedTitle": "Paper approved",
+      "back": "Back",
+      "blueprint": {
+        "attemptHint": "How many questions a student must attempt in each section.",
+        "attemptLabel": "Attempt rule",
+        "customLabel": "Custom pattern",
+        "error": "Choose a pattern, or set sections that add up to the target.",
+        "presetLabel": "Preset",
+        "sectionsTitle": "Sections",
+        "targetLabel": "Target marks"
+      },
+      "closePreview": "Close preview",
+      "continue": "Continue",
+      "finish": {
+        "answerKeyLabel": "Include a separate answer key",
+        "answerKeyTitle": "Answer key",
+        "approvedBody": "Your paper was approved directly because your school does not need approval for papers.",
+        "approvedTitle": "Paper approved",
+        "download": "Download PDF",
+        "headerTitle": "Header details",
+        "instructionsLabel": "Instructions for students",
+        "instructionsPlaceholder": "Write the instructions printed on the paper…",
+        "print": "Print",
+        "printFirst": "Print is available after approval. Submit the paper first, then print it once it is approved.",
+        "rollNumberLabel": "Show roll-number block",
+        "saveDraft": "Save as draft",
+        "submit": "Submit for approval",
+        "submitDirect": "Approve directly",
+        "submittedBody": "Your paper is with the school admin for review. You can follow its status in My papers.",
+        "submittedTitle": "Paper submitted",
+        "title": "Finish"
+      },
+      "lead": "Build your paper step by step. The live preview follows every choice you make.",
+      "preview": "Paper preview",
+      "previewButton": "Preview paper",
+      "questions": {
+        "autoFillAll": "Auto-fill all sections",
+        "autoFillSection": "Auto-fill",
+        "count": "{{count}} questions",
+        "emptyBody": "Auto-fill a section, or add questions one by one from the bank.",
+        "emptyTitle": "No questions yet",
+        "manualAdd": "Add manually",
+        "manualEmpty": "No bank questions match this search.",
+        "manualSearch": "Search bank questions…",
+        "manualTitle": "Add from the bank",
+        "remove": "Remove",
+        "saveQuestion": "Save question",
+        "savedQuestion": "Question saved",
+        "swapEmpty": "No other question from this chapter is left.",
+        "swapTitle": "Swap question",
+        "title": "Questions"
+      },
+      "review": {
+        "allGood": "Everything checks out. You can finish the paper.",
+        "checklist": {
+          "coverage": "Every chapter in scope is covered",
+          "duplicates": "No duplicate questions",
+          "marksMatch": "Marks match the target",
+          "missingAnswers": "Every question has an answer"
+        },
+        "checklistTitle": "Validation checklist",
+        "notReady": "Fix the items below before you finish.",
+        "previewLanguage": "Preview language",
+        "title": "Review"
+      },
+      "saveDraft": "Save draft",
+      "saved": "Saved",
+      "saving": "Saving…",
+      "scope": {
+        "available": "available",
+        "chaptersCount": "{{count}} chapters selected",
+        "deselectAll": "Deselect all",
+        "searchPlaceholder": "Search chapters…",
+        "selectAll": "Select all",
+        "title": "Scope"
+      },
+      "setup": {
+        "classLabel": "Class",
+        "classPlaceholder": "Choose a class",
+        "durationLabel": "Duration (minutes)",
+        "durationUnit": "minutes",
+        "error": "Choose a class, a subject and an exam date first.",
+        "examDateLabel": "Exam date",
+        "examTypeLabel": "Exam type",
+        "mediumLabel": "Medium",
+        "subjectLabel": "Subject",
+        "subjectPlaceholder": "Choose a subject",
+        "termLabel": "Term",
+        "title": "Setup"
+      },
+      "stepOf": "Step {{current}} of 6",
+      "steps": {
+        "blueprint": "Blueprint",
+        "finish": "Finish",
+        "questions": "Questions",
+        "review": "Review",
+        "scope": "Scope",
+        "setup": "Setup"
+      },
+      "title": "Paper Studio",
+      "toasts": {
+        "approved": "Paper approved",
+        "duplicated": "Paper duplicated",
+        "printed": "Paper marked as printed",
+        "saved": "Draft saved",
+        "submitted": "Paper submitted for approval"
+      },
+      "viewPaper": "View paper"
+    },
+    "papers": {
+      "archive": "Archive",
+      "archiveBody": "Archived papers stay in your library but cannot be edited.",
+      "archiveCancel": "Keep paper",
+      "archiveConfirm": "Archive paper",
+      "archiveTitle": "Archive this paper?",
+      "duplicate": "Duplicate",
+      "emptyBody": "Try a different search or filter, or start a new paper.",
+      "emptyTitle": "No papers found",
+      "error": {
+        "body": "Something went wrong. Please try again.",
+        "title": "Papers could not be loaded"
+      },
+      "filters": {
+        "all": "All",
+        "searchPlaceholder": "Search by title or subject…",
+        "statusGroupLabel": "Filter by status"
+      },
+      "lead": "Every paper you made, in one library.",
+      "list": {
+        "count": "{{count}} papers"
+      },
+      "open": "Open",
+      "print": "Print",
+      "sort": {
+        "label": "Sort",
+        "marks": "Most marks",
+        "newest": "Newest first",
+        "oldest": "Oldest first",
+        "title": "Title A to Z"
+      },
+      "title": "My papers"
+    },
+    "templates": {
+      "bodyFont": "Body font",
+      "delete": "Delete",
+      "error": {
+        "body": "Something went wrong. Please try again.",
+        "title": "Templates could not be loaded"
+      },
+      "footer": "Footer text",
+      "isDefault": "Default",
+      "layout": "Layout",
+      "lead": "Use your school templates, or save a marks pattern of your own.",
+      "patternDeleteBody": "This pattern will be removed from your list.",
+      "patternDeleteTitle": "Delete this pattern?",
+      "patternNameLabel": "Pattern name",
+      "patternNamePlaceholder": "For example: My board pattern",
+      "patternPresetLabel": "Start from a preset",
+      "patternSave": "Save pattern",
+      "personalEmpty": "No personal patterns yet. Save one from a preset below.",
+      "personalTitle": "My patterns",
+      "savePattern": "Save a pattern",
+      "schoolEmpty": "Your school has no templates yet.",
+      "schoolTitle": "School templates",
+      "title": "Templates",
+      "use": "Use template"
+    },
+    "questions": {
+      "emptyBody": "While you build a paper, save good questions here and reuse them later.",
+      "emptyTitle": "No saved questions yet",
+      "error": {
+        "body": "Something went wrong. Please try again.",
+        "title": "Saved questions could not be loaded"
+      },
+      "filters": {
+        "all": "All",
+        "searchPlaceholder": "Search saved questions…",
+        "typeGroupLabel": "Filter by type"
+      },
+      "goStudio": "Go to Paper Studio",
+      "lead": "Questions you bookmarked while building papers.",
+      "list": {
+        "count": "{{count}} questions"
+      },
+      "remove": "Remove",
+      "title": "Saved questions",
+      "useInStudio": "Use in Studio"
+    },
+    "detail": {
+      "answerKeyEmpty": "This paper has no questions yet, so there is no answer key.",
+      "answerKeyTitle": "Answer key",
+      "archive": "Archive",
+      "back": "Back to My papers",
+      "commentsTitle": "Comments from the approver",
+      "duplicate": "Duplicate",
+      "editDraft": "Edit draft",
+      "error": {
+        "body": "Something went wrong. Please try again.",
+        "title": "Paper could not be loaded"
+      },
+      "historyTitle": "History",
+      "noComments": "No comments yet.",
+      "notFoundBody": "This paper does not exist, or it belongs to another teacher.",
+      "notFoundTitle": "Paper not found",
+      "print": "Print",
+      "rollNumber": "Roll number",
+      "submit": "Submit for approval",
+      "tabs": {
+        "answerKey": "Answer key",
+        "history": "History",
+        "paper": "Paper"
+      }
+    }
   }
 }

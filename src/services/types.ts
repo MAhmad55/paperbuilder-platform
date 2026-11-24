@@ -1,7 +1,7 @@
 import type {
   School, Paper, PaperStatus, Person, PersonRole, Plan, PlanId, AuditEvent, AppNotification,
   Exam, Template, SavedQuestion, SubjectDef, ChapterDef, ClassDef,
-  Announcement, AnnouncementTarget, PlatformSettings,
+  Announcement, AnnouncementTarget, PlatformSettings, BankQuestion, PersonalPattern,
 } from '../mock/data'
 import type { PlanLimitPatch } from './plan-limits'
 
@@ -71,7 +71,14 @@ export interface PaperService {
     chapterIds: string[]
     targetMarks: number
     sections: Paper['sections']
+    questions?: Paper['questions']
+    instructions?: string[]
+    durationMinutes?: number
+    rollNumberBlock?: boolean
+    answerKey?: boolean
   }, actor: Person): Result<Paper>
+  update(id: string, patch: Partial<Pick<Paper, 'classId' | 'subjectId' | 'medium' | 'examType' | 'term' | 'examDate' | 'chapterIds' | 'targetMarks' | 'sections' | 'questions' | 'instructions' | 'durationMinutes' | 'rollNumberBlock' | 'answerKey'>>, actor: Person): Result<Paper>
+  duplicate(id: string, actor: Person): Result<Paper>
   transition(id: string, target: PaperStatus, actor: Person, comment?: string): Result<Paper>
   markPrinted(id: string, actor: Person): Result<Paper>
 }
@@ -85,6 +92,8 @@ export interface QuestionBankProvider {
   getQuestionCounts(chapterId: string): { mcq: number; short: number; long: number }
   autoFill(input: { subjectId: string; chapterIds: string[]; sections: Paper['sections'] }):
     Result<{ chapterId: string; type: 'mcq' | 'short' | 'long'; marks: number; text: string }[]>
+  listBankQuestions(filter?: { chapterId?: string; type?: BankQuestion['type']; subjectId?: string }): BankQuestion[]
+  getBankQuestion(id: string): BankQuestion | undefined
 }
 
 /* ---------------- Plans / audit / notifications / misc ---------------- */
@@ -112,4 +121,9 @@ export interface PlatformService {
   duplicateTemplate(id: string, name: string, actor: Person): Result<Template>
   setDefaultTemplate(id: string, actor: Person): Result<Template>
   listSavedQuestions(teacherId: string): SavedQuestion[]
+  addSavedQuestion(teacherId: string, bankQuestionId: string): Result<SavedQuestion>
+  removeSavedQuestion(teacherId: string, id: string): boolean
+  listPersonalPatterns(teacherId: string): PersonalPattern[]
+  savePersonalPattern(teacherId: string, input: { name: string; sections: Paper['sections']; targetMarks: number }): Result<PersonalPattern>
+  deletePersonalPattern(teacherId: string, id: string): boolean
 }

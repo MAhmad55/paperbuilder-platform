@@ -9,7 +9,7 @@ const ROLE_SESSIONS: Record<string, { userId: string; schoolId: string | null }>
 const ROLE_ROUTES: Record<string, string[]> = {
   'super-admin': ['/admin', '/admin/schools', '/admin/schools/sch-beacon', '/admin/approvals', '/admin/plans', '/admin/bank', '/admin/users', '/admin/announcements', '/admin/audit', '/admin/settings'],
   'school-admin': ['/school', '/school/approvals', '/school/teachers', '/school/classes', '/school/calendar', '/school/papers', '/school/templates', '/school/reports', '/school/settings', '/school/plan'],
-  teacher: ['/teacher', '/teacher/studio', '/teacher/papers', '/teacher/templates', '/teacher/questions'],
+  teacher: ['/teacher', '/teacher/studio', '/teacher/papers', '/teacher/papers/paper-001', '/teacher/templates', '/teacher/questions'],
 }
 
 const SHARED_ROUTES = ['/design-system', '/foundation-test', '/profile', '/settings', '/history', '/notifications', '/session-expired', '/does-not-exist']

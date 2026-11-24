@@ -1,5 +1,5 @@
-import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
-import { useMemo, type ReactNode } from 'react'
+import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
+import { type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AuthProvider, useAuth } from './shell/AuthContext'
 import { ToastProvider } from './design-system'
@@ -36,7 +36,13 @@ import { SchoolTemplatesPage } from './pages/school/SchoolTemplatesPage'
 import { SchoolReportsPage } from './pages/school/SchoolReportsPage'
 import { SchoolSettingsPage } from './pages/school/SchoolSettingsPage'
 import { SchoolPlanPage } from './pages/school/SchoolPlanPage'
-import { railNavForRole, type NavItem } from './shell/navigation'
+import { TeacherDashboardPage } from './pages/teacher/TeacherDashboardPage'
+import { PaperStudioPage } from './pages/teacher/PaperStudioPage'
+import { TeacherPapersPage } from './pages/teacher/TeacherPapersPage'
+import { TeacherPaperDetailPage } from './pages/teacher/TeacherPaperDetailPage'
+import { TeacherTemplatesPage } from './pages/teacher/TeacherTemplatesPage'
+import { TeacherSavedQuestionsPage } from './pages/teacher/TeacherSavedQuestionsPage'
+
 import type { Role } from './services/types'
 
 /* ------------------------------------------------------------------
@@ -80,33 +86,6 @@ function AnyPlaceholder({ titleKey }: { titleKey: string }) {
   const { role } = useAuth()
   if (!role) return <Navigate to="/sign-in" replace />
   const title = t(titleKey)
-  const breadcrumb = [
-    { label: t('nav.dashboard'), to: roleHome(role) },
-    { label: title },
-  ]
-  return <PlaceholderPage title={title} breadcrumb={breadcrumb} />
-}
-
-function RolePlaceholder({ role }: { role: Role }) {
-  const { t } = useTranslation()
-  const { role: currentRole } = useAuth()
-  const location = useLocation()
-
-  const matched = useMemo(() => {
-    const items = railNavForRole(role)
-    let best: NavItem | null = null
-    for (const item of items) {
-      if (location.pathname === item.to || location.pathname.startsWith(item.to + '/')) {
-        if (!best || item.to.length > best.to.length) best = item
-      }
-    }
-    return best
-  }, [role, location.pathname])
-
-  if (!currentRole) return <Navigate to="/sign-in" replace />
-  if (currentRole !== role) return <SystemStatePage kind="no-permission" />
-
-  const title = matched ? t(matched.labelKey) : t('nav.dashboard')
   const breadcrumb = [
     { label: t('nav.dashboard'), to: roleHome(role) },
     { label: title },
@@ -163,7 +142,14 @@ export function App() {
               <Route path="/school/settings" element={<SchoolSettingsPage />} />
               <Route path="/school/plan" element={<SchoolPlanPage />} />
             </Route>
-            <Route path="/teacher/*" element={<RolePlaceholder role="teacher" />} />
+            <Route element={<RequireRole role="teacher" />}>
+              <Route path="/teacher" element={<TeacherDashboardPage />} />
+              <Route path="/teacher/studio" element={<PaperStudioPage />} />
+              <Route path="/teacher/papers" element={<TeacherPapersPage />} />
+              <Route path="/teacher/papers/:id" element={<TeacherPaperDetailPage />} />
+              <Route path="/teacher/templates" element={<TeacherTemplatesPage />} />
+              <Route path="/teacher/questions" element={<TeacherSavedQuestionsPage />} />
+            </Route>
             <Route path="/profile" element={<AnyPlaceholder titleKey="shell.profile" />} />
             <Route path="/settings" element={<AnyPlaceholder titleKey="shell.settings" />} />
             <Route path="/history" element={<AnyPlaceholder titleKey="shell.history" />} />

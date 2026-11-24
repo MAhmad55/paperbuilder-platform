@@ -36,4 +36,7 @@ export type {
   Exam,
   Template,
   SavedQuestion,
+  BankQuestion,
+  PaperQuestion,
+  PersonalPattern,
 } from './mock-store'

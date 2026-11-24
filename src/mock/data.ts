@@ -274,6 +274,8 @@ export interface PaperSection {
   type: 'mcq' | 'short' | 'long'
   marksPerQuestion: number
   questionCount: number
+  /** How many of the section's questions a student must attempt (default: all). */
+  attemptCount?: number
 }
 
 export interface PaperHistoryEntry {
@@ -284,6 +286,21 @@ export interface PaperHistoryEntry {
   action: 'created' | 'submitted' | 'in-review' | 'approved' | 'changes-requested' | 'printed' | 'archived' | 'edited'
   comment?: string
   createdAt: string
+}
+
+export interface PaperQuestion {
+  id: string
+  bankId?: string
+  chapterId: string
+  type: 'mcq' | 'short' | 'long'
+  marks: number
+  textEn: string
+  textUr: string
+  optionsEn?: string[]
+  optionsUr?: string[]
+  answerEn: string
+  answerUr: string
+  locked?: boolean
 }
 
 export interface Paper {
@@ -305,6 +322,15 @@ export interface Paper {
   createdAt: string
   updatedAt: string
   printedAt: string | null
+  /** Questions actually placed on the paper (Studio-built papers; seeded
+      papers predate the Studio and carry none — their sections still
+      describe the pattern). */
+  questions?: PaperQuestion[]
+  /** Studio finish-step choices. */
+  instructions?: string[]
+  durationMinutes?: number
+  rollNumberBlock?: boolean
+  answerKey?: boolean
 }
 
 export function currentMarks(p: Paper): number {
@@ -703,6 +729,135 @@ export const SAVED_QUESTIONS: SavedQuestion[] = (() => {
   }
   return items
 })()
+
+/* ---------------- Question bank (Phase 5, Studio) ---------------- */
+
+/**
+ * Real bank questions for the Studio: one generated question per counted
+ * slot in every chapter (counts match CHAPTERS[].counts, so Scope shows
+ * exactly what auto-fill and swap can draw on). Stems are templated
+ * around the chapter name — this is mock data, not book text — but every
+ * question has a chapter, a type, four MCQ options and an answer, so
+ * Review validation and the answer key are computed from real records.
+ */
+export interface BankQuestion {
+  id: string
+  chapterId: string
+  subjectId: string
+  type: 'mcq' | 'short' | 'long'
+  textEn: string
+  textUr: string
+  optionsEn?: string[]
+  optionsUr?: string[]
+  answerEn: string
+  answerUr: string
+}
+
+const MCQ_STEMS_EN = [
+  'Which statement is correct about {ch}?',
+  'Choose the correct answer about {ch}.',
+  'Which of the following best describes {ch}?',
+  'What is the first step when working with {ch}?',
+]
+const MCQ_STEMS_UR = [
+  '{ch} کے بارے میں کون سا جملہ درست ہے؟',
+  '{ch} کے بارے میں درست جواب چنیں۔',
+  'مندرجہ ذیل میں سے کون سا {ch} کی بہترین وضاحت کرتا ہے؟',
+  '{ch} پر کام کرتے وقت پہلا قدم کیا ہے؟',
+]
+const MCQ_OPTION_SETS_EN: string[][] = [
+  ['Always true', 'Sometimes true', 'Never true', 'Only in special cases'],
+  ['The first rule', 'The second rule', 'The third rule', 'None of these'],
+  ['Increases', 'Decreases', 'Stays the same', 'Becomes zero'],
+  ['One', 'Two', 'Three', 'Four'],
+]
+const MCQ_OPTION_SETS_UR: string[][] = [
+  ['ہمیشہ درست', 'کبھی کبھی درست', 'کبھی درست نہیں', 'صرف خاص صورتوں میں'],
+  ['پہلا اصول', 'دوسرا اصول', 'تیسرا اصول', 'ان میں سے کوئی نہیں'],
+  ['بڑھتا ہے', 'کم ہوتا ہے', 'ایک جیسا رہتا ہے', 'صفر ہو جاتا ہے'],
+  ['ایک', 'دو', 'تین', 'چار'],
+]
+const SHORT_STEMS_EN = [
+  'Define {ch} in your own words.',
+  'Write two important points about {ch}.',
+  'Explain {ch} briefly with one example.',
+  'What is the main idea of {ch}?',
+]
+const SHORT_STEMS_UR = [
+  '{ch} کی تعریف اپنے الفاظ میں لکھیں۔',
+  '{ch} کے بارے میں دو اہم نکات لکھیں۔',
+  '{ch} کی مختصر وضاحت ایک مثال کے ساتھ کریں۔',
+  '{ch} کا مرکزی خیال کیا ہے؟',
+]
+const LONG_STEMS_EN = [
+  'Describe {ch} in detail, with examples.',
+  'Explain {ch} fully and give two worked examples.',
+  'Discuss {ch} in detail, covering its main rules and uses.',
+  'Write a detailed note on {ch} with examples.',
+]
+const LONG_STEMS_UR = [
+  '{ch} کی تفصیلی وضاحت مثالوں کے ساتھ کریں۔',
+  '{ch} کی مکمل وضاحت کریں اور دو مثالیں دیں۔',
+  '{ch} پر تفصیل سے بحث کریں، اس کے اہم اصول اور استعمال بیان کریں۔',
+  '{ch} پر مثالوں کے ساتھ تفصیلی نوٹ لکھیں۔',
+]
+
+export const BANK_QUESTIONS: BankQuestion[] = (() => {
+  const out: BankQuestion[] = []
+  for (const ch of CHAPTERS) {
+    const mk = (type: 'mcq' | 'short' | 'long', n: number) => {
+      for (let i = 0; i < n; i++) {
+        const stemsEn = type === 'mcq' ? MCQ_STEMS_EN : type === 'short' ? SHORT_STEMS_EN : LONG_STEMS_EN
+        const stemsUr = type === 'mcq' ? MCQ_STEMS_UR : type === 'short' ? SHORT_STEMS_UR : LONG_STEMS_UR
+        const stemEn = stemsEn[i % stemsEn.length].replace('{ch}', ch.nameEn)
+        const stemUr = stemsUr[i % stemsUr.length].replace('{ch}', ch.nameUr)
+        const optionsEn = type === 'mcq' ? MCQ_OPTION_SETS_EN[i % MCQ_OPTION_SETS_EN.length] : undefined
+        const optionsUr = type === 'mcq' ? MCQ_OPTION_SETS_UR[i % MCQ_OPTION_SETS_UR.length] : undefined
+        const answerIdx = i % 4
+        out.push({
+          id: `bq-${ch.id}-${type}-${i + 1}`,
+          chapterId: ch.id,
+          subjectId: ch.subjectId,
+          type,
+          textEn: `${stemEn}`,
+          textUr: `${stemUr}`,
+          optionsEn,
+          optionsUr,
+          answerEn: type === 'mcq'
+            ? (optionsEn?.[answerIdx] ?? '')
+            : type === 'short'
+              ? `A short answer about ${ch.nameEn}, covering its definition and one example.`
+              : `A full answer about ${ch.nameEn}, with its main rules, two worked examples and a conclusion.`,
+          answerUr: type === 'mcq'
+            ? (optionsUr?.[answerIdx] ?? '')
+            : type === 'short'
+              ? `${ch.nameUr} کے بارے میں مختصر جواب، جس میں تعریف اور ایک مثال شامل ہو۔`
+              : `${ch.nameUr} کے بارے میں مکمل جواب، جس میں اہم اصول، دو مثالیں اور نتیجہ شامل ہو۔`,
+        })
+      }
+    }
+    mk('mcq', ch.counts.mcq)
+    mk('short', ch.counts.short)
+    mk('long', ch.counts.long)
+  }
+  return out
+})()
+
+export function bankQuestions(chapterId: string, type: 'mcq' | 'short' | 'long'): BankQuestion[] {
+  return BANK_QUESTIONS.filter(q => q.chapterId === chapterId && q.type === type)
+}
+
+/* ---------------- Personal patterns (Phase 5, teacher templates) ---------------- */
+
+/** A teacher's saved marks pattern (sections + target), reusable in the Studio. */
+export interface PersonalPattern {
+  id: string
+  teacherId: string
+  name: string
+  sections: PaperSection[]
+  targetMarks: number
+  createdAt: string
+}
 
 /* ---------------- Helpers ---------------- */
 

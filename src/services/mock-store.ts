@@ -1,7 +1,7 @@
 import {
   SCHOOLS, TEACHERS, SUPER_ADMINS, SCHOOL_ADMINS, USERS, PAPERS, PLANS, AUDIT_EVENTS,
   NOTIFICATIONS, EXAMS, TEMPLATES, SAVED_QUESTIONS, CLASSES, SUBJECTS, CHAPTERS,
-  APPROVAL_REQUESTS, ANNOUNCEMENTS, DEFAULT_PLATFORM_SETTINGS,
+  APPROVAL_REQUESTS, ANNOUNCEMENTS, DEFAULT_PLATFORM_SETTINGS, BANK_QUESTIONS,
   personRole, currentMarks,
 } from '../mock/data'
 import type {
@@ -9,7 +9,7 @@ import type {
   Exam, Template, SavedQuestion, Medium, ExamType, Term, AuditAction,
   ApprovalRequest, ApprovalRequestStatus, ApprovalTimelineEvent,
   ApprovalMissingItem, Announcement, AnnouncementTarget, AnnouncementStatus, PlatformSettings,
-  SchoolSettings,
+  SchoolSettings, BankQuestion, PaperQuestion, PersonalPattern,
 } from '../mock/data'
 import type { Session, Role, PaperFilter, Result } from './types'
 import { PAPER_TRANSITIONS, canTransition, validateTransition, type ActorRole } from './paper-transitions'
@@ -52,6 +52,10 @@ interface PersistedState {
   templateDefaultOverrides: Record<string, string>
   /** Phase 4: plan upgrade requests (school id -> requested plan id). */
   upgradeRequests: Record<string, PlanId>
+  /** Phase 5: saved questions (seed + bookmarked in the Studio), deep-copied in seed(). */
+  savedQuestions: SavedQuestion[]
+  /** Phase 5: teacher personal patterns (saved in /teacher/templates). */
+  personalPatterns: PersonalPattern[]
 }
 
 function loadPersisted(): PersistedState | null {
@@ -97,6 +101,8 @@ function seed(): PersistedState {
     templates: clone(TEMPLATES),
     templateDefaultOverrides: {},
     upgradeRequests: {},
+    savedQuestions: clone(SAVED_QUESTIONS),
+    personalPatterns: [],
   }
 }
 
@@ -117,6 +123,8 @@ if (!state.schoolSettings) state.schoolSettings = {}
 if (!Array.isArray(state.templates)) state.templates = [...TEMPLATES]
 if (!state.templateDefaultOverrides) state.templateDefaultOverrides = {}
 if (!state.upgradeRequests) state.upgradeRequests = {}
+if (!Array.isArray(state.savedQuestions)) state.savedQuestions = [...SAVED_QUESTIONS]
+if (!Array.isArray(state.personalPatterns)) state.personalPatterns = []
 
 function save() {
   persist(state)
@@ -421,11 +429,19 @@ function createPaper(input: {
   schoolId: string; teacherId: string; classId: string; subjectId: string
   medium: Medium; examType: ExamType; term: Term; examDate: string
   chapterIds: string[]; targetMarks: number; sections: Paper['sections']
+  questions?: PaperQuestion[]; instructions?: string[]; durationMinutes?: number
+  rollNumberBlock?: boolean; answerKey?: boolean
 }, actor: Person): Result<Paper> {
   const cls = CLASSES.find(c => c.id === input.classId)
   const subject = SUBJECTS.find(s => s.id === input.subjectId)
   if (!cls || !subject) return { ok: false, error: 'Unknown class or subject' }
-  const id = `paper-${String(state.papers.length + 1).padStart(3, '0')}`
+  // Next id from the highest existing number, not the list length — a
+  // duplicate created after an archive must never collide with a live id.
+  const maxNum = state.papers.reduce((m, p) => {
+    const n = Number(/^paper-(\d+)$/.exec(p.id)?.[1] ?? 0)
+    return Math.max(m, n)
+  }, 0)
+  const id = `paper-${String(maxNum + 1).padStart(3, '0')}`
   const now = new Date().toISOString()
   const paper: Paper = {
     id,
@@ -442,6 +458,11 @@ function createPaper(input: {
     targetMarks: input.targetMarks,
     sections: input.sections,
     chapterIds: input.chapterIds,
+    questions: input.questions ? JSON.parse(JSON.stringify(input.questions)) : [],
+    instructions: input.instructions ? [...input.instructions] : [],
+    durationMinutes: input.durationMinutes ?? 150,
+    rollNumberBlock: input.rollNumberBlock ?? true,
+    answerKey: input.answerKey ?? true,
     history: [{
       id: `hst-${Date.now().toString(36)}`,
       actorId: actor.id,
@@ -457,6 +478,77 @@ function createPaper(input: {
   state.papers.push(paper)
   save()
   return { ok: true, value: paper }
+}
+
+/**
+ * Save a Studio draft over an existing paper (autosave / Save draft).
+ * Only drafts and changes-requested papers can be edited; editing a
+ * changes-requested paper returns it to draft (blueprint §5.2).
+ */
+function updatePaper(
+  id: string,
+  patch: Partial<Pick<Paper, 'classId' | 'subjectId' | 'medium' | 'examType' | 'term' | 'examDate' | 'chapterIds' | 'targetMarks' | 'sections' | 'questions' | 'instructions' | 'durationMinutes' | 'rollNumberBlock' | 'answerKey'>>,
+  actor: Person,
+): Result<Paper> {
+  const paper = getPaper(id)
+  if (!paper) return { ok: false, error: 'Paper not found' }
+  if (paper.status !== 'draft' && paper.status !== 'changes-requested') {
+    return { ok: false, error: 'Only a draft can be edited' }
+  }
+  const cls = patch.classId ? CLASSES.find(c => c.id === patch.classId) : undefined
+  const subject = patch.subjectId ? SUBJECTS.find(s => s.id === patch.subjectId) : undefined
+  if ((patch.classId && !cls) || (patch.subjectId && !subject)) {
+    return { ok: false, error: 'Unknown class or subject' }
+  }
+  Object.assign(paper, {
+    ...patch,
+    questions: patch.questions ? JSON.parse(JSON.stringify(patch.questions)) : paper.questions,
+    chapterIds: patch.chapterIds ? [...patch.chapterIds] : paper.chapterIds,
+    sections: patch.sections ? JSON.parse(JSON.stringify(patch.sections)) : paper.sections,
+    instructions: patch.instructions ? [...patch.instructions] : paper.instructions,
+  })
+  if (cls && subject) {
+    paper.title = `${subject.nameEn} — ${paper.term} (${cls.name})`
+  }
+  if (paper.status === 'changes-requested') {
+    paper.status = 'draft'
+    paper.history.push({
+      id: `hst-${Date.now().toString(36)}`,
+      actorId: actor.id,
+      actorName: actor.name,
+      actorRole: actor.role,
+      action: 'edited',
+      createdAt: new Date().toISOString(),
+    })
+  }
+  paper.updatedAt = new Date().toISOString()
+  save()
+  return { ok: true, value: paper }
+}
+
+/** Duplicate a paper as a fresh draft owned by the same teacher. */
+function duplicatePaper(id: string, actor: Person): Result<Paper> {
+  const source = getPaper(id)
+  if (!source) return { ok: false, error: 'Paper not found' }
+  const result = createPaper({
+    schoolId: source.schoolId,
+    teacherId: source.teacherId,
+    classId: source.classId,
+    subjectId: source.subjectId,
+    medium: source.medium,
+    examType: source.examType,
+    term: source.term,
+    examDate: source.examDate,
+    chapterIds: [...source.chapterIds],
+    targetMarks: source.targetMarks,
+    sections: JSON.parse(JSON.stringify(source.sections)),
+    questions: source.questions ? JSON.parse(JSON.stringify(source.questions)) : [],
+    instructions: source.instructions ? [...source.instructions] : [],
+    durationMinutes: source.durationMinutes,
+    rollNumberBlock: source.rollNumberBlock,
+    answerKey: source.answerKey,
+  }, actor)
+  return result
 }
 
 function transitionPaper(id: string, target: PaperStatus, actor: Person, comment?: string): Result<Paper> {
@@ -541,6 +633,88 @@ function autoFill(input: {
     }
   }
   return { ok: true, value: questions }
+}
+
+/** Real bank questions (Phase 5): filter by chapter and type. */
+function listBankQuestions(filter: { chapterId?: string; type?: BankQuestion['type']; subjectId?: string } = {}): BankQuestion[] {
+  return BANK_QUESTIONS.filter((q) => {
+    if (filter.chapterId && q.chapterId !== filter.chapterId) return false
+    if (filter.type && q.type !== filter.type) return false
+    if (filter.subjectId && q.subjectId !== filter.subjectId) return false
+    return true
+  })
+}
+
+function getBankQuestion(id: string): BankQuestion | undefined {
+  return BANK_QUESTIONS.find((q) => q.id === id)
+}
+
+/* ---------------- Saved questions & personal patterns (Phase 5) ---------------- */
+
+/** Saved questions for a teacher: seed + questions bookmarked in the Studio. */
+function listSavedQuestions(teacherId: string): SavedQuestion[] {
+  return state.savedQuestions.filter((s) => s.teacherId === teacherId)
+}
+
+/** Bookmark a bank question (no-op when already saved). */
+function addSavedQuestion(teacherId: string, bankQuestionId: string): Result<SavedQuestion> {
+  const bank = getBankQuestion(bankQuestionId)
+  if (!bank) return { ok: false, error: 'Question not found' }
+  const existing = state.savedQuestions.find((s) => s.teacherId === teacherId && s.id === `sq-${bank.id}`)
+  if (existing) return { ok: true, value: existing }
+  const item: SavedQuestion = {
+    id: `sq-${bank.id}`,
+    teacherId,
+    subjectId: bank.subjectId,
+    chapterId: bank.chapterId,
+    type: bank.type,
+    marks: bank.type === 'mcq' ? 1 : bank.type === 'short' ? 4 : 8,
+    text: bank.textEn,
+    createdAt: new Date().toISOString(),
+  }
+  state.savedQuestions.push(item)
+  save()
+  return { ok: true, value: item }
+}
+
+function removeSavedQuestion(teacherId: string, id: string): boolean {
+  const idx = state.savedQuestions.findIndex((s) => s.teacherId === teacherId && s.id === id)
+  if (idx === -1) return false
+  state.savedQuestions.splice(idx, 1)
+  save()
+  return true
+}
+
+function listPersonalPatterns(teacherId: string): PersonalPattern[] {
+  return state.personalPatterns.filter((p) => p.teacherId === teacherId)
+}
+
+function savePersonalPattern(
+  teacherId: string,
+  input: { name: string; sections: Paper['sections']; targetMarks: number },
+): Result<PersonalPattern> {
+  const name = input.name.trim()
+  if (!name) return { ok: false, error: 'Name is required' }
+  if (!input.sections.length || input.targetMarks <= 0) return { ok: false, error: 'Choose a pattern first' }
+  const pattern: PersonalPattern = {
+    id: `pp-${Date.now().toString(36)}`,
+    teacherId,
+    name,
+    sections: JSON.parse(JSON.stringify(input.sections)),
+    targetMarks: input.targetMarks,
+    createdAt: new Date().toISOString(),
+  }
+  state.personalPatterns.push(pattern)
+  save()
+  return { ok: true, value: pattern }
+}
+
+function deletePersonalPattern(teacherId: string, id: string): boolean {
+  const idx = state.personalPatterns.findIndex((p) => p.teacherId === teacherId && p.id === id)
+  if (idx === -1) return false
+  state.personalPatterns.splice(idx, 1)
+  save()
+  return true
 }
 
 /* ---------------- Platform ---------------- */
@@ -1013,6 +1187,8 @@ export const PaperService = {
   list: listPapers,
   get: getPaper,
   create: createPaper,
+  update: updatePaper,
+  duplicate: duplicatePaper,
   transition: transitionPaper,
   markPrinted: (id: string, actor: Person) => transitionPaper(id, 'printed', actor),
 } as const
@@ -1023,6 +1199,8 @@ export const QuestionBankProvider = {
   getChapters,
   getQuestionCounts,
   autoFill,
+  listBankQuestions,
+  getBankQuestion,
 } as const
 
 export const ApprovalRequestService = {
@@ -1057,7 +1235,12 @@ export const PlatformService = {
   listTemplates,
   duplicateTemplate,
   setDefaultTemplate,
-  listSavedQuestions: (teacherId: string) => SAVED_QUESTIONS.filter(s => s.teacherId === teacherId),
+  listSavedQuestions,
+  addSavedQuestion,
+  removeSavedQuestion,
+  listPersonalPatterns,
+  savePersonalPattern,
+  deletePersonalPattern,
 } as const
 
 /** Reset mock mutations back to seed (demo helper). */
@@ -1073,11 +1256,12 @@ export function resetMockData() {
 export {
   SCHOOLS, TEACHERS, SUPER_ADMINS, SCHOOL_ADMINS, USERS, PAPERS, PLANS, AUDIT_EVENTS,
   NOTIFICATIONS, EXAMS, TEMPLATES, SAVED_QUESTIONS, CLASSES, SUBJECTS, CHAPTERS,
-  APPROVAL_REQUESTS, ANNOUNCEMENTS, DEFAULT_PLATFORM_SETTINGS,
+  APPROVAL_REQUESTS, ANNOUNCEMENTS, DEFAULT_PLATFORM_SETTINGS, BANK_QUESTIONS,
   personRole, currentMarks,
 }
 export type {
   School, Paper, PaperStatus, Person, PersonRole, Plan, PlanId, AuditEvent, AppNotification,
   Exam, Template, SavedQuestion, ApprovalRequest, ApprovalRequestStatus,
   Announcement, AnnouncementTarget, AnnouncementStatus, PlatformSettings, SchoolSettings,
+  BankQuestion, PaperQuestion, PersonalPattern,
 }
