@@ -516,6 +516,7 @@
       "patternEmpty": "کوئی پری سیٹ منتخب کریں یا نیچے حصہ شامل کریں۔",
       "totalMarksLabel": "کل مارک",
       "targetLabel": "مطلوبہ",
+      "marksMismatch": "کل {{current}} مطلوبہ {{target}} سے میل نہیں کھاتا۔ حصے درست کریں تاکہ کل مطلوبہ کے برابر ہو۔",
       "presetBoard75": "بورڈ 75",
       "presetHalfBook": "نصف کتاب 40",
       "presetChapterTest": "باب ٹیسٹ 30",
@@ -2044,7 +2045,8 @@
         "checklistTitle": "جانچ کی فہرست",
         "notReady": "مکمل کرنے سے پہلے نیچے دی گئی باتیں درست کریں۔",
         "previewLanguage": "پیش نظارہ کی زبان",
-        "title": "جائزہ"
+        "title": "جائزہ",
+        "attemptAny": "{{total}} میں سے کوئی {{attempt}} حل کریں"
       },
       "saveDraft": "مسودہ محفوظ کریں",
       "saved": "محفوظ ہو گیا",

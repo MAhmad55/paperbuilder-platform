@@ -1131,6 +1131,39 @@ function updatePlatformSettings(patch: Partial<PlatformSettings>): PlatformSetti
   return { ...state.platformSettings }
 }
 
+export type LegalDoc = 'terms' | 'privacy'
+
+/** The seed default for one legal text — the "no custom text saved" baseline. */
+function defaultLegalText(doc: LegalDoc, lang: 'en' | 'ur'): string {
+  if (doc === 'privacy') {
+    return lang === 'ur' ? DEFAULT_PLATFORM_SETTINGS.legalPrivacyUr : DEFAULT_PLATFORM_SETTINGS.legalPrivacyEn
+  }
+  return lang === 'ur' ? DEFAULT_PLATFORM_SETTINGS.legalTermsUr : DEFAULT_PLATFORM_SETTINGS.legalTermsEn
+}
+
+/**
+ * Resolve the legal text for a public /legal page (Phase 7, B10 gap).
+ * Returns the saved settings text when the admin has saved custom text
+ * (non-blank and different from the seed default); otherwise null, and the
+ * caller falls back to the static i18n copy (public.legal.*). The seed
+ * equals the i18n body1, so comparing against it keeps the default page
+ * (body1 + the demo disclaimer body2) unchanged until an admin edits it.
+ */
+export function resolveLegalText(doc: LegalDoc, lang: 'en' | 'ur', settings: PlatformSettings): string | null {
+  const saved = doc === 'privacy'
+    ? (lang === 'ur' ? settings.legalPrivacyUr : settings.legalPrivacyEn)
+    : (lang === 'ur' ? settings.legalTermsUr : settings.legalTermsEn)
+  const text = saved.trim()
+  if (!text) return null
+  if (text === defaultLegalText(doc, lang)) return null
+  return text
+}
+
+/** Current-store version of resolveLegalText (what the /legal pages read). */
+export function getLegalText(doc: LegalDoc, lang: 'en' | 'ur'): string | null {
+  return resolveLegalText(doc, lang, state.platformSettings)
+}
+
 /* ---------------- Templates (Phase 4, /school/templates) ---------------- */
 
 /** Templates for a school, with the default override applied. */
@@ -1337,6 +1370,7 @@ export const PlatformService = {
   createAnnouncement,
   getSettings: getPlatformSettings,
   updateSettings: updatePlatformSettings,
+  getLegalText,
   listAudit,
   listNotifications,
   markNotificationRead,

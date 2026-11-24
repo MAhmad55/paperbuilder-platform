@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import { type ReactNode } from 'react'
 import { AuthProvider, useAuth } from './shell/AuthContext'
+import { RouteAnnouncer } from './shell/RouteAnnouncer'
 import { ToastProvider } from './design-system'
 import { AppShell } from './shell/AppShell'
 import { SignInPage } from './pages/SignInPage'
@@ -90,6 +91,7 @@ export function App() {
     <BrowserRouter>
       <AuthProvider>
         <ToastProvider>
+          <RouteAnnouncer />
           <Routes>
           {/* Public & access screens (Phase 2, blueprint 4.1) — no sidebar */}
           <Route path="/" element={<LandingPage />} />

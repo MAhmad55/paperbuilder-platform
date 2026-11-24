@@ -101,24 +101,36 @@ export function PatternEditor({ sections, targetMarks, onChange, presets = PRESE
   }
 
   const state = getMeterState(targetMarks, currentMarks)
+  const marksMismatch = currentMarks !== targetMarks
 
   return (
     <div className="pb-pattern">
       <Meter target={targetMarks} current={currentMarks} label={t('copy.paper.meterLabel')} />
 
-      <div className="pb-pattern__presets" role="group" aria-label={t('copy.paper.presetsAria')}>
-        {presets.map(p => (
-          <button
-            key={p.id}
-            type="button"
-            className="pb-pattern__preset"
-            aria-pressed={activePresetId === p.id}
-            onClick={() => applyPreset(p)}
-          >
-            {t(PRESET_NAME_KEY[p.id] ?? p.id, { defaultValue: p.name })}
-          </button>
-        ))}
-      </div>
+      {/* Announced validation error: the meter status text alone is
+          colour + short copy, not an error a screen reader (or a
+          sighted teacher scanning quickly) can act on. */}
+      {marksMismatch && (
+        <p className="pb-error-text" role="alert">
+          {t('copy.paper.marksMismatch', { current: currentMarks, target: targetMarks })}
+        </p>
+      )}
+
+      {presets.length > 0 && (
+        <div className="pb-pattern__presets" role="group" aria-label={t('copy.paper.presetsAria')}>
+          {presets.map(p => (
+            <button
+              key={p.id}
+              type="button"
+              className="pb-pattern__preset"
+              aria-pressed={activePresetId === p.id}
+              onClick={() => applyPreset(p)}
+            >
+              {t(PRESET_NAME_KEY[p.id] ?? p.id, { defaultValue: p.name })}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {sections.length === 0 && (

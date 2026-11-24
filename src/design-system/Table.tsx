@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import {
   useReactTable,
   getCoreRowModel,
@@ -35,6 +35,30 @@ export interface TableProps<T extends { id: string }> {
   emptyAction?: { label: string; onClick: () => void }
 }
 
+/** True below the same 768px breakpoint where the CSS swaps the desktop
+    table for the mobile card list. Rendering only one representation keeps
+    screen-reader users from meeting every row (and every row checkbox)
+    twice — `display: none` hides the other copy visually, but rendering
+    a single copy is the guarantee, not the stylesheet. */
+export function useIsMobileTable(): boolean {
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false
+    return window.matchMedia('(max-width: 768px)').matches
+  })
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return
+    const mq = window.matchMedia('(max-width: 768px)')
+    const onChange = (e: MediaQueryListEvent) => setIsMobile(e.matches)
+    if (typeof mq.addEventListener === 'function') {
+      mq.addEventListener('change', onChange)
+      return () => mq.removeEventListener('change', onChange)
+    }
+    mq.addListener(onChange)
+    return () => mq.removeListener(onChange)
+  }, [])
+  return isMobile
+}
+
 export function Table<T extends { id: string }>({
   columns,
   data,
@@ -45,6 +69,7 @@ export function Table<T extends { id: string }>({
   emptyAction,
 }: TableProps<T>) {
   const { t } = useTranslation()
+  const isMobile = useIsMobileTable()
   const resolvedEmptyTitle = emptyTitle ?? t('common.tableEmptyTitle')
   const resolvedEmptyBody = emptyBody ?? t('common.tableEmptyBody')
   const [sorting, setSorting] = useState<SortingState>([])
@@ -112,7 +137,9 @@ export function Table<T extends { id: string }>({
         </div>
       )}
 
-      {/* Desktop table */}
+      {/* Desktop table — rendered only above the mobile breakpoint, so
+          the rows (and their checkboxes) exist exactly once in the DOM. */}
+      {!isMobile && (
       <div className="pb-table-wrap">
         <table className="pb-table" aria-label={ariaLabel}>
           <thead>
@@ -129,8 +156,23 @@ export function Table<T extends { id: string }>({
                 </th>
               )}
               {table.getHeaderGroups().map(hg =>
-                hg.headers.map(header => (
-                  <th key={header.id} scope="col" style={{ textAlign: header.column.columnDef.meta?.align === 'center' ? 'center' : header.column.columnDef.meta?.align === 'end' ? 'end' : undefined }}>
+                hg.headers.map(header => {
+                  const sorted = header.column.getIsSorted()
+                  return (
+                  <th
+                    key={header.id}
+                    scope="col"
+                    aria-sort={
+                      header.column.getCanSort()
+                        ? sorted === 'asc'
+                          ? 'ascending'
+                          : sorted === 'desc'
+                            ? 'descending'
+                            : 'none'
+                        : undefined
+                    }
+                    style={{ textAlign: header.column.columnDef.meta?.align === 'center' ? 'center' : header.column.columnDef.meta?.align === 'end' ? 'end' : undefined }}
+                  >
                     {header.column.getCanSort() ? (
                       <button
                         type="button"
@@ -144,7 +186,8 @@ export function Table<T extends { id: string }>({
                       flexRender(header.column.columnDef.header, header.getContext())
                     )}
                   </th>
-                ))
+                  )
+                })
               )}
             </tr>
           </thead>
@@ -173,8 +216,11 @@ export function Table<T extends { id: string }>({
           </tbody>
         </table>
       </div>
+      )}
 
-      {/* Mobile card list */}
+      {/* Mobile card list — rendered only below the breakpoint, so the
+          rows (and their checkboxes) exist exactly once in the DOM. */}
+      {isMobile && (
       <ul className="pb-table__cards">
         {table.getRowModel().rows.map(row => {
           const selected = selectedIds.includes(row.original.id)
@@ -204,6 +250,7 @@ export function Table<T extends { id: string }>({
           )
         })}
       </ul>
+      )}
     </div>
   )
 }

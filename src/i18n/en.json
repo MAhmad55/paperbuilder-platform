@@ -516,6 +516,7 @@
       "patternEmpty": "Choose a preset or add a section below.",
       "totalMarksLabel": "Total marks",
       "targetLabel": "Target",
+      "marksMismatch": "Total {{current}} does not match the target {{target}}. Adjust the sections so the total matches.",
       "presetBoard75": "Board 75",
       "presetHalfBook": "Half-book 40",
       "presetChapterTest": "Chapter test 30",
@@ -2044,7 +2045,8 @@
         "checklistTitle": "Validation checklist",
         "notReady": "Fix the items below before you finish.",
         "previewLanguage": "Preview language",
-        "title": "Review"
+        "title": "Review",
+        "attemptAny": "Attempt any {{attempt}} of {{total}}"
       },
       "saveDraft": "Save draft",
       "saved": "Saved",

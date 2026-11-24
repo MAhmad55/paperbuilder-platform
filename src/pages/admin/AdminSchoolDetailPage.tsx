@@ -242,6 +242,16 @@ export function AdminSchoolDetailPage() {
         </div>
       ) : demoError ? (
         <div>
+          {/* Phase 7: the error state had no page heading — the header
+              lives inside the other branches only. A heading keeps the
+              error state a real page (and the route announcer working). */}
+          <PageHeader
+            breadcrumb={[
+              { label: t('nav.dashboard'), to: '/admin' },
+              { label: t('nav.schools'), to: '/admin/schools' },
+            ]}
+            title={school?.name ?? t('admin.detail.title')}
+          />
           <Banner variant="error" title={t('admin.detail.error.title')}>
             {t('admin.detail.error.body')}
           </Banner>

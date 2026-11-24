@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { PaperSheet, StatusChip } from '../../design-system'
 import {
   AuthService, PlatformService, SchoolService, SCHOOL_ADMINS,
@@ -86,6 +87,7 @@ export function paperStatusChip(status: PaperStatus) {
 /** Live A4 preview of a paper (paper content, not UI copy — the same
     bilingual-hardcoded approach PaperSheet itself uses). */
 export function PaperPreview({ paper, schoolName }: { paper: Paper; schoolName: string }) {
+  const { t } = useTranslation()
   const mode: 'en' | 'ur' = paper.medium === 'urdu' ? 'ur' : 'en'
   const sectionLabel = (type: string) =>
     type === 'mcq' ? 'MCQ' : type === 'short'
@@ -124,6 +126,15 @@ export function PaperPreview({ paper, schoolName }: { paper: Paper; schoolName: 
               {section.questionCount * section.marksPerQuestion}
               {' '}
               {mode === 'ur' ? 'مارک' : 'marks'}
+              {/* Phase 7: attempt rule, only where it differs from the total —
+                  the same shape as the Studio preview; the approver checks
+                  attempted marks, so the rule belongs in this preview too. */}
+              {section.attemptCount != null && section.attemptCount !== section.questionCount && (
+                <span>
+                  {' — '}
+                  {t('teacher.studio.review.attemptAny', { attempt: section.attemptCount, total: section.questionCount })}
+                </span>
+              )}
             </p>
             <ol>
               {Array.from({ length: Math.min(section.questionCount, 3) }, (_, q) => (

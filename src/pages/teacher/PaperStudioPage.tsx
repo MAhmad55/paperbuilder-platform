@@ -594,7 +594,18 @@ export function PaperStudioPage() {
                       </button>
                     </div>
                   </div>
-                  <PatternEditor sections={draft.sections} targetMarks={draft.targetMarks} onChange={onPatternChange} />
+                  <div>
+                    <p className="teacher-note">{t('teacher.studio.blueprint.sectionsTitle')}</p>
+                    {/*
+                      PatternEditor presets hidden here (Phase 7): the Studio
+                      chips above are the single preset control. Showing both
+                      put "Board 75" on screen twice, and the two copies
+                      disagreed — PatternEditor presets carry no attemptCount,
+                      so its Board 75 silently dropped the 2-of-3 longs rule.
+                      PatternEditor here only edits marks per question.
+                    */}
+                    <PatternEditor sections={draft.sections} targetMarks={draft.targetMarks} onChange={onPatternChange} presets={[]} />
+                  </div>
                   {draft.sections.length > 0 && (
                     <div>
                       <p className="teacher-note">{t('teacher.studio.blueprint.attemptHint')}</p>

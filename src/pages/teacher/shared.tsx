@@ -1,4 +1,5 @@
 import { useAuth } from '../../shell/AuthContext'
+import { useTranslation } from 'react-i18next'
 import { PaperSheet } from '../../design-system'
 import { AuthService, SchoolService, TEACHERS } from '../../services/mock-store'
 import { CHAPTERS, SUBJECTS } from '../../mock/data'
@@ -63,6 +64,7 @@ export function StudioPreview({
   previewMode: 'en' | 'ur'
   rollNumberLabel: string
 }) {
+  const { t } = useTranslation()
   const mode = previewMode
   const sectionLabel = (type: string) =>
     type === 'mcq' ? 'MCQ' : type === 'short'
@@ -106,6 +108,13 @@ export function StudioPreview({
                 {sectionLabel(section.type)}
                 {' '}
                 <span>({section.questionCount} × {section.marksPerQuestion} = {section.questionCount * section.marksPerQuestion})</span>
+                {/* Phase 7: attempt rule, only where it differs from the total. */}
+                {section.attemptCount != null && section.attemptCount !== section.questionCount && (
+                  <span className="teacher-paper__attempt">
+                    {' — '}
+                    {t('teacher.studio.review.attemptAny', { attempt: section.attemptCount, total: section.questionCount })}
+                  </span>
+                )}
               </h3>
               {qs.length === 0 ? (
                 <p className="teacher-paper__empty-q">{mode === 'ur' ? 'ابھی کوئی سوال نہیں' : 'No questions yet'}</p>

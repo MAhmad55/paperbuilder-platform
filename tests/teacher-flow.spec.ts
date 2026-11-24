@@ -54,6 +54,10 @@ test('teacher builds, submits, gets approval, prints', async ({ page }) => {
 
   // --- Step 5 Review: checklist passes ---
   await expect(page.getByText('Everything checks out.')).toBeVisible({ timeout: 5000 })
+  // Phase 7: the Review preview renders the attempt rule (Board 75 longs
+  // are "attempt any 2 of 3"), like the paper itself will. It appears
+  // twice on this step (main preview + side rail), so match the first.
+  await expect(page.getByText('Attempt any 2 of 3').first()).toBeVisible()
   await page.getByRole('button', { name: 'Continue', exact: true }).click()
 
   // --- Step 6 Finish: submit for approval ---
@@ -71,6 +75,9 @@ test('teacher builds, submits, gets approval, prints', async ({ page }) => {
   await switchSession(page, 'school-admin', 'u-adm-03', 'sch-beacon')
   await page.goto(`/school/approvals?selected=${paperId}`, { waitUntil: 'domcontentloaded' })
   await page.waitForTimeout(1500)
+  // Phase 7: the approvals preview renders the same attempt rule as the
+  // Studio preview — the approver checks attempted marks, not just totals.
+  await expect(page.getByText('Attempt any 2 of 3').first()).toBeVisible({ timeout: 5000 })
   await page.getByRole('button', { name: 'Approve', exact: true }).click()
   await expect(page.locator('.pb-toast')).toBeVisible({ timeout: 5000 })
 
