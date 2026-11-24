@@ -78,8 +78,8 @@ export function AppShell({ title, notifications = 0, children }: AppShellProps) 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '4px 0 14px', borderBottom: '1px solid var(--line)', marginBottom: 12 }}>
           {currentUser && <Avatar name={currentUser.name} size="md" />}
           <div>
-            <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--ink-900)' }}>{currentUser?.name}</div>
-            <div className="pb-muted" style={{ fontSize: 12 }}>{currentUser?.role}</div>
+            <div style={{ fontWeight: 600, fontSize: 'var(--text-sm)', color: 'var(--ink-900)' }}>{currentUser?.name}</div>
+            <div className="pb-muted" style={{ fontSize: 'var(--text-xs)' }}>{currentUser?.role}</div>
           </div>
         </div>
         <MobileNav onNavigate={() => setMobileNavOpen(false)} />
@@ -114,7 +114,7 @@ function MobileNav({ onNavigate }: { onNavigate: () => void }) {
             <NavLink
               to={item.to}
               onClick={onNavigate}
-              style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', color: 'var(--ink-900)', borderRadius: 10, textDecoration: 'none', fontSize: 15, fontWeight: 500 }}
+              style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', color: 'var(--ink-900)', borderRadius: 10, textDecoration: 'none', fontSize: '0.9375rem', fontWeight: 500 }}
             >
               <Icon size={18} aria-hidden="true" />
               <span>{t(item.labelKey)}</span>

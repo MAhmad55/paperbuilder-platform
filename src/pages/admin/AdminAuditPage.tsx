@@ -49,6 +49,8 @@ const ALL_ACTIONS: AuditAction[] = [
   'teacher.assignment-changed',
   'user.invited',
   'user.deactivated',
+  'user.profile-updated',
+  'user.password-changed',
   'plan.limit-changed',
   'template.created',
   'template.default-changed',
@@ -205,6 +207,11 @@ export function AdminAuditPage() {
         <span>
           <span className="admin-audit__target-label"><Bidi>{row.targetLabel}</Bidi></span>
           <span className="admin-audit__target-type">{t(`admin.audit.targetTypes.${row.targetType}`)}</span>
+          {row.reason && (
+            <span className="admin-audit__target-type">
+              <Bidi>{t('admin.audit.reason', { reason: row.reason })}</Bidi>
+            </span>
+          )}
         </span>
       ),
     },

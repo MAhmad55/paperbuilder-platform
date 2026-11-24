@@ -21,8 +21,8 @@ import {
 } from '../../services/studio'
 import type { StudioDraft } from '../../services/studio'
 import {
-  chapterLabel, classLabel, demoModeOf, demoTeacher, demoTeacherSchool, shouldOpenPrintDialog,
-  StudioPreview, subjectLabel, useSchoolDemo,
+  chapterLabel, classLabel, demoModeOf, demoTeacher, demoTeacherSchool, paperFileTitle,
+  printWithTitle, shouldOpenPrintDialog, StudioPreview, subjectLabel, useSchoolDemo,
 } from './shared'
 import '../../styles/teacher.css'
 
@@ -345,7 +345,12 @@ export function PaperStudioPage() {
       toast({ variant: 'error', message: result.error })
       return
     }
-    if (shouldOpenPrintDialog()) window.print()
+    if (shouldOpenPrintDialog()) printWithTitle(paperFileTitle({
+      className: classLabel(paper.classId),
+      subjectName: subjectLabel(paper.subjectId, 'en'),
+      examType: t(`examType.${paper.examType === 'board-pattern' ? 'boardPattern' : paper.examType === 'chapter-test' ? 'chapterTest' : paper.examType}`),
+      schoolName: school?.name ?? '',
+    }))
     toast({ variant: 'success', message: t('teacher.studio.toasts.printed') })
   }
 
@@ -780,7 +785,12 @@ export function PaperStudioPage() {
                       variant="secondary"
                       onClick={() => {
                         saveDraftClick()
-                        if (shouldOpenPrintDialog()) window.print()
+                        if (shouldOpenPrintDialog()) printWithTitle(paperFileTitle({
+                          className: classLabel(draft.classId),
+                          subjectName: subjectLabel(draft.subjectId, 'en'),
+                          examType: t(`examType.${draft.examType === 'board-pattern' ? 'boardPattern' : draft.examType === 'chapter-test' ? 'chapterTest' : draft.examType}`),
+                          schoolName: school?.name ?? '',
+                        }))
                       }}
                     >
                       {t('teacher.studio.finish.download')}
@@ -793,6 +803,7 @@ export function PaperStudioPage() {
                     </Button>
                   </div>
                   <p className="teacher-note">{t('teacher.studio.finish.printFirst')}</p>
+                  <p className="teacher-note">{t('teacher.studio.finish.downloadHint')}</p>
                 </div>
               </Card>
             )}

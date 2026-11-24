@@ -215,7 +215,7 @@ function setSchoolStatusQuiet(id: string, status: School['status']) {
   state.schoolOverrides[id] = status
 }
 
-function setSchoolStatus(id: string, status: School['status'], actor: Person): Result<School> {
+function setSchoolStatus(id: string, status: School['status'], actor: Person, reason?: string): Result<School> {
   const school = SCHOOLS.find(s => s.id === id)
   if (!school) return { ok: false, error: 'School not found' }
   const current = state.schoolOverrides[id] ?? school.status
@@ -232,6 +232,7 @@ function setSchoolStatus(id: string, status: School['status'], actor: Person): R
     targetType: 'school',
     targetId: school.id,
     targetLabel: school.name,
+    reason: reason?.trim() ? reason.trim() : undefined,
     createdAt: new Date().toISOString(),
   })
   save()
@@ -614,6 +615,7 @@ function transitionPaper(id: string, target: PaperStatus, actor: Person, comment
     targetType,
     targetId: paper.id,
     targetLabel: paper.title,
+    reason: target === 'changes-requested' ? comment?.trim() || undefined : undefined,
     createdAt: new Date().toISOString(),
   })
   save()
@@ -948,6 +950,7 @@ function decideApprovalRequest(
     targetType: 'school',
     targetId: school?.id ?? request.id,
     targetLabel: request.schoolName,
+    reason: decision === 'rejected' ? opts.rejectionReason!.trim() : undefined,
     createdAt: new Date().toISOString(),
   })
   save()

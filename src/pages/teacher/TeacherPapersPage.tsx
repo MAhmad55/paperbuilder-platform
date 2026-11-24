@@ -13,7 +13,8 @@ import { Bidi } from '../../utils/bidi'
 import { formatDate } from '../../utils/date'
 import type { AppLanguage } from '../../i18n'
 import {
-  classLabel, demoModeOf, demoTeacher, paperStatusChip, subjectLabel, useSchoolDemo,
+  classLabel, demoModeOf, demoTeacher, demoTeacherSchool, paperFileTitle, paperStatusChip,
+  printWithTitle, subjectLabel, useSchoolDemo,
 } from './shared'
 import { shouldOpenPrintDialog } from './shared'
 import '../../styles/teacher.css'
@@ -54,6 +55,7 @@ export function TeacherPapersPage() {
   const [archiveTarget, setArchiveTarget] = useState<Paper | null>(null)
 
   const teacher = demoTeacher()
+  const school = demoTeacherSchool()
 
   const initialStatus: StatusFilter = (() => {
     const v = params.get('status')
@@ -117,7 +119,12 @@ export function TeacherPapersPage() {
       toast({ variant: 'error', message: result.error })
       return
     }
-    if (shouldOpenPrintDialog()) window.print()
+    if (shouldOpenPrintDialog()) printWithTitle(paperFileTitle({
+      className: classLabel(paper.classId),
+      subjectName: subjectLabel(paper.subjectId, 'en'),
+      examType: t(`examType.${paper.examType === 'board-pattern' ? 'boardPattern' : paper.examType === 'chapter-test' ? 'chapterTest' : paper.examType}`),
+      schoolName: school?.name ?? '',
+    }))
     setVersion((v) => v + 1)
     toast({ variant: 'success', message: t('teacher.studio.toasts.printed') })
   }

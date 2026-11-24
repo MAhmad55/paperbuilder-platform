@@ -29,7 +29,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
         <div className="pb-card__header">
           <div>
             {title && <div className="pb-card__title">{title}</div>}
-            {subtitle && <div className="pb-card__body" style={{ marginTop: 4, fontSize: 12 }}>{subtitle}</div>}
+            {subtitle && <div className="pb-card__body" style={{ marginTop: 4, fontSize: 'var(--text-xs)' }}>{subtitle}</div>}
           </div>
         </div>
       )}

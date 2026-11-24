@@ -67,7 +67,7 @@ export function TokensDemo() {
                 </div>
                 <div className="ds-token__meta">
                   <div className="ds-token__name"><Bidi>{token.token}</Bidi></div>
-                  <div style={{ color: 'var(--muted)', fontSize: 11 }}>{t(token.useKey)}</div>
+                  <div style={{ color: 'var(--muted)', fontSize: '0.6875rem' }}>{t(token.useKey)}</div>
                 </div>
               </div>
             ))}
@@ -82,36 +82,36 @@ export function TypographyDemo() {
   const { t } = useTranslation()
   return (
     <div className="ds-typo">
-      <p className="pb-muted" style={{ fontSize: 12, lineHeight: 1.6 }}>{t('showcase.typographyLead')}</p>
+      <p className="pb-muted" style={{ fontSize: 'var(--text-xs)', lineHeight: 1.6 }}>{t('showcase.typographyLead')}</p>
       <div className="ds-typo__block">
         <span className="ds-typo__label">{t('copy.identity.typoH1')}</span>
-        <h1 style={{ fontSize: 36 }}>{t('copy.identity.typoH1Sample')}</h1>
+        <h1 style={{ fontSize: 'var(--text-3xl)' }}>{t('copy.identity.typoH1Sample')}</h1>
       </div>
       <div className="ds-typo__block">
         <span className="ds-typo__label">{t('copy.identity.typoH2')}</span>
-        <h2 style={{ fontSize: 28 }}>{t('copy.identity.typoH2Sample')}</h2>
+        <h2 style={{ fontSize: 'var(--text-2xl)' }}>{t('copy.identity.typoH2Sample')}</h2>
       </div>
       <div className="ds-typo__block">
         <span className="ds-typo__label">{t('copy.identity.typoH3')}</span>
-        <p style={{ fontSize: 18 }}>{t('copy.identity.typoH3Sample')}</p>
-        <p style={{ fontSize: 16, marginTop: 8 }}>{t('copy.identity.typoBody')}</p>
-        <p style={{ fontSize: 14, color: 'var(--muted)', marginTop: 8 }}>{t('copy.identity.typoSecondary')}</p>
+        <p style={{ fontSize: 'var(--text-lg)' }}>{t('copy.identity.typoH3Sample')}</p>
+        <p style={{ fontSize: 'var(--text-base)', marginTop: 8 }}>{t('copy.identity.typoBody')}</p>
+        <p style={{ fontSize: 'var(--text-sm)', color: 'var(--muted)', marginTop: 8 }}>{t('copy.identity.typoSecondary')}</p>
       </div>
       <div className="ds-typo__block">
         <span className="ds-typo__label">{t('copy.identity.typoUrduHeadings')}</span>
-        <p style={{ fontFamily: 'var(--font-urdu-head)', fontSize: 22, lineHeight: 2.2 }}>{t('copy.identity.typoUrduHeadingsSample')}</p>
+        <p style={{ fontFamily: 'var(--font-urdu-head)', fontSize: 'var(--text-xl)', lineHeight: 2.2 }}>{t('copy.identity.typoUrduHeadingsSample')}</p>
       </div>
       <div className="ds-typo__block">
         <span className="ds-typo__label">{t('copy.identity.typoUrduUI')}</span>
-        <p style={{ fontFamily: 'var(--font-urdu-ui)', fontSize: 17, lineHeight: 2.0 }}>{t('copy.identity.typoUrduUISample')}</p>
+        <p style={{ fontFamily: 'var(--font-urdu-ui)', fontSize: '1.0625rem', lineHeight: 2.0 }}>{t('copy.identity.typoUrduUISample')}</p>
       </div>
       <div className="ds-typo__block">
         <span className="ds-typo__label">{t('copy.identity.typoEnglishPaper')}</span>
-        <p style={{ fontFamily: 'var(--font-paper-latin)', fontSize: 22, lineHeight: 1.7 }}>{t('copy.identity.typoEnglishPaperSample')}</p>
+        <p style={{ fontFamily: 'var(--font-paper-latin)', fontSize: 'var(--text-xl)', lineHeight: 1.7 }}>{t('copy.identity.typoEnglishPaperSample')}</p>
       </div>
       <div className="ds-typo__block">
         <span className="ds-typo__label">{t('copy.identity.typoArabicStack')}</span>
-        <p style={{ fontSize: 14 }}><Bidi>{t('copy.identity.typoArabicStackSample')}</Bidi></p>
+        <p style={{ fontSize: 'var(--text-sm)' }}><Bidi>{t('copy.identity.typoArabicStackSample')}</Bidi></p>
       </div>
     </div>
   )
@@ -122,10 +122,10 @@ export default function IdentityDemo() {
   return (
     <div className="ds-identity">
       <div className="ds-identity__card">
-        <span className="app-rail__logo" style={{ width: 44, height: 44, fontSize: 17 }} aria-hidden="true">PB</span>
-        <span className="app-rail__brand-name" style={{ fontSize: 20 }}>PaperBuilder</span>
+        <span className="app-rail__logo" style={{ width: 44, height: 44, fontSize: '1.0625rem' }} aria-hidden="true">PB</span>
+        <span className="app-rail__brand-name" style={{ fontSize: '1.25rem' }}>PaperBuilder</span>
       </div>
-      <p className="pb-muted" style={{ fontSize: 13 }}>{t('copy.identity.quote')}</p>
+      <p className="pb-muted" style={{ fontSize: '0.8125rem' }}>{t('copy.identity.quote')}</p>
     </div>
   )
 }

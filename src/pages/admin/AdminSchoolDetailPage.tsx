@@ -122,7 +122,7 @@ export function AdminSchoolDetailPage() {
       window.setTimeout(() => document.getElementById('suspend-reason')?.focus(), 50)
       return
     }
-    const result = SchoolService.setStatus(school.id, 'suspended', actor)
+    const result = SchoolService.setStatus(school.id, 'suspended', actor, reason.trim())
     if (!result.ok) {
       toast({ variant: 'error', message: result.error })
       return
@@ -130,7 +130,6 @@ export function AdminSchoolDetailPage() {
     setSuspendOpen(false)
     setReason('')
     setVersion((v) => v + 1)
-    /* The mock audit event carries no reason field, so the reason is shown here. */
     toast({ variant: 'success', message: t('admin.detail.suspendedToast', { reason: reason.trim() }) })
   }
 
@@ -221,7 +220,9 @@ export function AdminSchoolDetailPage() {
       defaultValue: event.action,
     }),
     meta: formatDateTime(event.createdAt, lang),
-    description: event.actorName,
+    description: event.reason
+      ? `${event.actorName} — ${t('admin.detail.activity.reason', { reason: event.reason })}`
+      : event.actorName,
   }))
 
   const lastActiveLabel =

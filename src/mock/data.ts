@@ -1,4 +1,5 @@
 import { totalMarks } from '../services/marks'
+import { autoFillQuestions, emptyDraft, STUDIO_PRESETS } from '../services/studio'
 
 /* ------------------------------------------------------------------
    PaperBuilder mock data — generated deterministically (seeded RNG).
@@ -326,9 +327,10 @@ export interface Paper {
   createdAt: string
   updatedAt: string
   printedAt: string | null
-  /** Questions actually placed on the paper (Studio-built papers; seeded
-      papers predate the Studio and carry none — their sections still
-      describe the pattern). */
+  /** Questions actually placed on the paper. Seeded papers carry the
+      questions auto-filled from the bank at seed time (see the second pass
+      after BANK_QUESTIONS in this file); Studio-built papers carry the
+      questions the teacher placed. */
   questions?: PaperQuestion[]
   /** Studio finish-step choices. */
   instructions?: string[]
@@ -357,6 +359,96 @@ function buildSections(_rng: () => number, targetMarks: number): PaperSection[] 
     { id: 'sec-short', type: 'short', marksPerQuestion: shortPer, questionCount: shortCount },
     { id: 'sec-long', type: 'long', marksPerQuestion: longPer, questionCount: longCount },
   ]
+}
+
+/** Bank pool for a scope: one bank question per counted slot (CHAPTERS counts). */
+function bankPool(chapterIds: string[]): { mcq: number; short: number; long: number } {
+  const pool = { mcq: 0, short: 0, long: 0 }
+  for (const id of chapterIds) {
+    const ch = CHAPTERS.find((c) => c.id === id)
+    if (!ch) continue
+    pool.mcq += ch.counts.mcq
+    pool.short += ch.counts.short
+    pool.long += ch.counts.long
+  }
+  return pool
+}
+
+/**
+ * A seeded paper's sections are usable when they add up to the target AND
+ * every section can actually be filled from the scoped bank (auto-fill
+ * never repeats a bank question, so a section asking for more questions
+ * than its type holds in scope can never be filled). The MCQ section must
+ * also hold at least one question per scoped chapter, so round-robin
+ * auto-fill covers every chapter.
+ */
+function sectionsAreFillable(sections: PaperSection[], targetMarks: number, chapterIds: string[]): boolean {
+  if (totalMarks(sections) !== targetMarks) return false
+  const pool = bankPool(chapterIds)
+  const byType = new Map(sections.map((s) => [s.type, s]))
+  const mcq = byType.get('mcq')
+  const short = byType.get('short')
+  const long = byType.get('long')
+  if (!mcq || !short || !long) return false
+  if (mcq.questionCount > pool.mcq || short.questionCount > pool.short || long.questionCount > pool.long) return false
+  if (mcq.questionCount < chapterIds.length) return false
+  return true
+}
+
+/** Preferred counts for the canonical 1/5/10 pattern, per target. */
+const PREFERRED_COUNTS: Record<number, { mcq: number; short: number; long: number }> = {
+  60: { mcq: 10, short: 4, long: 3 },
+  75: { mcq: 15, short: 6, long: 3 },
+  90: { mcq: 15, short: 5, long: 5 },
+  100: { mcq: 15, short: 5, long: 6 },
+  120: { mcq: 20, short: 6, long: 7 },
+}
+
+/** Marks-per-question triples, most board-like first. */
+const MARKS_PREFERENCE: [number, number, number][] = [
+  [1, 5, 10], [2, 5, 10], [1, 8, 10], [2, 8, 10],
+  [1, 5, 12], [2, 5, 12], [1, 4, 10], [2, 4, 10],
+  [1, 8, 12], [2, 8, 12], [1, 4, 8], [2, 4, 8],
+  [1, 5, 8], [2, 5, 8], [1, 8, 8], [2, 8, 8],
+  [1, 4, 12], [2, 4, 12],
+]
+
+function byDistance(pref: number, max: number): number[] {
+  const vals = Array.from({ length: max }, (_, i) => i + 1)
+  return vals.sort((a, b) => Math.abs(a - pref) - Math.abs(b - pref) || a - b)
+}
+
+/**
+ * Deterministic sections that add up to `targetMarks` and fit the scoped
+ * bank pool. Target 75 uses the Board 75 preset when the pool allows it;
+ * otherwise the first exact solution in MARKS_PREFERENCE order wins, with
+ * counts kept as close as possible to the preferred board-like counts.
+ * Throws when no exact pattern exists — a seed that cannot be filled must
+ * fail loudly at import, never silently ship short.
+ */
+function buildValidSections(targetMarks: number, chapterIds: string[]): PaperSection[] {
+  const pool = bankPool(chapterIds)
+  if (targetMarks === 75 && pool.mcq >= 15 && pool.short >= 6 && pool.long >= 3) {
+    const preset = STUDIO_PRESETS.find((p) => p.id === 'board-75')!
+    return preset.sections.map((s) => ({ ...s }))
+  }
+  const pref = PREFERRED_COUNTS[targetMarks] ?? { mcq: 10, short: 5, long: 4 }
+  for (const [mcqPer, shortPer, longPer] of MARKS_PREFERENCE) {
+    for (const longCount of byDistance(pref.long, Math.min(12, pool.long))) {
+      for (const shortCount of byDistance(pref.short, Math.min(10, pool.short))) {
+        const remainder = targetMarks - shortPer * shortCount - longPer * longCount
+        if (remainder <= 0 || remainder % mcqPer !== 0) continue
+        const mcqCount = remainder / mcqPer
+        if (mcqCount < chapterIds.length || mcqCount > Math.min(30, pool.mcq)) continue
+        return [
+          { id: 'sec-mcq', type: 'mcq', marksPerQuestion: mcqPer, questionCount: mcqCount },
+          { id: 'sec-short', type: 'short', marksPerQuestion: shortPer, questionCount: shortCount },
+          { id: 'sec-long', type: 'long', marksPerQuestion: longPer, questionCount: longCount },
+        ]
+      }
+    }
+  }
+  throw new Error(`No fillable section pattern for target ${targetMarks} in chapters ${chapterIds.join(',')}`)
 }
 
 function randInt2(min: number, max: number) {
@@ -400,10 +492,22 @@ export const PAPERS: Paper[] = (() => {
       const selectedChapters = chapters
         .filter(() => rng() < 0.7)
         .slice(0, randInt2(2, Math.min(4, chapters.length)))
+      // A paper with no chapters in scope cannot be filled from the bank
+      // (paper-029 drew an empty scope); fall back to the subject's first
+      // two chapters so it has a scope like every other paper.
+      if (selectedChapters.length === 0) selectedChapters.push(...chapters.slice(0, 2))
       const targetMarks = pick([60, 75, 90, 100, 120])
       const medium: Medium = pick(['english', 'urdu', 'both'])
       const status = PAPER_STATUS_SEQUENCE[idx % PAPER_STATUS_SEQUENCE.length]
-      const sections = buildSections(rng, targetMarks)
+      const legacySections = buildSections(rng, targetMarks)
+      // Keep the legacy random pattern when it already adds up and can be
+      // filled from the scoped bank; otherwise rebuild it deterministically.
+      // (The legacy builder rounds the long section, so most papers land
+      // a few marks off their target.)
+      const chapterIds = selectedChapters.map((c) => c.id)
+      const sections = sectionsAreFillable(legacySections, targetMarks, chapterIds)
+        ? legacySections
+        : buildValidSections(targetMarks, chapterIds)
       const createdAt = daysAgo(randInt2(3, 120))
       const updatedAt = daysAgo(randInt2(0, 5))
       const history: PaperHistoryEntry[] = [
@@ -481,6 +585,10 @@ export interface AuditEvent {
   targetType: 'school' | 'paper' | 'user' | 'template' | 'announcement' | 'plan'
   targetId: string
   targetLabel: string
+  /** Why the action was taken, when one was given: suspend reason, rejection
+      reason, or the changes-requested comment. Shown in the audit log and in
+      the school detail Activity tab. Absent for actions taken without one. */
+  reason?: string
   createdAt: string
 }
 
@@ -853,6 +961,25 @@ export const BANK_QUESTIONS: BankQuestion[] = (() => {
 
 export function bankQuestions(chapterId: string, type: 'mcq' | 'short' | 'long'): BankQuestion[] {
   return BANK_QUESTIONS.filter(q => q.chapterId === chapterId && q.type === type)
+}
+
+/* ---------------- Seeded paper questions (Task 7) ---------------- */
+
+/**
+ * Every seeded paper carries its questions, built from the bank with the
+ * same round-robin auto-fill the Studio uses (studio.autoFillQuestions) —
+ * no second picking algorithm. Sections were validated as fillable above,
+ * so every section reaches its full count. This runs here, after
+ * BANK_QUESTIONS exists, so the PAPERS generator above stays free of the
+ * bank (and of any import cycle: studio imports only types from this file).
+ */
+for (const paper of PAPERS) {
+  const draft = emptyDraft()
+  draft.chapterIds = [...paper.chapterIds]
+  draft.sections = paper.sections
+  draft.targetMarks = paper.targetMarks
+  draft.questions = []
+  paper.questions = autoFillQuestions(draft, BANK_QUESTIONS)
 }
 
 /* ---------------- Personal patterns (Phase 5, teacher templates) ---------------- */

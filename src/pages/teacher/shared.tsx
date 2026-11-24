@@ -40,6 +40,43 @@ export function shouldOpenPrintDialog(): boolean {
   }
 }
 
+/** Build the print/PDF file name from real paper + school data:
+    "<Class> <Subject> <Exam type> - <School name>". English labels only,
+    so the file name stays Latin-safe in the browser save dialog. */
+export function paperFileTitle(parts: {
+  className: string
+  subjectName: string
+  examType: string
+  schoolName: string
+}): string {
+  const head = [parts.className, parts.subjectName, parts.examType]
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .join(' ')
+  return parts.schoolName.trim() ? `${head} - ${parts.schoolName.trim()}` : head
+}
+
+/** Open the browser print dialog with a meaningful document title, so the
+    saved PDF is named after the paper instead of "PaperBuilder". The
+    previous title is restored on afterprint (which fires when the dialog
+    closes, even on cancel). Callers gate on shouldOpenPrintDialog() first,
+    so the title only changes when a real print dialog opens. */
+export function printWithTitle(title: string): void {
+  const previous = document.title
+  const clean = title.trim().replace(/\s+/g, ' ')
+  if (clean) document.title = clean
+  const restore = () => {
+    document.title = previous
+    window.removeEventListener('afterprint', restore)
+  }
+  window.addEventListener('afterprint', restore)
+  try {
+    window.print()
+  } catch {
+    restore()
+  }
+}
+
 export interface StudioPreviewData {
   title: string
   classId: string

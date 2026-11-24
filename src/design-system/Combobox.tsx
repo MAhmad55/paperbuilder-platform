@@ -186,7 +186,7 @@ export function Combobox({
                   onMouseEnter={() => setHighlighted(i)}
                 >
                   <span>{o.label}</span>
-                  {o.hint && <span className="pb-muted" style={{ fontSize: 11 }}>{o.hint}</span>}
+                  {o.hint && <span className="pb-muted" style={{ fontSize: '0.6875rem' }}>{o.hint}</span>}
                   <Check size={16} className="pb-combobox__check" aria-hidden="true" />
                 </li>
               ))

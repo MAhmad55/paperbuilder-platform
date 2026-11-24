@@ -36,7 +36,7 @@
 }
 
 .admin-detail__facts dt {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--muted);
   margin-block-end: 4px;
 }
@@ -59,7 +59,7 @@
 
 .admin-detail__plan-name {
   margin-block: 0 16px;
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 
 .admin-detail__actions {

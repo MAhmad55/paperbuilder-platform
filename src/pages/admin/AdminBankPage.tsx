@@ -17,7 +17,7 @@ import {
   useToast,
   type TableColumn,
 } from '../../design-system'
-import { QuestionBankProvider } from '../../services/mock-store'
+import { PaperService, QuestionBankProvider } from '../../services/mock-store'
 import type { SubjectDef } from '../../mock/data'
 import { Bidi } from '../../utils/bidi'
 import '../../styles/admin-bank.css'
@@ -31,9 +31,20 @@ interface SubjectRow {
   short: number
   long: number
   total: number
+  /** Bank chapters of this subject used by the selected class's papers. */
+  covered: number
 }
 
-function buildRows(subjects: SubjectDef[]): SubjectRow[] {
+/**
+ * Per-class coverage, derived from real bank data: BANK_QUESTIONS are
+ * generated one per CHAPTERS count slot, and each paper records the bank
+ * chapters it draws on — so the chapters a class's papers use are the
+ * chapters of the bank that class covers. CHAPTERS / BANK_QUESTIONS
+ * carry no class of their own, which is why the class selector used to
+ * be a no-op (identical numbers for every class). Same covered/total
+ * definition as the school Reports page.
+ */
+function buildRows(subjects: SubjectDef[], coveredBySubject: Map<string, Set<string>>): SubjectRow[] {
   return subjects.map((subject) => {
     const chapters = QuestionBankProvider.getChapters(subject.id)
     const mcq = chapters.reduce((sum, c) => sum + c.counts.mcq, 0)
@@ -48,6 +59,7 @@ function buildRows(subjects: SubjectDef[]): SubjectRow[] {
       short,
       long,
       total: mcq + short + long,
+      covered: coveredBySubject.get(subject.id)?.size ?? 0,
     }
   })
 }
@@ -84,7 +96,19 @@ export function AdminBankPage() {
     () => (demo === 'empty' ? [] : QuestionBankProvider.getSubjects()),
     [demo],
   )
-  const rows = useMemo(() => buildRows(subjects), [subjects])
+  const coveredBySubject = useMemo(() => {
+    const map = new Map<string, Set<string>>()
+    for (const paper of PaperService.list({ classId })) {
+      let set = map.get(paper.subjectId)
+      if (!set) {
+        set = new Set<string>()
+        map.set(paper.subjectId, set)
+      }
+      for (const id of paper.chapterIds) set.add(id)
+    }
+    return map
+  }, [classId])
+  const rows = useMemo(() => buildRows(subjects, coveredBySubject), [subjects, coveredBySubject])
 
   const filteredRows = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -136,6 +160,12 @@ export function AdminBankPage() {
       header: t('admin.bank.columns.total'),
       align: 'end',
       cell: (row) => <Bidi>{row.total}</Bidi>,
+    },
+    {
+      id: 'coverage',
+      header: t('admin.bank.columns.coverage'),
+      align: 'end',
+      cell: (row) => <Bidi>{row.covered} / {row.chapters}</Bidi>,
     },
     {
       id: 'status',

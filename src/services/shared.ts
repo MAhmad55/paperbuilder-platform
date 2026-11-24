@@ -100,7 +100,7 @@ export function validatePasswordChange(input: PasswordChangeInput): string[] {
 }
 
 /** Avatar choices: initials (default) or one of the seeded colour keys. */
-export const AVATAR_CHOICES = ['initials', 'navy', 'green', 'red', 'amber'] as const
+export const AVATAR_CHOICES = ['initials', 'navy', 'slate', 'red', 'amber'] as const
 export type AvatarChoice = (typeof AVATAR_CHOICES)[number]
 
 /* ---------------- History ---------------- */

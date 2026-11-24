@@ -32,7 +32,7 @@ export interface AuthService {
 export interface SchoolService {
   list(): School[]
   get(id: string): School | undefined
-  setStatus(id: string, status: School['status'], actor: Person): Result<School>
+  setStatus(id: string, status: School['status'], actor: Person, reason?: string): Result<School>
   setPlan(id: string, planId: PlanId, actor: Person): Result<School>
   listTeachers(schoolId: string): Person[]
   listAdmins(schoolId: string): Person[]

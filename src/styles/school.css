@@ -25,7 +25,7 @@
 
 .school__section-title {
   margin: 0 0 12px;
-  font-size: 18px;
+  font-size: 1.125rem;
 }
 
 /* KPI cards (same compact density as the admin dashboard). */
@@ -187,12 +187,12 @@ a.school-kpi:focus-visible,
 
 .school-list__head h2 {
   margin: 0;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .school-list__head span {
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .school-items {
@@ -244,7 +244,7 @@ a.school-kpi:focus-visible,
 
 .school-item__meta {
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .school-panel {
@@ -283,7 +283,7 @@ a.school-kpi:focus-visible,
 }
 
 .school-facts dt {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--muted);
   margin-block-end: 4px;
 }
@@ -308,7 +308,7 @@ a.school-kpi:focus-visible,
 
 .school-flow h3 {
   margin: 0;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .school-note {
@@ -331,7 +331,7 @@ a.school-kpi:focus-visible,
   gap: 8px 12px;
   padding-block: 12px;
   border-block-end: 1px solid var(--line);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .school-rows__row:last-child {
@@ -352,7 +352,7 @@ a.school-kpi:focus-visible,
 
 .school-rows__meta {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .school-rows__more {
@@ -401,7 +401,7 @@ a.school-kpi:focus-visible,
   flex-direction: column;
   gap: 4px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.875rem;
   margin-block-end: 12px;
 }
 
@@ -437,12 +437,12 @@ a.school-kpi:focus-visible,
 
 .school-class-card h3 {
   margin: 0 0 4px;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .school-class-card__subject {
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.875rem;
   margin-block-end: 12px;
 }
 
@@ -450,13 +450,13 @@ a.school-kpi:focus-visible,
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-size: 14px;
+  font-size: 0.875rem;
   margin-block-end: 12px;
 }
 
 .school-class-card__rows dt {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .school-class-card__rows dd {
@@ -481,7 +481,7 @@ a.school-kpi:focus-visible,
 
 .school-cal__head h2 {
   margin: 0;
-  font-size: 18px;
+  font-size: 1.125rem;
 }
 
 .school-cal__grid {
@@ -492,7 +492,7 @@ a.school-kpi:focus-visible,
 
 .school-cal__weekday {
   text-align: center;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--muted);
   padding-block: 6px;
@@ -503,7 +503,7 @@ a.school-kpi:focus-visible,
   padding: 6px;
   border: 1px solid var(--line);
   border-radius: var(--radius-control);
-  font-size: 13px;
+  font-size: 0.8125rem;
   text-align: start;
   background: var(--paper);
   color: var(--ink-900);
@@ -533,7 +533,7 @@ a.school-kpi:focus-visible,
   color: var(--ink-900);
   border-radius: 4px;
   padding: 2px 4px;
-  font-size: 12px;
+  font-size: 0.75rem;
   margin-block-start: 2px;
   text-decoration: none;
 }
@@ -592,7 +592,7 @@ a.school-cal__exam:hover {
   align-items: baseline;
   justify-content: space-between;
   gap: 12px;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 /* Report rows with meters. */
@@ -603,7 +603,7 @@ a.school-cal__exam:hover {
   align-items: center;
   padding-block: 8px;
   border-block-end: 1px solid var(--line);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .school-report__row:last-child {
@@ -677,7 +677,7 @@ a.school-cal__exam:hover {
 
 .school-assign__group h3 {
   margin: 0 0 8px;
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 .school-assign__checks {
@@ -698,6 +698,6 @@ a.school-cal__exam:hover {
 
 .school-count {
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.875rem;
   margin-block-end: 12px;
 }

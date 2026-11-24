@@ -83,7 +83,7 @@ export function OverlayDemos() {
           <>
             <Button variant="secondary" onClick={() => setSheetOpen(true)}>{t('copy.overlays.bottomSheetOpen')}</Button>
             <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)} title={t('copy.overlays.bottomSheetTitle')}>
-              <p style={{ fontSize: 14, color: 'var(--muted)' }}>{t('copy.overlays.bottomSheetBody')}</p>
+              <p style={{ fontSize: 'var(--text-sm)', color: 'var(--muted)' }}>{t('copy.overlays.bottomSheetBody')}</p>
             </BottomSheet>
           </>
         )}

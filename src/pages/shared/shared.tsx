@@ -31,9 +31,23 @@ export function className(id: string): string {
 export const AVATAR_COLOURS: Record<string, { bg: string; fg: string }> = {
   initials: { bg: 'var(--ink-100)', fg: 'var(--ink-700)' },
   navy: { bg: '#1E2A78', fg: '#FFFFFF' },
-  green: { bg: '#0B6B50', fg: '#FFFFFF' },
+  slate: { bg: '#4A5470', fg: '#FFFFFF' },
   red: { bg: '#C92A45', fg: '#FFFFFF' },
   amber: { bg: '#FFD84D', fg: '#0F1733' },
+}
+
+/** Legacy avatar keys and the current key they map to. */
+const LEGACY_AVATAR_KEYS: Record<string, string> = { green: 'slate' }
+
+/** Resolve a stored avatar key to a current choice ('green' → 'slate'). */
+export function normalizeAvatarChoice(key: string | undefined): string {
+  const resolved = LEGACY_AVATAR_KEYS[key ?? ''] ?? key ?? 'initials'
+  return AVATAR_COLOURS[resolved] ? resolved : 'initials'
+}
+
+/** Resolve an avatar key to its colours; legacy and unknown keys fall back safely. */
+export function avatarColour(key: string): { bg: string; fg: string } {
+  return AVATAR_COLOURS[normalizeAvatarChoice(key)] ?? AVATAR_COLOURS.initials
 }
 
 export function avatarInitials(name: string): string {

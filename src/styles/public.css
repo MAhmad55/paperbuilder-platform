@@ -47,7 +47,7 @@
 .pb-public-brand__name {
   font-family: var(--font-heading);
   font-weight: 600;
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.2;
 }
 
@@ -63,7 +63,7 @@
   color: var(--ink-900);
   text-decoration: none;
   font-weight: 500;
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 .pb-public-nav__link:hover {
@@ -101,7 +101,7 @@
   color: var(--ink-900);
   text-decoration: none;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .pb-public-menu__link:hover {
@@ -130,7 +130,7 @@
 }
 
 .pb-public-menu__lang-label {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--ink-900);
 }
@@ -164,13 +164,13 @@
 
 .pb-public-footer__brand .pb-public-brand__name {
   color: #ffffff;
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 
 .pb-public-footer__tagline {
   margin: 8px 0 0;
   color: var(--ink-100);
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.7;
   max-width: 320px;
 }
@@ -190,14 +190,14 @@
 .pb-public-footer__col-title {
   margin: 0 0 4px;
   color: #ffffff;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 700;
 }
 
 .pb-public-footer__link {
   color: var(--ink-100);
   text-decoration: none;
-  font-size: 15px;
+  font-size: 0.9375rem;
   padding: 4px 0;
 }
 
@@ -241,7 +241,7 @@
   margin-inline: auto;
   padding: 0 24px 24px;
   color: var(--ink-100);
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 /* ---------- Narrow screens ---------- */

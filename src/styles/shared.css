@@ -3,8 +3,11 @@
    properties only, so Urdu RTL mirrors automatically. */
 
 /* Text size setting: Large bumps the type tokens (Settings writes
-   html[data-font-size] via applyFontSize). */
+   html[data-font-size] via applyFontSize) and the root font size, so
+   rem-based sizes scale by the same step. Token rules and rem rules
+   both scale; .pb-paper uses cqw units and never scales. */
 html[data-font-size='large'] {
+  font-size: 112.5%;
   --text-xs: 13px;
   --text-sm: 15px;
   --text-base: 18px;

@@ -20,7 +20,7 @@
 
 .admin-schools__count {
   margin: 0 0 12px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--muted);
 }
 

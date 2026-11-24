@@ -43,7 +43,7 @@ export function QuestionRow({
         <p className="pb-question-row__text">{text}</p>
         <div className="pb-question-row__meta">
           <Badge tone={type === 'mcq' ? 'ink' : type === 'short' ? 'neutral' : 'mark'}>{typeLabel}</Badge>
-          {chapter && <span className="pb-muted" style={{ fontSize: 12 }}>{chapter}</span>}
+          {chapter && <span className="pb-muted" style={{ fontSize: 'var(--text-xs)' }}>{chapter}</span>}
         </div>
       </div>
       <div className="pb-question-row__marks"><Bidi>{marks}m</Bidi></div>

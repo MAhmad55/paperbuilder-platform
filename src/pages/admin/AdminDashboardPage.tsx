@@ -5,40 +5,11 @@ import { ArrowRight } from 'lucide-react'
 import { PageHeader } from '../../shell/PageHeader'
 import { Banner, Button, Card, EmptyState, Skeleton } from '../../design-system'
 import { ApprovalRequestService, PaperService, PlatformService, SchoolService } from '../../services/mock-store'
-import type { AuditAction, SchoolStatus } from '../../mock/data'
+import type { SchoolStatus } from '../../mock/data'
 import { Bidi } from '../../utils/bidi'
 import { formatDate, formatDateTime } from '../../utils/date'
 import type { AppLanguage } from '../../i18n'
 import '../../styles/admin-dashboard.css'
-
-/** Audit action values (hyphenated/dotted) map to camelCase i18n keys. */
-const ACTION_KEY: Record<AuditAction, string> = {
-  'school.approved': 'schoolApproved',
-  'school.rejected': 'schoolRejected',
-  'school.suspended': 'schoolSuspended',
-  'school.reactivated': 'schoolReactivated',
-  'school.plan-changed': 'schoolPlanChanged',
-  'school.info-requested': 'schoolInfoRequested',
-  'school.settings-changed': 'schoolSettingsChanged',
-  'school.plan-upgrade-requested': 'schoolPlanUpgradeRequested',
-  'paper.approved': 'paperApproved',
-  'paper.submitted': 'paperSubmitted',
-  'paper.printed': 'paperPrinted',
-  'paper.changes-requested': 'paperChangesRequested',
-  'paper.archived': 'paperArchived',
-  'paper.in-review': 'paperInReview',
-  'teacher.invited': 'teacherInvited',
-  'teacher.assignment-changed': 'teacherAssignmentChanged',
-  'user.invited': 'userInvited',
-  'user.deactivated': 'userDeactivated',
-  'user.profile-updated': 'userProfileUpdated',
-  'user.password-changed': 'userPasswordChanged',
-  'plan.limit-changed': 'planLimitChanged',
-  'template.created': 'templateCreated',
-  'template.default-changed': 'templateDefaultChanged',
-  'announcement.published': 'announcementPublished',
-  'announcement.scheduled': 'announcementScheduled',
-}
 
 const STATUS_ROWS: SchoolStatus[] = ['active', 'pending', 'suspended']
 
@@ -233,7 +204,8 @@ export function AdminDashboardPage() {
                     <li key={event.id} className="admin-activity__item">
                       <span className="admin-activity__actor"><Bidi>{event.actorName}</Bidi></span>
                       <span className="admin-activity__action">
-                        {t(`admin.dashboard.activityAction.${ACTION_KEY[event.action]}`)}
+                        {/* Action labels live in one place: admin.audit.actions.* (same set as the audit log). */}
+                        {t(`admin.audit.actions.${event.action}`)}
                       </span>
                       <span className="admin-activity__target"><Bidi>{event.targetLabel}</Bidi></span>
                       <time className="admin-activity__time">

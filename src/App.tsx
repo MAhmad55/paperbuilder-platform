@@ -1,52 +1,92 @@
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
-import { type ReactNode } from 'react'
+import { lazy, Suspense, type ReactNode } from 'react'
 import { AuthProvider, useAuth } from './shell/AuthContext'
 import { RouteAnnouncer } from './shell/RouteAnnouncer'
 import { ToastProvider } from './design-system'
+import { Skeleton } from './design-system/Skeleton'
 import { AppShell } from './shell/AppShell'
-import { SignInPage } from './pages/SignInPage'
-import { LandingPage } from './pages/LandingPage'
-import { RequestAccessPage } from './pages/RequestAccessPage'
-import { RequestStatusPage } from './pages/RequestStatusPage'
-import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
-import { InvitePage } from './pages/InvitePage'
-import { LegalPage } from './pages/LegalPage'
-import { PublicPreviewPage } from './pages/PublicPreviewPage'
-import { DesignSystemPage } from './pages/DesignSystemPage'
-import { FoundationTestPage } from './pages/FoundationTestPage'
-import { SystemStatePage } from './pages/SystemStatePage'
-import { AdminDashboardPage } from './pages/admin/AdminDashboardPage'
-import { AdminSchoolsPage } from './pages/admin/AdminSchoolsPage'
-import { AdminSchoolDetailPage } from './pages/admin/AdminSchoolDetailPage'
-import { AdminApprovalsPage } from './pages/admin/AdminApprovalsPage'
-import { AdminPlansPage } from './pages/admin/AdminPlansPage'
-import { AdminBankPage } from './pages/admin/AdminBankPage'
-import { AdminUsersPage } from './pages/admin/AdminUsersPage'
-import { AdminAnnouncementsPage } from './pages/admin/AdminAnnouncementsPage'
-import { AdminAuditPage } from './pages/admin/AdminAuditPage'
-import { AdminSettingsPage } from './pages/admin/AdminSettingsPage'
-import { SchoolDashboardPage } from './pages/school/SchoolDashboardPage'
-import { SchoolApprovalsPage } from './pages/school/SchoolApprovalsPage'
-import { SchoolTeachersPage } from './pages/school/SchoolTeachersPage'
-import { SchoolClassesPage } from './pages/school/SchoolClassesPage'
-import { SchoolCalendarPage } from './pages/school/SchoolCalendarPage'
-import { SchoolPapersPage } from './pages/school/SchoolPapersPage'
-import { SchoolTemplatesPage } from './pages/school/SchoolTemplatesPage'
-import { SchoolReportsPage } from './pages/school/SchoolReportsPage'
-import { SchoolSettingsPage } from './pages/school/SchoolSettingsPage'
-import { SchoolPlanPage } from './pages/school/SchoolPlanPage'
-import { TeacherDashboardPage } from './pages/teacher/TeacherDashboardPage'
-import { PaperStudioPage } from './pages/teacher/PaperStudioPage'
-import { TeacherPapersPage } from './pages/teacher/TeacherPapersPage'
-import { TeacherPaperDetailPage } from './pages/teacher/TeacherPaperDetailPage'
-import { TeacherTemplatesPage } from './pages/teacher/TeacherTemplatesPage'
-import { TeacherSavedQuestionsPage } from './pages/teacher/TeacherSavedQuestionsPage'
-import { ProfilePage } from './pages/shared/ProfilePage'
-import { SettingsPage } from './pages/shared/SettingsPage'
-import { HistoryPage } from './pages/shared/HistoryPage'
-import { NotificationsPage } from './pages/shared/NotificationsPage'
-import { HelpPage } from './pages/shared/HelpPage'
-import { SystemStatesPage } from './pages/shared/SystemStatesPage'
+/* ------------------------------------------------------------------
+   Lazy route pages (bundle headroom) — one dynamic import per page,
+   grouped by route group (public, admin, school, teacher, shared).
+   The Design System, Foundation Test and Public Preview pages are
+   lazy too, so they never ship in the entry chunk. The route
+   structure and the RequireRole guards below are unchanged; only
+   how each page component is loaded moved.
+------------------------------------------------------------------ */
+
+// Public & access screens
+const LandingPage = lazy(() => import('./pages/LandingPage'))
+const SignInPage = lazy(() => import('./pages/SignInPage'))
+const RequestAccessPage = lazy(() => import('./pages/RequestAccessPage'))
+const RequestStatusPage = lazy(() => import('./pages/RequestStatusPage'))
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'))
+const InvitePage = lazy(() => import('./pages/InvitePage'))
+const LegalPage = lazy(() => import('./pages/LegalPage'))
+const PublicPreviewPage = lazy(() => import('./pages/PublicPreviewPage'))
+
+// Showcase / test pages (demo-only, never on first paint)
+const DesignSystemPage = lazy(() => import('./pages/DesignSystemPage'))
+const FoundationTestPage = lazy(() => import('./pages/FoundationTestPage'))
+
+// Shared system-state page (no-permission / 404 / session-expired)
+const SystemStatePage = lazy(() => import('./pages/SystemStatePage'))
+
+// Super Admin screens
+const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage'))
+const AdminSchoolsPage = lazy(() => import('./pages/admin/AdminSchoolsPage'))
+const AdminSchoolDetailPage = lazy(() => import('./pages/admin/AdminSchoolDetailPage'))
+const AdminApprovalsPage = lazy(() => import('./pages/admin/AdminApprovalsPage'))
+const AdminPlansPage = lazy(() => import('./pages/admin/AdminPlansPage'))
+const AdminBankPage = lazy(() => import('./pages/admin/AdminBankPage'))
+const AdminUsersPage = lazy(() => import('./pages/admin/AdminUsersPage'))
+const AdminAnnouncementsPage = lazy(() => import('./pages/admin/AdminAnnouncementsPage'))
+const AdminAuditPage = lazy(() => import('./pages/admin/AdminAuditPage'))
+const AdminSettingsPage = lazy(() => import('./pages/admin/AdminSettingsPage'))
+
+// School Admin screens
+const SchoolDashboardPage = lazy(() => import('./pages/school/SchoolDashboardPage'))
+const SchoolApprovalsPage = lazy(() => import('./pages/school/SchoolApprovalsPage'))
+const SchoolTeachersPage = lazy(() => import('./pages/school/SchoolTeachersPage'))
+const SchoolClassesPage = lazy(() => import('./pages/school/SchoolClassesPage'))
+const SchoolCalendarPage = lazy(() => import('./pages/school/SchoolCalendarPage'))
+const SchoolPapersPage = lazy(() => import('./pages/school/SchoolPapersPage'))
+const SchoolTemplatesPage = lazy(() => import('./pages/school/SchoolTemplatesPage'))
+const SchoolReportsPage = lazy(() => import('./pages/school/SchoolReportsPage'))
+const SchoolSettingsPage = lazy(() => import('./pages/school/SchoolSettingsPage'))
+const SchoolPlanPage = lazy(() => import('./pages/school/SchoolPlanPage'))
+
+// Teacher screens
+const TeacherDashboardPage = lazy(() => import('./pages/teacher/TeacherDashboardPage'))
+const PaperStudioPage = lazy(() => import('./pages/teacher/PaperStudioPage'))
+const TeacherPapersPage = lazy(() => import('./pages/teacher/TeacherPapersPage'))
+const TeacherPaperDetailPage = lazy(() => import('./pages/teacher/TeacherPaperDetailPage'))
+const TeacherTemplatesPage = lazy(() => import('./pages/teacher/TeacherTemplatesPage'))
+const TeacherSavedQuestionsPage = lazy(() => import('./pages/teacher/TeacherSavedQuestionsPage'))
+
+// Shared screens (role-neutral)
+const ProfilePage = lazy(() => import('./pages/shared/ProfilePage'))
+const SettingsPage = lazy(() => import('./pages/shared/SettingsPage'))
+const HistoryPage = lazy(() => import('./pages/shared/HistoryPage'))
+const NotificationsPage = lazy(() => import('./pages/shared/NotificationsPage'))
+const HelpPage = lazy(() => import('./pages/shared/HelpPage'))
+const SystemStatesPage = lazy(() => import('./pages/shared/SystemStatesPage'))
+
+/**
+ * Daftar loading skeleton — the Suspense fallback while a lazy route
+ * chunk loads. Deliberately text-free (no h1, no copy): the
+ * RouteAnnouncer only announces a real page heading once the page
+ * itself has painted, and no new user-facing string is introduced.
+ * Uses the existing design-system Skeleton bars.
+ */
+function RouteSkeleton() {
+  return (
+    <div aria-hidden="true" style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: '24px 0' }}>
+      <Skeleton variant="rect" width="38%" height={30} />
+      <Skeleton variant="line" width="68%" height={14} />
+      <Skeleton variant="line" count={4} />
+    </div>
+  )
+}
 
 import type { Role } from './services/types'
 
@@ -63,7 +103,12 @@ function ProtectedLayout() {
   if (!role) return <Navigate to="/sign-in" replace />
   return (
     <AppShell>
-      <Outlet />
+      {/* One Suspense boundary for every protected route group
+          (admin, school, teacher, shared, showcase): the shell stays
+          visible while the lazy page chunk loads. */}
+      <Suspense fallback={<RouteSkeleton />}>
+        <Outlet />
+      </Suspense>
     </AppShell>
   )
 }
@@ -93,15 +138,17 @@ export function App() {
         <ToastProvider>
           <RouteAnnouncer />
           <Routes>
-          {/* Public & access screens (Phase 2, blueprint 4.1) — no sidebar */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/sign-in" element={<SignInPage />} />
-          <Route path="/request-access" element={<RequestAccessPage />} />
-          <Route path="/request-status" element={<RequestStatusPage />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/invite" element={<InvitePage />} />
-          <Route path="/legal/:doc" element={<LegalPage />} />
-          <Route path="/public-preview" element={<PublicPreviewPage />} />
+          {/* Public & access screens (Phase 2, blueprint 4.1) — no sidebar.
+              Each public route has its own Suspense boundary (no shell to
+              keep visible here); the fallback is the text-free skeleton. */}
+          <Route path="/" element={<Suspense fallback={<RouteSkeleton />}><LandingPage /></Suspense>} />
+          <Route path="/sign-in" element={<Suspense fallback={<RouteSkeleton />}><SignInPage /></Suspense>} />
+          <Route path="/request-access" element={<Suspense fallback={<RouteSkeleton />}><RequestAccessPage /></Suspense>} />
+          <Route path="/request-status" element={<Suspense fallback={<RouteSkeleton />}><RequestStatusPage /></Suspense>} />
+          <Route path="/forgot-password" element={<Suspense fallback={<RouteSkeleton />}><ForgotPasswordPage /></Suspense>} />
+          <Route path="/invite" element={<Suspense fallback={<RouteSkeleton />}><InvitePage /></Suspense>} />
+          <Route path="/legal/:doc" element={<Suspense fallback={<RouteSkeleton />}><LegalPage /></Suspense>} />
+          <Route path="/public-preview" element={<Suspense fallback={<RouteSkeleton />}><PublicPreviewPage /></Suspense>} />
 
           <Route element={<ProtectedLayout />}>
             <Route path="/home" element={<RoleHomeRedirect />} />

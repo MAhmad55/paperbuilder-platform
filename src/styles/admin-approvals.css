@@ -66,12 +66,12 @@
 
 .admin-approvals__list-head h2 {
   margin: 0;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .admin-approvals__list-head span {
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .admin-approvals__items {
@@ -124,7 +124,7 @@
 .admin-approvals__item-meta,
 .admin-approvals__item-ref {
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .admin-approvals__panel {
@@ -163,7 +163,7 @@
 }
 
 .admin-approvals__facts dt {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--muted);
   margin-block-end: 4px;
 }
@@ -277,5 +277,5 @@
 
 .admin-approvals__flow h3 {
   margin: 0;
-  font-size: 16px;
+  font-size: 1rem;
 }

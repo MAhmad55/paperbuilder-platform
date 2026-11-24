@@ -24,8 +24,8 @@ export function Switch({ checked, onChange, label, description, disabled }: Swit
       </button>
       {(label || description) && (
         <span style={{ flex: 1, minWidth: 0 }}>
-          {label && <span style={{ display: 'block', fontSize: 14, color: 'var(--ink-900)' }}>{label}</span>}
-          {description && <span style={{ display: 'block', fontSize: 12, color: 'var(--muted)' }}>{description}</span>}
+          {label && <span style={{ display: 'block', fontSize: 'var(--text-sm)', color: 'var(--ink-900)' }}>{label}</span>}
+          {description && <span style={{ display: 'block', fontSize: 'var(--text-xs)', color: 'var(--muted)' }}>{description}</span>}
         </span>
       )}
     </div>

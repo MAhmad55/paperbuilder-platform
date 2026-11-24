@@ -104,7 +104,7 @@ export function TopBar({ title, onMenuClick, notifications = 0 }: TopBarProps) {
             <span
               style={{
                 position: 'absolute', top: 5, insetInlineEnd: 5, minWidth: 16, height: 16, padding: '0 4px',
-                borderRadius: 999, background: 'var(--pen-600)', color: '#fff', fontSize: 10, fontWeight: 700,
+                borderRadius: 999, background: 'var(--pen-600)', color: '#fff', fontSize: '0.625rem', fontWeight: 700,
                 display: 'inline-flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1,
               }}
               aria-hidden="true"

@@ -92,7 +92,7 @@ export function FileUpload({
             <li key={`${f.name}-${i}`} className="pb-file-list__item">
               <Paperclip size={15} aria-hidden="true" />
               <span className="pb-file-list__name" title={f.name}>{f.name}</span>
-              <span className="pb-muted" style={{ fontSize: 12, flexShrink: 0 }}>
+              <span className="pb-muted" style={{ fontSize: 'var(--text-xs)', flexShrink: 0 }}>
                 <Bidi>{t('copy.fileSize', { count: Math.max(1, Math.round(f.size / 1024)) })}</Bidi>
               </span>
               <button

@@ -10,7 +10,7 @@ import { Bidi } from '../../utils/bidi'
 import { useAuth } from '../../shell/AuthContext'
 import { roleLabelKey } from '../../shell/navigation'
 import {
-  AVATAR_COLOURS, avatarInitials, className, demoModeOf, subjectName,
+  AVATAR_COLOURS, avatarColour, avatarInitials, className, demoModeOf, normalizeAvatarChoice, subjectName,
   useSchoolDemo, useSharedUser, userSchool,
 } from './shared'
 
@@ -46,7 +46,7 @@ export function ProfilePage() {
   const [name, setName] = useState(user?.name ?? '')
   const [email, setEmail] = useState(user?.email ?? '')
   const [phone, setPhone] = useState(user?.phone ?? '')
-  const [avatar, setAvatar] = useState(user?.avatar ?? 'initials')
+  const [avatar, setAvatar] = useState(normalizeAvatarChoice(user?.avatar))
   const [saveErrors, setSaveErrors] = useState<string[]>([])
   const [current, setCurrent] = useState('')
   const [next, setNext] = useState('')
@@ -58,7 +58,7 @@ export function ProfilePage() {
     setName(user?.name ?? '')
     setEmail(user?.email ?? '')
     setPhone(user?.phone ?? '')
-    setAvatar(user?.avatar ?? 'initials')
+    setAvatar(normalizeAvatarChoice(user?.avatar))
   }, [user?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const subjects = useMemo(
@@ -147,7 +147,7 @@ export function ProfilePage() {
               <div className="shared-profile__head">
                 <span
                   className="shared-profile__avatar-btn"
-                  style={{ background: AVATAR_COLOURS[avatar]?.bg, color: AVATAR_COLOURS[avatar]?.fg, cursor: 'default' }}
+                  style={{ background: avatarColour(avatar).bg, color: avatarColour(avatar).fg, cursor: 'default' }}
                   aria-hidden="true"
                 >
                   {avatarInitials(name || user.name)}

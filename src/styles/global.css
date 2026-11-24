@@ -23,7 +23,7 @@ body {
 
 :root[dir='rtl'] body,
 body.rtl {
-  font-size: 17px; /* Urdu sizes are +2px of the Latin equivalent */
+  font-size: 1.0625rem; /* Urdu sizes are +2px of the Latin equivalent */
   line-height: 2.0;
 }
 
@@ -147,6 +147,10 @@ button {
 /* ---------- Print (PDF export) ---------- */
 @media print {
   .app-rail, .app-topbar, .app-content > nav.ds-jump, .app-bottom-tabs, .skip-link { display: none !important; }
+  /* Preview controls and actions are app chrome, not paper: the language
+     chips, step/tab bars, action buttons and toasts stay off the print. */
+  .teacher-filters, .teacher-actions, .teacher-studio__actions, .teacher__section,
+  .teacher-studio__preview-head, .teacher-studio__preview-btn, .pb-toast { display: none !important; }
   .app-body, .app-shell, .app-content { margin: 0 !important; padding: 0 !important; }
   .app-content { overflow: visible !important; }
   .ds-demo { break-inside: avoid; }
@@ -154,4 +158,4 @@ button {
   .ds-jump { display: none !important; }
 }
 
-@page { margin: 0; }
+@page { size: A4; margin: 12mm; }

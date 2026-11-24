@@ -197,7 +197,7 @@ export function PatternEditor({ sections, targetMarks, onChange, presets = PRESE
       <div className="pb-pattern__total">
         <span>{t('copy.paper.totalMarksLabel')}</span>
         <span style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontWeight: 600, color: 'var(--muted)', fontSize: 12 }}><Bidi>{t('copy.paper.targetLabel')}: {targetMarks}</Bidi></span>
+          <span style={{ fontWeight: 600, color: 'var(--muted)', fontSize: 'var(--text-xs)' }}><Bidi>{t('copy.paper.targetLabel')}: {targetMarks}</Bidi></span>
           <span style={{ color: state === 'met' || state === 'under' ? 'var(--ink-900)' : 'var(--pen-600)' }}><Bidi>{currentMarks}</Bidi></span>
         </span>
       </div>

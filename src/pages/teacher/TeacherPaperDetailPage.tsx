@@ -13,7 +13,7 @@ import { formatDate, formatDateTime } from '../../utils/date'
 import type { AppLanguage } from '../../i18n'
 import {
   chapterLabel, classLabel, demoModeOf, demoTeacher, demoTeacherSchool,
-  paperStatusChip, SavedPaperPreview, shouldOpenPrintDialog, subjectLabel, useSchoolDemo,
+  paperFileTitle, paperStatusChip, printWithTitle, SavedPaperPreview, shouldOpenPrintDialog, subjectLabel, useSchoolDemo,
 } from './shared'
 import '../../styles/teacher.css'
 
@@ -80,7 +80,12 @@ export function TeacherPaperDetailPage() {
       toast({ variant: 'error', message: result.error })
       return
     }
-    if (shouldOpenPrintDialog()) window.print()
+    if (shouldOpenPrintDialog()) printWithTitle(paperFileTitle({
+      className: classLabel(paper.classId),
+      subjectName: subjectLabel(paper.subjectId, 'en'),
+      examType: t(`examType.${examTypeKey(paper.examType)}`),
+      schoolName: school?.name ?? '',
+    }))
     setVersion((v) => v + 1)
     toast({ variant: 'success', message: t('teacher.studio.toasts.printed') })
   }
