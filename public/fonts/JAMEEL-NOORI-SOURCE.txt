@@ -1,0 +1,7 @@
+Jameel Noori Nastaleeq
+
+Local web font bundled at the user's request for Urdu print output.
+Source mirror: https://github.com/tariq-abdullah/urdu-web-font-CDN/blob/master/JameelNooriNastaleeq.woff
+The original WOFF was converted locally to WOFF2 without changing the font family.
+Font family verified with fontconfig: Jameel Noori Nastaleeq, Regular.
+No license ownership is claimed by PaperBuilder.
